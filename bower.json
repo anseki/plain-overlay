@@ -1,0 +1,36 @@
+{
+  "name": "plain-overlay",
+  "version": "0.0.1",
+  "description": "The simple library for customizable overlay which covers a page, elements or iframe-windows.",
+  "keywords": [
+    "overlay",
+    "busy",
+    "loading",
+    "form",
+    "input",
+    "progress",
+    "ui",
+    "simple",
+    "customizable",
+    "iframe",
+    "window"
+  ],
+  "main": "plain-overlay.min.js",
+  "homepage": "http://anseki.github.io/plain-overlay/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anseki/plain-overlay.git"
+  },
+  "moduleType": [],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "license": "MIT",
+  "authors": [
+    "anseki <AnSeki.aff@gmail.com>"
+  ]
+}

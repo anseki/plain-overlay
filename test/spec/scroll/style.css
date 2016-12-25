@@ -1,0 +1,57 @@
+
+th {
+  background-color: #ddd;
+}
+
+td > div,
+td > iframe {
+  width: 80px;
+  height: 80px;
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+td > div {
+  overflow: auto;
+}
+
+td > iframe {
+  display: block;
+}
+
+td > div.margin {
+  padding: 10px;
+}
+
+.spacer {
+  box-sizing: border-box;
+  width: 20px;
+  height: 20px;
+  border: 2px solid red;
+}
+
+.width .spacer {
+  width: 120px;
+}
+
+.height .spacer {
+  height: 120px;
+}
+
+.bar-left {
+  direction: rtl;               /* Make `writing-mode: rl-tb` in Trident and Edge */
+}
+
+.bar-top {
+  writing-mode: vertical-lr;    /* For other than Trident and Edge */
+  direction: rtl;               /* For other than Trident and Edge */
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -ms-writing-mode: bt-lr;      /* Override `writing-mode` and `direction` in Trident and Edge */
+}
+
+.bar-left.bar-top {
+  writing-mode: vertical-rl;    /* For other than Trident and Edge */
+  direction: rtl;               /* For other than Trident and Edge */
+  /* stylelint-disable-next-line property-no-vendor-prefix */
+  -ms-writing-mode: bt-rl;      /* Override `writing-mode` and `direction` in Trident and Edge */
+}

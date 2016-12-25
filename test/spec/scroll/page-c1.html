@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body {
+      margin: 0;
+    }
+
+    body.margin {
+      margin: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="spacer"></div>
+
+  <script>
+
+    var params = location.search.replace(/^\?/, '').split('&'),
+      body = document.body;
+
+    ['width', 'height', 'bar-left', 'bar-top', 'margin'].forEach(function(classKey) {
+      if (params.indexOf(classKey) > -1) { body.classList.add(classKey); }
+    });
+
+  </script>
+</body>
+</html>

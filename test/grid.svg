@@ -1,0 +1,68 @@
+<?xml version="1.0" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1"
+  width="1000px" height="1000px">
+  <style type="text/css"><![CDATA[
+    .f1 { fill: #ccc; }
+    .f2 { fill: #eee; }
+    .f3 { fill: rgba(151, 220, 241, 0.4); }
+    .f4 {
+      fill: none;
+      stroke: rgba(53, 44, 222, 0.4);
+      stroke-width: 2px;
+    }
+    .f5 {
+      fill: none;
+      stroke: rgba(44, 222, 63, 0.6);
+      stroke-width: 4px;
+    }
+  ]]></style>
+  <defs>
+    <g id="w20h20">
+      <rect x="0" y="0" width="10" height="10" class="f1"/>
+      <rect x="10" y="0" width="10" height="10" class="f2"/>
+      <rect x="0" y="10" width="10" height="10" class="f2"/>
+      <rect x="10" y="10" width="10" height="10" class="f1"/>
+    </g>
+    <g id="w100h20">
+      <use xlink:href="#w20h20" x="0" y="0"/>
+      <use xlink:href="#w20h20" x="20" y="0"/>
+      <use xlink:href="#w20h20" x="40" y="0"/>
+      <use xlink:href="#w20h20" x="60" y="0"/>
+      <use xlink:href="#w20h20" x="80" y="0"/>
+    </g>
+    <g id="w100h100">
+      <use xlink:href="#w100h20" x="0" y="0"/>
+      <use xlink:href="#w100h20" x="0" y="20"/>
+      <use xlink:href="#w100h20" x="0" y="40"/>
+      <use xlink:href="#w100h20" x="0" y="60"/>
+      <use xlink:href="#w100h20" x="0" y="80"/>
+      <rect x="0" y="0" width="50" height="50" class="f3"/>
+      <rect x="50" y="50" width="50" height="50" class="f3"/>
+    </g>
+    <g id="w200h200">
+      <use xlink:href="#w100h100" x="0" y="0"/>
+      <use xlink:href="#w100h100" x="100" y="0"/>
+      <use xlink:href="#w100h100" x="0" y="100"/>
+      <use xlink:href="#w100h100" x="100" y="100"/>
+      <rect x="1" y="1" width="98" height="98" class="f4"/>
+      <rect x="101" y="101" width="98" height="98" class="f4"/>
+    </g>
+    <g id="w1000h200">
+      <use xlink:href="#w200h200" x="0" y="0"/>
+      <use xlink:href="#w200h200" x="200" y="0"/>
+      <use xlink:href="#w200h200" x="400" y="0"/>
+      <use xlink:href="#w200h200" x="600" y="0"/>
+      <use xlink:href="#w200h200" x="800" y="0"/>
+    </g>
+    <g id="w1000h1000">
+      <use xlink:href="#w1000h200" x="0" y="0"/>
+      <use xlink:href="#w1000h200" x="0" y="200"/>
+      <use xlink:href="#w1000h200" x="0" y="400"/>
+      <use xlink:href="#w1000h200" x="0" y="600"/>
+      <use xlink:href="#w1000h200" x="0" y="800"/>
+      <rect x="2" y="2" width="496" height="496" class="f5"/>
+      <rect x="502" y="502" width="496" height="496" class="f5"/>
+    </g>
+  </defs>
+  <use xlink:href="#w1000h1000" x="0" y="0"/>
+</svg>

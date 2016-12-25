@@ -1,0 +1,75 @@
+/* line 5, default.scss */
+.plainoverlay {
+  -webkit-tap-highlight-color: transparent;
+  transform: translateZ(0);
+  box-shadow: 0 0 1px transparent;
+}
+
+/* line 11, default.scss */
+.plainoverlay {
+  -moz-transition-property: opacity;
+  -o-transition-property: opacity;
+  -webkit-transition-property: opacity;
+  transition-property: opacity;
+  -moz-transition-duration: 2500ms;
+  -o-transition-duration: 2500ms;
+  -webkit-transition-duration: 2500ms;
+  transition-duration: 2500ms;
+  -moz-transition-timing-function: linear;
+  -o-transition-timing-function: linear;
+  -webkit-transition-timing-function: linear;
+  transition-timing-function: linear;
+  opacity: 0;
+  position: absolute;
+  /*
+    In mobile browsers, its UI at the top changes a size of the viewport
+    dynamically, and height of the document is changed.
+    Also, another UI or something might be added at the side of that chrome, in
+    the future. That might change the right side, or the left side of RTL
+    document or CJK vertical document.
+    Then, add all padding, but padding-bottom may be unnecessary.
+  */
+  padding: 200px;
+  left: -200px;
+  top: -200px;
+  background-color: rgba(136, 136, 136, 0.6);
+  cursor: wait;
+  z-index: 9000;
+}
+/* line 19, default.scss */
+body > .plainoverlay {
+  position: fixed;
+}
+
+/* line 37, default.scss */
+.plainoverlay-show {
+  opacity: 1;
+}
+
+/* line 41, default.scss */
+.plainoverlay-hide {
+  display: none;
+}
+
+/* line 48, default.scss */
+.plainoverlay-anchor {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1px;
+  height: 1px;
+  visibility: hidden;
+}
+
+/* line 57, default.scss */
+.plainoverlay-builtin-face {
+  width: 100%;
+  height: 100%;
+}
+
+/* line 62, default.scss */
+.plainoverlay-builtin-face-rect {
+  fill: none;
+  stroke: rgba(80, 255, 86, 0.6);
+  stroke-width: 2px;
+}

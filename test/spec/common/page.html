@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/plain-overlay.js"></script>
+  <style>
+    .box {
+      width: 200px;
+      height: 100px;
+      margin: 10px;
+      border: 2px solid #419cde;
+    }
+
+    .content-a {
+      margin: 0;
+      width: 150%;
+      font-size: 1.5em;
+      background-color: rgba(65, 156, 222, 0.1);
+    }
+
+    #iframe1 {
+      position: absolute;
+      left: 400px;
+      top: 30px;
+      width: 600px;
+      height: 400px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="elm-plain" class="box"><p class="content-a">(#elm-plain)</p></div>
+
+  <div id="elm-ov-v" class="box" style="margin-bottom: 200px;"><p class="content-a">(#elm-ov-v)Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p></div>
+
+  <div id="elm-ov-a" class="box" style="overflow: auto;"><p class="content-a">(#elm-ov-a)Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p></div>
+
+  <div id="elm-ov-h" class="box" style="overflow: hidden;"><p class="content-a">(#elm-ov-h)Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p></div>
+
+  <iframe id="iframe1" class="box" src="page-c1.html"></iframe>
+
+</body>
+</html>

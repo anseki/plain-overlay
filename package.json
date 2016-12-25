@@ -1,0 +1,53 @@
+{
+  "name": "plain-overlay",
+  "version": "0.0.1",
+  "title": "PlainOverlay",
+  "description": "The simple library for customizable overlay which covers a page, elements or iframe-windows.",
+  "keywords": [
+    "overlay",
+    "busy",
+    "loading",
+    "form",
+    "input",
+    "progress",
+    "ui",
+    "simple",
+    "customizable",
+    "iframe",
+    "window"
+  ],
+  "main": "./src/plain-overlay.js",
+  "devDependencies": {
+    "anim-event": "0.0.5",
+    "babel-core": "^6.18.2",
+    "babel-loader": "^6.2.8",
+    "babel-plugin-add-module-exports": "^0.2.1",
+    "babel-preset-es2015": "^6.18.0",
+    "clean-css-loader": "0.0.3",
+    "cssprefix": "^0.3.0",
+    "htmlclean": "^2.7.8",
+    "htmlclean-loader": "0.0.2",
+    "log4js": "^1.0.1",
+    "node-static-alias": "^0.1.3",
+    "skeleton-loader": "0.0.5",
+    "stats-filelist": "^0.1.1",
+    "test-page-loader": "0.0.10",
+    "webpack": "^1.13.3",
+    "yargs": "^6.5.0"
+  },
+  "scripts": {
+    "build": "webpack --mode=build",
+    "dev": "webpack --display-modules --mode=dev"
+  },
+  "homepage": "http://anseki.github.io/plain-overlay/",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/anseki/plain-overlay.git"
+  },
+  "bugs": "https://github.com/anseki/plain-overlay/issues",
+  "license": "MIT",
+  "author": {
+    "name": "anseki",
+    "url": "https://github.com/anseki"
+  }
+}
