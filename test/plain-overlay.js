@@ -61,9 +61,9 @@ var PlainOverlay =
 	                                                                                                                                                                                                                                                                               * Licensed under the MIT license.
 	                                                                                                                                                                                                                                                                               */
 	
-	var _cssPrefix = __webpack_require__(1);
+	var _cssprefix = __webpack_require__(1);
 	
-	var _cssPrefix2 = _interopRequireDefault(_cssPrefix);
+	var _cssprefix2 = _interopRequireDefault(_cssprefix);
 	
 	var _default = __webpack_require__(2);
 	
@@ -78,7 +78,8 @@ var PlainOverlay =
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 	
 	var APP_ID = 'plainoverlay',
-	    STYLE_ELEMENT_ID = APP_ID + '-style',
+	    // COPY: default.scss
+	STYLE_ELEMENT_ID = APP_ID + '-style',
 	    STYLE_CLASS = APP_ID,
 	    STYLE_CLASS_BODY = APP_ID + '-body',
 	    STYLE_CLASS_SHOW = APP_ID + '-show',
@@ -164,7 +165,7 @@ var PlainOverlay =
 	  Object.keys(styleProps).forEach(function (prop) {
 	    if (styleProps[prop] != null) {
 	      if (savedStyleProps && savedStyleProps[prop] == null) {
-	        savedStyleProps[prop] = style[prop];
+	        savedStyleProps[prop] = styleProps[prop];
 	      }
 	      style[prop] = styleProps[prop];
 	    }
@@ -220,46 +221,48 @@ var PlainOverlay =
 	}
 	window.scrollTop = scrollTop; // [DEBUG/]
 	
-	/**
-	 * @param {props} props - `props` of instance.
-	 * @param {Object} newOptions - New options.
-	 * @returns {void}
-	 */
-	function _setOptions(props, newOptions) {
-	  var options = props.options,
-	      elmTarget = props.elmTarget,
-	      elmTargetBody = props.elmTargetBody,
-	      elmOverlay = props.elmOverlay,
-	      elmOverlayBody = props.elmOverlayBody;
+	function resizeTargetOuter(props, width, height) {
+	  var elmTargetBody = props.elmTargetBody,
+	      targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+	      boxSizing = targetBodyCmpStyle.boxSizing,
+	      includeProps = boxSizing === 'border-box' ? [] : boxSizing === 'padding-box' ? ['border'] : ['border', 'padding'],
+	      // content-box
 	
-	  // face
-	  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
-	    // Clear
-	    while (elmOverlayBody.firstChild) {
-	      elmOverlayBody.removeChild(elmOverlayBody.firstChild);
+	  PROP_NAMES = {
+	    padding: {
+	      width: ['paddingLeft', 'paddingRight'],
+	      height: ['paddingTop', 'paddingBottom']
+	    },
+	    border: {
+	      width: ['borderLeftWidth', 'borderRightWidth'],
+	      height: ['borderTopWidth', 'borderBottomWidth']
 	    }
-	    if (newOptions.face === '') {
-	      options.face = '';
-	    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
-	      options.face = newOptions.face;
-	      elmOverlayBody.appendChild(newOptions.face);
-	    } else {
-	      options.face = void 0;
-	      elmOverlayBody.innerHTML = _face2.default;
-	    }
-	  }
+	  },
+	      values = ['width', 'height'].reduce(function (values, dir) {
+	    includeProps.forEach(function (part) {
+	      PROP_NAMES[part][dir].forEach(function (propName) {
+	        values[dir] -= parseFloat(targetBodyCmpStyle[propName]);
+	      });
+	    });
+	    return values;
+	  }, { width: width, height: height });
 	
-	  // duration
-	  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
-	    options.duration = newOptions.duration;
-	    propNameTransitionDuration = propNameTransitionDuration || _cssPrefix2.default.getProp('transitionDuration', elmOverlay);
-	    elmOverlay.style[propNameTransitionDuration] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
-	  }
+	  setStyle(elmTargetBody, { width: values.width + 'px', height: values.height + 'px' }, props.savedPropsTargetBody);
 	
-	  if (isObject(newOptions.style)) {
-	    setStyle(props.elmOverlay, newOptions.style);
+	  // In some browsers, getComputedStyle might return computed values that is not px instead of used values.
+	  var bBox = elmTargetBody.getBoundingClientRect(),
+	      fixStyle = {};
+	  if (Math.abs(bBox.width - width) >= 0.5) {
+	    console.warn('[resizeTargetOuter] Incorrect width: ' + bBox.width + ' (expected: ' + width + ' passed: ' + values.width + ')'); // [DEBUG/]
+	    fixStyle.width = values.width - (bBox.width - width) + 'px';
 	  }
+	  if (bBox.height !== height) {
+	    console.warn('[resizeTargetOuter] Incorrect height: ' + bBox.height + ' (expected: ' + height + ' passed: ' + values.height + ')'); // [DEBUG/]
+	    fixStyle.height = values.height - (bBox.height - height) + 'px';
+	  }
+	  setStyle(elmTargetBody, fixStyle, props.savedPropsTargetBody);
 	}
+	window.resizeTargetOuter = resizeTargetOuter; // [DEBUG/]
 	
 	// Trident and Edge bug, width and height are interchanged.
 	function getTargetClientWH(props) {
@@ -479,6 +482,47 @@ var PlainOverlay =
 	  // event
 	}
 	
+	/**
+	 * @param {props} props - `props` of instance.
+	 * @param {Object} newOptions - New options.
+	 * @returns {void}
+	 */
+	function _setOptions(props, newOptions) {
+	  var options = props.options,
+	      elmTarget = props.elmTarget,
+	      elmTargetBody = props.elmTargetBody,
+	      elmOverlay = props.elmOverlay,
+	      elmOverlayBody = props.elmOverlayBody;
+	
+	  // face
+	  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+	    // Clear
+	    while (elmOverlayBody.firstChild) {
+	      elmOverlayBody.removeChild(elmOverlayBody.firstChild);
+	    }
+	    if (newOptions.face === '') {
+	      options.face = '';
+	    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
+	      options.face = newOptions.face;
+	      elmOverlayBody.appendChild(newOptions.face);
+	    } else {
+	      options.face = void 0;
+	      elmOverlayBody.innerHTML = _face2.default;
+	    }
+	  }
+	
+	  // duration
+	  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
+	    options.duration = newOptions.duration;
+	    propNameTransitionDuration = propNameTransitionDuration || _cssprefix2.default.getProp('transitionDuration', elmOverlay);
+	    elmOverlay.style[propNameTransitionDuration] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
+	  }
+	
+	  if (isObject(newOptions.style)) {
+	    setStyle(props.elmOverlay, newOptions.style);
+	  }
+	}
+	
 	var PlainOverlay = function () {
 	  /**
 	   * Create a `PlainOverlay` instance.
@@ -634,11 +678,6 @@ var PlainOverlay =
 	    value: function hide(force) {
 	      _hide(insProps[this._id]);
 	      return this;
-	    }
-	  }, {
-	    key: 'getState',
-	    value: function getState() {
-	      return this.state;
 	    }
 	  }, {
 	    key: 'face',

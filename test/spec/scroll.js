@@ -1,5 +1,5 @@
 
-describe('scroll', function() {
+describe('disableScroll()', function() {
   'use strict';
 
   var window, document,
@@ -111,7 +111,7 @@ describe('scroll', function() {
       pageDone = done;
 
       beforeDone();
-    }, 'scroll');
+    }, 'disableScroll()');
   });
 
   afterAll(function() {

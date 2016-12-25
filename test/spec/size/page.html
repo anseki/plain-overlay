@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/plain-overlay.js"></script>
+  <style>
+
+    table {
+      border-collapse: collapse;
+    }
+
+    td {
+      border: 1px solid #ddd;
+      width: 100px;
+      font-size: 10px; /* Blink ignore small value like 1px */
+    }
+
+    td > * {
+      height: 10px;
+      background-color: rgba(108, 140, 189, 0.6);
+    }
+
+    /* .static {} */
+
+    .absolute {
+      position: relative;
+    }
+    .absolute > * {
+      position: absolute;
+      left: 0;
+      top: 0;
+    }
+
+    /* .content-box {} */
+
+    .padding-box > * {
+      box-sizing: padding-box;
+    }
+
+    .border-box > * {
+      box-sizing: border-box;
+    }
+
+    /* .unit01 {} */
+
+    .unit02 td > * {
+      border-left: 1px solid orange;
+      padding-left: 2px;
+      width: 4px;
+      padding-right: 8px;
+      border-right: 16px solid orange;
+    }
+
+    .unit03 td > * {
+      border-left: 0.1em solid orange;
+      padding-left: 0.2em;
+      width: 0.4em;
+      padding-right: 0.8em;
+      border-right: 1.6em solid orange;
+    }
+
+    /* include incorrect value */
+    .unit04 td > * {
+      border-left: 1% solid orange;
+      padding-left: 2%;
+      width: 4%;
+      padding-right: 8%;
+      border-right: 16% solid orange;
+    }
+
+    /* include incorrect value */
+    .unit05 td > * {
+      border-left: auto solid orange;
+      padding-left: auto;
+      width: auto;
+      padding-right: auto;
+      border-right: auto solid orange;
+    }
+
+  </style>
+</head>
+<body>
+
+  <table>
+    <tr class="unit01">
+      <td class="static content-box"><div></div></td>
+      <td class="static padding-box"><div></div></td>
+      <td class="static border-box"><div></div></td>
+      <td class="absolute content-box"><div></div></td>
+      <td class="absolute padding-box"><div></div></td>
+      <td class="absolute border-box"><div></div></td>
+    </tr>
+    <tr class="unit02">
+      <td class="static content-box"><div></div></td>
+      <td class="static padding-box"><div></div></td>
+      <td class="static border-box"><div></div></td>
+      <td class="absolute content-box"><div></div></td>
+      <td class="absolute padding-box"><div></div></td>
+      <td class="absolute border-box"><div></div></td>
+    </tr>
+    <tr class="unit03">
+      <td class="static content-box"><div></div></td>
+      <td class="static padding-box"><div></div></td>
+      <td class="static border-box"><div></div></td>
+      <td class="absolute content-box"><div></div></td>
+      <td class="absolute padding-box"><div></div></td>
+      <td class="absolute border-box"><div></div></td>
+    </tr>
+    <tr class="unit04">
+      <td class="static content-box"><div></div></td>
+      <td class="static padding-box"><div></div></td>
+      <td class="static border-box"><div></div></td>
+      <td class="absolute content-box"><div></div></td>
+      <td class="absolute padding-box"><div></div></td>
+      <td class="absolute border-box"><div></div></td>
+    </tr>
+    <tr class="unit05">
+      <td class="static content-box"><div></div></td>
+      <td class="static padding-box"><div></div></td>
+      <td class="static border-box"><div></div></td>
+      <td class="absolute content-box"><div></div></td>
+      <td class="absolute padding-box"><div></div></td>
+      <td class="absolute border-box"><div></div></td>
+    </tr>
+  </table>
+
+</body>
+</html>

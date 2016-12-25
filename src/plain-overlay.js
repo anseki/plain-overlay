@@ -94,7 +94,7 @@ function setStyle(element, styleProps, savedStyleProps) {
   Object.keys(styleProps).forEach(prop => {
     if (styleProps[prop] != null) {
       if (savedStyleProps && savedStyleProps[prop] == null) {
-        savedStyleProps[prop] = style[prop];
+        savedStyleProps[prop] = styleProps[prop];
       }
       style[prop] = styleProps[prop];
     }
@@ -143,44 +143,51 @@ function scrollTop(props, value) {
 }
 window.scrollTop = scrollTop; // [DEBUG/]
 
-/**
- * @param {props} props - `props` of instance.
- * @param {Object} newOptions - New options.
- * @returns {void}
- */
-function setOptions(props, newOptions) {
-  const options = props.options,
-    elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
-    elmOverlay = props.elmOverlay, elmOverlayBody = props.elmOverlayBody;
+function resizeTargetOuter(props, width, height) {
+  const elmTargetBody = props.elmTargetBody,
+    targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+    boxSizing = targetBodyCmpStyle.boxSizing,
+    includeProps =
+      boxSizing === 'border-box' ? [] :
+      boxSizing === 'padding-box' ? ['border'] :
+        ['border', 'padding'], // content-box
 
-  // face
-  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
-    // Clear
-    while (elmOverlayBody.firstChild) { elmOverlayBody.removeChild(elmOverlayBody.firstChild); }
-    if (newOptions.face === '') {
-      options.face = '';
-    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
-      options.face = newOptions.face;
-      elmOverlayBody.appendChild(newOptions.face);
-    } else {
-      options.face = void 0;
-      elmOverlayBody.innerHTML = FACE;
-    }
-  }
+    PROP_NAMES = {
+      padding: {
+        width: ['paddingLeft', 'paddingRight'],
+        height: ['paddingTop', 'paddingBottom']
+      },
+      border: {
+        width: ['borderLeftWidth', 'borderRightWidth'],
+        height: ['borderTopWidth', 'borderBottomWidth']
+      }
+    },
 
-  // duration
-  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
-    options.duration = newOptions.duration;
-    propNameTransitionDuration =
-      propNameTransitionDuration || CSSPrefix.getProp('transitionDuration', elmOverlay);
-    elmOverlay.style[propNameTransitionDuration] =
-      newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
-  }
+    values = ['width', 'height'].reduce((values, dir) => {
+      includeProps.forEach(part => {
+        PROP_NAMES[part][dir].forEach(propName => {
+          values[dir] -= parseFloat(targetBodyCmpStyle[propName]);
+        });
+      });
+      return values;
+    }, {width: width, height: height});
 
-  if (isObject(newOptions.style)) {
-    setStyle(props.elmOverlay, newOptions.style);
+  setStyle(elmTargetBody,
+    {width: `${values.width}px`, height: `${values.height}px`}, props.savedPropsTargetBody);
+
+  // In some browsers, getComputedStyle might return computed values that is not px instead of used values.
+  const bBox = elmTargetBody.getBoundingClientRect(), fixStyle = {};
+  if (Math.abs(bBox.width - width) >= 0.5) {
+    console.warn(`[resizeTargetOuter] Incorrect width: ${bBox.width} (expected: ${width} passed: ${values.width})`); // [DEBUG/]
+    fixStyle.width = `${values.width - (bBox.width - width)}px`;
   }
+  if (bBox.height !== height) {
+    console.warn(`[resizeTargetOuter] Incorrect height: ${bBox.height} (expected: ${height} passed: ${values.height})`); // [DEBUG/]
+    fixStyle.height = `${values.height - (bBox.height - height)}px`;
+  }
+  setStyle(elmTargetBody, fixStyle, props.savedPropsTargetBody);
 }
+window.resizeTargetOuter = resizeTargetOuter; // [DEBUG/]
 
 // Trident and Edge bug, width and height are interchanged.
 function getTargetClientWH(props) {
@@ -314,8 +321,8 @@ function disableScroll(props) {
     }
 
     const addStyle = {};
-    if (barV) { addStyle[propV] = parseFloat(targetBodyCmpStyle[propV]) + barV + 'px'; }
-    if (barH) { addStyle[propH] = parseFloat(targetBodyCmpStyle[propH]) + barH + 'px'; }
+    if (barV) { addStyle[propV] = `${parseFloat(targetBodyCmpStyle[propV]) + barV}px`; }
+    if (barH) { addStyle[propH] = `${parseFloat(targetBodyCmpStyle[propH]) + barH}px`; }
     setStyle(elmTargetBody, addStyle, props.savedPropsTargetBody);
 
     scrollLeft(props, props.scrollLeft);
@@ -334,10 +341,10 @@ function position(props) {
     overlayBodyCurBBox = props.isDoc ? {left: bBox.left, top: bBox.top} :
       {left: bBox.left + props.window.pageXOffset,
         top: bBox.top + props.window.pageYOffset};
-  overlayStyle.left = parseFloat(overlayCmpStyle.left) + (overlayBodyBBox.left - overlayBodyCurBBox.left) + 'px';
-  overlayStyle.top = parseFloat(overlayCmpStyle.top) + (overlayBodyBBox.top - overlayBodyCurBBox.top) + 'px';
-  overlayBodyStyle.width = overlayBodyBBox.width + 'px';
-  overlayBodyStyle.height = overlayBodyBBox.height + 'px';
+  overlayStyle.left = `${parseFloat(overlayCmpStyle.left) + (overlayBodyBBox.left - overlayBodyCurBBox.left)}px`;
+  overlayStyle.top = `${parseFloat(overlayCmpStyle.top) + (overlayBodyBBox.top - overlayBodyCurBBox.top)}px`;
+  overlayBodyStyle.width = `${overlayBodyBBox.width}px`;
+  overlayBodyStyle.height = `${overlayBodyBBox.height}px`;
 }
 window.position = position; // [DEBUG/]
 
@@ -361,9 +368,10 @@ function show(props) {
 
 /**
  * @param {props} props - `props` of instance.
+ * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function hide(props) {
+function hide(props, force) {
   const elmOverlay = props.elmOverlay;
   elmOverlay.classList.remove(STYLE_CLASS_SHOW);
   props.state = STATE_HIDING;
@@ -383,6 +391,45 @@ function finishHiding(props) {
   props.savedPropsTarget = {};
   props.savedPropsTargetBody = {};
   // event
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @param {Object} newOptions - New options.
+ * @returns {void}
+ */
+function setOptions(props, newOptions) {
+  const options = props.options,
+    elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
+    elmOverlay = props.elmOverlay, elmOverlayBody = props.elmOverlayBody;
+
+  // face
+  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+    // Clear
+    while (elmOverlayBody.firstChild) { elmOverlayBody.removeChild(elmOverlayBody.firstChild); }
+    if (newOptions.face === '') {
+      options.face = '';
+    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
+      options.face = newOptions.face;
+      elmOverlayBody.appendChild(newOptions.face);
+    } else {
+      options.face = void 0;
+      elmOverlayBody.innerHTML = FACE;
+    }
+  }
+
+  // duration
+  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
+    options.duration = newOptions.duration;
+    propNameTransitionDuration =
+      propNameTransitionDuration || CSSPrefix.getProp('transitionDuration', elmOverlay);
+    elmOverlay.style[propNameTransitionDuration] =
+      newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
+  }
+
+  if (isObject(newOptions.style)) {
+    setStyle(props.elmOverlay, newOptions.style);
+  }
 }
 
 class PlainOverlay {
@@ -518,7 +565,7 @@ class PlainOverlay {
    * @returns {PlainOverlay} Current instance itself.
    */
   hide(force) {
-    hide(insProps[this._id]);
+    hide(insProps[this._id], force);
     return this;
   }
 
