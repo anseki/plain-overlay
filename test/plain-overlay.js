@@ -91,8 +91,8 @@ var PlainOverlay =
 	    STATE_HIDING = 3,
 	    DURATION = 2500,
 	    // COPY: default.scss
-	
-	IS_TRIDENT = !!document.uniqueID,
+	TOLERANCE = 0.5,
+	    IS_TRIDENT = !!document.uniqueID,
 	    IS_BLINK = !!(window.chrome && window.chrome.webstore),
 	    IS_GECKO = 'MozAppearance' in document.documentElement.style,
 	    IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
@@ -165,7 +165,7 @@ var PlainOverlay =
 	  Object.keys(styleProps).forEach(function (prop) {
 	    if (styleProps[prop] != null) {
 	      if (savedStyleProps && savedStyleProps[prop] == null) {
-	        savedStyleProps[prop] = styleProps[prop];
+	        savedStyleProps[prop] = style[prop];
 	      }
 	      style[prop] = styleProps[prop];
 	    }
@@ -221,21 +221,27 @@ var PlainOverlay =
 	}
 	window.scrollTop = scrollTop; // [DEBUG/]
 	
-	function resizeTargetOuter(props, width, height) {
-	  var elmTargetBody = props.elmTargetBody,
-	      targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+	function resizeTarget(props, width, height) {
+	  var elmTargetBody = props.elmTargetBody;
+	
+	  var bBox = elmTargetBody.getBoundingClientRect();
+	  if (Math.abs(bBox.width - width) < TOLERANCE && Math.abs(bBox.height - height) < TOLERANCE) {
+	    return;
+	  }
+	
+	  var targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
 	      boxSizing = targetBodyCmpStyle.boxSizing,
 	      includeProps = boxSizing === 'border-box' ? [] : boxSizing === 'padding-box' ? ['border'] : ['border', 'padding'],
 	      // content-box
 	
 	  PROP_NAMES = {
-	    padding: {
-	      width: ['paddingLeft', 'paddingRight'],
-	      height: ['paddingTop', 'paddingBottom']
-	    },
 	    border: {
 	      width: ['borderLeftWidth', 'borderRightWidth'],
 	      height: ['borderTopWidth', 'borderBottomWidth']
+	    },
+	    padding: {
+	      width: ['paddingLeft', 'paddingRight'],
+	      height: ['paddingTop', 'paddingBottom']
 	    }
 	  },
 	      values = ['width', 'height'].reduce(function (values, dir) {
@@ -247,22 +253,30 @@ var PlainOverlay =
 	    return values;
 	  }, { width: width, height: height });
 	
-	  setStyle(elmTargetBody, { width: values.width + 'px', height: values.height + 'px' }, props.savedPropsTargetBody);
+	  setStyle(elmTargetBody, {
+	    // The value might be negative number when size is too small.
+	    width: values.width > 0 ? values.width + 'px' : 0,
+	    height: values.height > 0 ? values.height + 'px' : 0
+	  }, props.savedPropsTargetBody);
 	
 	  // In some browsers, getComputedStyle might return computed values that is not px instead of used values.
-	  var bBox = elmTargetBody.getBoundingClientRect(),
-	      fixStyle = {};
-	  if (Math.abs(bBox.width - width) >= 0.5) {
-	    console.warn('[resizeTargetOuter] Incorrect width: ' + bBox.width + ' (expected: ' + width + ' passed: ' + values.width + ')'); // [DEBUG/]
+	  var fixStyle = {};
+	  bBox = elmTargetBody.getBoundingClientRect();
+	  if (Math.abs(bBox.width - width) >= TOLERANCE) {
+	    // [DEBUG]
+	    console.warn('[resizeTarget] Incorrect width: ' + bBox.width + (' (expected: ' + width + ' passed: ' + values.width + ')'));
+	    // [/DEBUG]
 	    fixStyle.width = values.width - (bBox.width - width) + 'px';
 	  }
 	  if (bBox.height !== height) {
-	    console.warn('[resizeTargetOuter] Incorrect height: ' + bBox.height + ' (expected: ' + height + ' passed: ' + values.height + ')'); // [DEBUG/]
+	    // [DEBUG]
+	    console.warn('[resizeTarget] Incorrect height: ' + bBox.height + (' (expected: ' + height + ' passed: ' + values.height + ')'));
+	    // [/DEBUG]
 	    fixStyle.height = values.height - (bBox.height - height) + 'px';
 	  }
 	  setStyle(elmTargetBody, fixStyle, props.savedPropsTargetBody);
 	}
-	window.resizeTargetOuter = resizeTargetOuter; // [DEBUG/]
+	window.resizeTarget = resizeTarget; // [DEBUG/]
 	
 	// Trident and Edge bug, width and height are interchanged.
 	function getTargetClientWH(props) {
@@ -358,7 +372,9 @@ var PlainOverlay =
 	  barH += clientWH.height;
 	
 	  if (barV || barH) {
-	    var targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, '');
+	    var targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+	        bBox = elmTargetBody.getBoundingClientRect(),
+	        targetSize = { width: bBox.width, height: bBox.height };
 	    var propV = void 0,
 	        propH = void 0;
 	
@@ -386,6 +402,8 @@ var PlainOverlay =
 	          propH = 'marginBottom';
 	        }
 	      }
+	      targetSize.width -= barV;
+	      targetSize.height -= barH;
 	    } else {
 	      // Blink bug, position is not updated.
 	      elmAnchor.style.left = '10px'; // Blink bug (reflow can't update)
@@ -411,6 +429,7 @@ var PlainOverlay =
 	      addStyle[propH] = parseFloat(targetBodyCmpStyle[propH]) + barH + 'px';
 	    }
 	    setStyle(elmTargetBody, addStyle, props.savedPropsTargetBody);
+	    resizeTarget(props, targetSize.width, targetSize.height);
 	
 	    scrollLeft(props, props.scrollLeft);
 	    scrollTop(props, props.scrollTop);
@@ -458,11 +477,11 @@ var PlainOverlay =
 	
 	/**
 	 * @param {props} props - `props` of instance.
+	 * @param {boolean} [force] - Skip effect.
 	 * @returns {void}
 	 */
-	function _hide(props) {
-	  var elmOverlay = props.elmOverlay;
-	  elmOverlay.classList.remove(STYLE_CLASS_SHOW);
+	function _hide(props, force) {
+	  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
 	  props.state = STATE_HIDING;
 	}
 	
@@ -472,13 +491,12 @@ var PlainOverlay =
 	}
 	
 	function finishHiding(props) {
-	  props.state = STATE_HIDDEN;
 	  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
-	
 	  restoreStyle(props.elmTarget, props.savedPropsTarget);
 	  restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
 	  props.savedPropsTarget = {};
 	  props.savedPropsTargetBody = {};
+	  props.state = STATE_HIDDEN;
 	  // event
 	}
 	
@@ -676,7 +694,7 @@ var PlainOverlay =
 	  }, {
 	    key: 'hide',
 	    value: function hide(force) {
-	      _hide(insProps[this._id]);
+	      _hide(insProps[this._id], force);
 	      return this;
 	    }
 	  }, {

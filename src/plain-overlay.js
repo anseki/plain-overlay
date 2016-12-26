@@ -94,7 +94,7 @@ function setStyle(element, styleProps, savedStyleProps) {
   Object.keys(styleProps).forEach(prop => {
     if (styleProps[prop] != null) {
       if (savedStyleProps && savedStyleProps[prop] == null) {
-        savedStyleProps[prop] = styleProps[prop];
+        savedStyleProps[prop] = style[prop];
       }
       style[prop] = styleProps[prop];
     }
@@ -231,7 +231,7 @@ function initOverlayBodyBBox(props) {
   const overlayBodyBBox = props.overlayBodyBBox = getTargetClientWH(props);
   if (props.isDoc) {
     overlayBodyBBox.left = overlayBodyBBox.top = 0;
-    return function() {};
+    return () => {};
 
   } else {
     // `elmTarget.getBoundingClientRect` may be able to get these,
@@ -246,7 +246,7 @@ function initOverlayBodyBBox(props) {
     const bBox = props.elmAnchor.getBoundingClientRect();
     overlayBodyBBox.left = bBox.left + props.window.pageXOffset;
     overlayBodyBBox.top = bBox.top + props.window.pageYOffset;
-    return function() { restoreStyle(elmTargetBody, savedProps); };
+    return () => { restoreStyle(elmTargetBody, savedProps); };
   }
 }
 
@@ -295,7 +295,9 @@ function disableScroll(props) {
   barH += clientWH.height;
 
   if (barV || barH) {
-    const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, '');
+    const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+      bBox = elmTargetBody.getBoundingClientRect(),
+      targetSize = {width: bBox.width, height: bBox.height};
     let propV, propH;
 
     if (props.isDoc) {
@@ -313,6 +315,8 @@ function disableScroll(props) {
         if (barV) { propV = 'marginRight'; }
         if (barH) { propH = 'marginBottom'; }
       }
+      targetSize.width -= barV;
+      targetSize.height -= barH;
 
     } else {
       // Blink bug, position is not updated.
@@ -337,6 +341,7 @@ function disableScroll(props) {
     if (barV) { addStyle[propV] = `${parseFloat(targetBodyCmpStyle[propV]) + barV}px`; }
     if (barH) { addStyle[propH] = `${parseFloat(targetBodyCmpStyle[propH]) + barH}px`; }
     setStyle(elmTargetBody, addStyle, props.savedPropsTargetBody);
+    resizeTarget(props, targetSize.width, targetSize.height);
 
     scrollLeft(props, props.scrollLeft);
     scrollTop(props, props.scrollTop);
@@ -385,8 +390,7 @@ function show(props) {
  * @returns {void}
  */
 function hide(props, force) {
-  const elmOverlay = props.elmOverlay;
-  elmOverlay.classList.remove(STYLE_CLASS_SHOW);
+  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
   props.state = STATE_HIDING;
 }
 
@@ -396,13 +400,12 @@ function finishShowing(props) {
 }
 
 function finishHiding(props) {
-  props.state = STATE_HIDDEN;
   props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
-
   restoreStyle(props.elmTarget, props.savedPropsTarget);
   restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
   props.savedPropsTarget = {};
   props.savedPropsTargetBody = {};
+  props.state = STATE_HIDDEN;
   // event
 }
 
