@@ -20,8 +20,8 @@ const
   STYLE_CLASS_ANCHOR = `${APP_ID}-anchor`,
 
   STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
-
   DURATION = 2500, // COPY: default.scss
+  TOLERANCE = 0.5,
 
   IS_TRIDENT = !!document.uniqueID,
   IS_BLINK = !!(window.chrome && window.chrome.webstore),
@@ -143,23 +143,26 @@ function scrollTop(props, value) {
 }
 window.scrollTop = scrollTop; // [DEBUG/]
 
-function resizeTargetOuter(props, width, height) {
-  const elmTargetBody = props.elmTargetBody,
-    targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+function resizeTarget(props, width, height) {
+  const elmTargetBody = props.elmTargetBody;
+
+  let bBox = elmTargetBody.getBoundingClientRect();
+  if (Math.abs(bBox.width - width) < TOLERANCE &&
+      Math.abs(bBox.height - height) < TOLERANCE) { return; }
+
+  const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
     boxSizing = targetBodyCmpStyle.boxSizing,
-    includeProps =
-      boxSizing === 'border-box' ? [] :
-      boxSizing === 'padding-box' ? ['border'] :
-        ['border', 'padding'], // content-box
+    includeProps = boxSizing === 'border-box' ? [] :
+      boxSizing === 'padding-box' ? ['border'] : ['border', 'padding'], // content-box
 
     PROP_NAMES = {
-      padding: {
-        width: ['paddingLeft', 'paddingRight'],
-        height: ['paddingTop', 'paddingBottom']
-      },
       border: {
         width: ['borderLeftWidth', 'borderRightWidth'],
         height: ['borderTopWidth', 'borderBottomWidth']
+      },
+      padding: {
+        width: ['paddingLeft', 'paddingRight'],
+        height: ['paddingTop', 'paddingBottom']
       }
     },
 
@@ -172,22 +175,32 @@ function resizeTargetOuter(props, width, height) {
       return values;
     }, {width: width, height: height});
 
-  setStyle(elmTargetBody,
-    {width: `${values.width}px`, height: `${values.height}px`}, props.savedPropsTargetBody);
+  setStyle(elmTargetBody, {
+    // The value might be negative number when size is too small.
+    width: values.width > 0 ? `${values.width}px` : 0,
+    height: values.height > 0 ? `${values.height}px` : 0
+  }, props.savedPropsTargetBody);
 
   // In some browsers, getComputedStyle might return computed values that is not px instead of used values.
-  const bBox = elmTargetBody.getBoundingClientRect(), fixStyle = {};
-  if (Math.abs(bBox.width - width) >= 0.5) {
-    console.warn(`[resizeTargetOuter] Incorrect width: ${bBox.width} (expected: ${width} passed: ${values.width})`); // [DEBUG/]
+  const fixStyle = {};
+  bBox = elmTargetBody.getBoundingClientRect();
+  if (Math.abs(bBox.width - width) >= TOLERANCE) {
+    // [DEBUG]
+    console.warn(`[resizeTarget] Incorrect width: ${bBox.width}` +
+      ` (expected: ${width} passed: ${values.width})`);
+    // [/DEBUG]
     fixStyle.width = `${values.width - (bBox.width - width)}px`;
   }
   if (bBox.height !== height) {
-    console.warn(`[resizeTargetOuter] Incorrect height: ${bBox.height} (expected: ${height} passed: ${values.height})`); // [DEBUG/]
+    // [DEBUG]
+    console.warn(`[resizeTarget] Incorrect height: ${bBox.height}` +
+      ` (expected: ${height} passed: ${values.height})`);
+    // [/DEBUG]
     fixStyle.height = `${values.height - (bBox.height - height)}px`;
   }
   setStyle(elmTargetBody, fixStyle, props.savedPropsTargetBody);
 }
-window.resizeTargetOuter = resizeTargetOuter; // [DEBUG/]
+window.resizeTarget = resizeTarget; // [DEBUG/]
 
 // Trident and Edge bug, width and height are interchanged.
 function getTargetClientWH(props) {

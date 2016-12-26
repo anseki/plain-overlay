@@ -1,10 +1,10 @@
 
-describe('resizeTargetOuter()', function() {
+describe('resizeTarget()', function() {
   'use strict';
 
   var window, document,
     PlainOverlay, insProps, pageDone,
-    resizeTargetOuter,
+    resizeTarget,
     WIDTH = 320, HEIGHT = 160;
 
   beforeAll(function(beforeDone) {
@@ -13,11 +13,11 @@ describe('resizeTargetOuter()', function() {
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
       insProps = window.insProps;
-      resizeTargetOuter = window.resizeTargetOuter;
+      resizeTarget = window.resizeTarget;
       pageDone = done;
 
       beforeDone();
-    }, 'resizeTargetOuter()');
+    }, 'resizeTarget()');
   });
 
   afterAll(function() {
@@ -38,7 +38,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -66,7 +66,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -94,7 +94,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -122,7 +122,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -150,7 +150,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -178,7 +178,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -208,7 +208,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -236,7 +236,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -264,7 +264,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -292,7 +292,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -320,7 +320,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -348,7 +348,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -378,7 +378,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -406,7 +406,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -434,7 +434,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -462,7 +462,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -490,7 +490,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -518,7 +518,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -548,7 +548,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -576,7 +576,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -604,7 +604,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -632,7 +632,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -660,7 +660,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -688,7 +688,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -718,7 +718,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -746,7 +746,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -774,7 +774,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -802,7 +802,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -830,7 +830,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
@@ -858,7 +858,7 @@ describe('resizeTargetOuter()', function() {
       borderRight = cmpStyle.borderRight,
       bBox;
 
-    resizeTargetOuter(props, WIDTH, HEIGHT);
+    resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
     expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
