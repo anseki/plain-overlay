@@ -52,6 +52,7 @@ const
    * @property {Element} elmOverlayBody - Overlay body element.
    * @property {Element} elmAnchor - Element to get position.
    * @property {boolean} isDoc - `true` if target is document.
+   * @property {boolean} canScroll - `true` if target can be scrollable element.
    * @property {Window} window - Window that conatins target element.
    * @property {HTMLDocument} document - Document that conatins target element.
    * @property {number} state - Current state.
@@ -269,14 +270,7 @@ window.barTop = barTop; // [DEBUG/]
 
 function disableScroll(props) {
   const elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
-    elmAnchor = props.elmAnchor,
-    targetCmpStyle = props.window.getComputedStyle(elmTarget, '');
-
-  // `visible` of document might make scrollbars.
-  if (targetCmpStyle.overflow === 'hidden' ||
-      targetCmpStyle.overflowX === 'hidden' && targetCmpStyle.overflowY === 'hidden') {
-    return;
-  }
+    elmAnchor = props.elmAnchor;
 
   // Save before `overflow: 'hidden'` because it might change these.
   props.scrollLeft = scrollLeft(props);
@@ -373,9 +367,17 @@ window.position = position; // [DEBUG/]
 function show(props) {
   if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
 
+  const targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
+  // `visible` of document might make scrollbars.
+  props.canScroll = targetCmpStyle.overflow !== 'hidden' &&
+    (targetCmpStyle.overflowX !== 'hidden' || targetCmpStyle.overflowY !== 'hidden');
+
   const elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
-    disableScroll(props);
+    if (props.canScroll) {
+      disableScroll(props);
+    } else {
+    }
     elmOverlay.classList.remove(STYLE_CLASS_HIDE);
     position(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
