@@ -41,18 +41,28 @@ body > .plainoverlay {
   position: fixed;
 }
 
-/* line 37, default.scss */
+/* line 38, default.scss */
 .plainoverlay-show {
   opacity: 1;
 }
 
-/* line 41, default.scss */
+/* line 42, default.scss */
 .plainoverlay-hide {
   display: none;
 }
 
-/* line 48, default.scss */
+/* line 49, default.scss */
 .plainoverlay-anchor {
+  position: relative;
+  width: 0;
+  height: 0;
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+}
+
+/* line 59, default.scss */
+.plainoverlay-pointer {
   position: absolute;
   left: 0;
   top: 0;
@@ -61,13 +71,13 @@ body > .plainoverlay {
   visibility: hidden;
 }
 
-/* line 57, default.scss */
+/* line 68, default.scss */
 .plainoverlay-builtin-face {
   width: 100%;
   height: 100%;
 }
 
-/* line 62, default.scss */
+/* line 73, default.scss */
 .plainoverlay-builtin-face-rect {
   fill: none;
   stroke: rgba(80, 255, 86, 0.6);

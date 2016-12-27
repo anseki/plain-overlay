@@ -6,7 +6,7 @@ $media: "";
 
 $app_id: plainoverlay; // COPY: plain-overlay.js
 $duration: 2500ms; // COPY: plain-overlay.js
-$target_margin: 200px;
+$target_margin: 200px; // COPY: plain-overlay.js
 
 .#{$app_id} {
   @extend %anim-init#{$media};
@@ -26,8 +26,9 @@ $target_margin: 200px;
     Then, add all padding, but padding-bottom may be unnecessary.
   */
   padding: $target_margin;
-  left: -$target_margin; // Must be px for getComputedStyle
-  top: -$target_margin; // Must be px for getComputedStyle
+  // Default: position for isDoc
+  left: -$target_margin;
+  top: -$target_margin;
 
   background-color: rgba(136, 136, 136, 0.6);
   cursor: wait;
@@ -46,6 +47,16 @@ $target_margin: 200px;
 }
 
 .#{$app_id}-anchor {
+  position: relative;
+  width: 0;
+  height: 0;
+  // Override properties that might be specified in other sheets.
+  margin: 0;
+  padding: 0;
+  border: 0 none;
+}
+
+.#{$app_id}-pointer {
   position: absolute;
   left: 0;
   top: 0;

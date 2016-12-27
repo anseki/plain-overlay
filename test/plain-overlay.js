@@ -81,15 +81,18 @@ var PlainOverlay =
 	    // COPY: default.scss
 	STYLE_ELEMENT_ID = APP_ID + '-style',
 	    STYLE_CLASS = APP_ID,
-	    STYLE_CLASS_BODY = APP_ID + '-body',
 	    STYLE_CLASS_SHOW = APP_ID + '-show',
 	    STYLE_CLASS_HIDE = APP_ID + '-hide',
+	    STYLE_CLASS_BODY = APP_ID + '-body',
 	    STYLE_CLASS_ANCHOR = APP_ID + '-anchor',
+	    STYLE_CLASS_POINTER = APP_ID + '-pointer',
 	    STATE_HIDDEN = 0,
 	    STATE_SHOWING = 1,
 	    STATE_SHOWN = 2,
 	    STATE_HIDING = 3,
 	    DURATION = 2500,
+	    // COPY: default.scss
+	TARGET_MARGIN = 200,
 	    // COPY: default.scss
 	TOLERANCE = 0.5,
 	    IS_TRIDENT = !!document.uniqueID,
@@ -119,8 +122,10 @@ var PlainOverlay =
 	 * @property {Element} elmTargetBody - Target body element.
 	 * @property {Element} elmOverlay - Overlay element.
 	 * @property {Element} elmOverlayBody - Overlay body element.
-	 * @property {Element} elmAnchor - Element to get position.
+	 * @property {Element} elmAnchor - Element to position the overlay.
+	 * @property {Element} elmPointer - Element to get position.
 	 * @property {boolean} isDoc - `true` if target is document.
+	 * @property {boolean} canScroll - `true` if target can be scrollable element.
 	 * @property {Window} window - Window that conatins target element.
 	 * @property {HTMLDocument} document - Document that conatins target element.
 	 * @property {number} state - Current state.
@@ -253,6 +258,7 @@ var PlainOverlay =
 	    return values;
 	  }, { width: width, height: height });
 	
+	  // Since the `width` and `height` might change each other, fix both.
 	  setStyle(elmTargetBody, {
 	    // The value might be negative number when size is too small.
 	    width: values.width > 0 ? values.width + 'px' : 0,
@@ -309,15 +315,15 @@ var PlainOverlay =
 	  } else {
 	    var _ret = function () {
 	      // `elmTarget.getBoundingClientRect` may be able to get these,
-	      // but use elmAnchor because it is used for getting position of scrollbars.
+	      // but use elmPointer because it is used for getting position of scrollbars.
 	      var elmTargetBody = props.elmTargetBody,
 	          position = props.window.getComputedStyle(elmTargetBody, '').position,
 	          savedProps = {};
-	      // Position the elmAnchor relative to the elmTargetBody.
+	      // Position the elmPointer relative to the elmTargetBody.
 	      if (position !== 'relative' && position !== 'absolute' && position !== 'fixed') {
 	        setStyle(elmTargetBody, { position: 'relative' }, savedProps);
 	      }
-	      var bBox = props.elmAnchor.getBoundingClientRect();
+	      var bBox = props.elmPointer.getBoundingClientRect();
 	      overlayBodyBBox.left = bBox.left + props.window.pageXOffset;
 	      overlayBodyBBox.top = bBox.top + props.window.pageYOffset;
 	      return {
@@ -344,16 +350,6 @@ var PlainOverlay =
 	window.barTop = barTop; // [DEBUG/]
 	
 	function disableScroll(props) {
-	  var elmTarget = props.elmTarget,
-	      elmTargetBody = props.elmTargetBody,
-	      elmAnchor = props.elmAnchor,
-	      targetCmpStyle = props.window.getComputedStyle(elmTarget, '');
-	
-	  // `visible` of document might make scrollbars.
-	  if (targetCmpStyle.overflow === 'hidden' || targetCmpStyle.overflowX === 'hidden' && targetCmpStyle.overflowY === 'hidden') {
-	    return;
-	  }
-	
 	  // Save before `overflow: 'hidden'` because it might change these.
 	  props.scrollLeft = scrollLeft(props);
 	  props.scrollTop = scrollTop(props);
@@ -366,13 +362,14 @@ var PlainOverlay =
 	  var barV = -overlayBodyBBox.width,
 	      barH = -overlayBodyBBox.height; // elmTarget.clientWidth/clientHeight
 	  // Set regardless of whether it's scrollable or not.
-	  setStyle(elmTarget, { overflow: 'hidden' }, props.savedPropsTarget);
+	  setStyle(props.elmTarget, { overflow: 'hidden' }, props.savedPropsTarget);
 	  var clientWH = getTargetClientWH(props);
 	  barV += clientWH.width;
 	  barH += clientWH.height;
 	
 	  if (barV || barH) {
-	    var targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+	    var elmTargetBody = props.elmTargetBody,
+	        targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
 	        bBox = elmTargetBody.getBoundingClientRect(),
 	        targetSize = { width: bBox.width, height: bBox.height };
 	    var propV = void 0,
@@ -405,13 +402,14 @@ var PlainOverlay =
 	      targetSize.width -= barV;
 	      targetSize.height -= barH;
 	    } else {
+	      var elmPointer = props.elmPointer;
 	      // Blink bug, position is not updated.
-	      elmAnchor.style.left = '10px'; // Blink bug (reflow can't update)
-	      elmAnchor.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
-	      elmAnchor.style.left = '';
+	      elmPointer.style.left = '10px'; // Blink bug (reflow can't update)
+	      elmPointer.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
+	      elmPointer.style.left = '';
 	      // To get the position, this is a value closest to a absolute position.
 	      // `clientLeft` is unreliable in some browsers (Trident, Edge and browsers in MacOS).
-	      var bBoxAfter = elmAnchor.getBoundingClientRect();
+	      var bBoxAfter = elmPointer.getBoundingClientRect();
 	      if (barV) {
 	        // Since `getBoundingClientRect` might have fraction, expect that the size is more than 2px.
 	        propV = overlayBodyBBox.left - (bBoxAfter.left + props.window.pageXOffset) >= 2 ? 'paddingLeft' : 'paddingRight';
@@ -439,17 +437,16 @@ var PlainOverlay =
 	window.disableScroll = disableScroll; // [DEBUG/]
 	
 	function position(props) {
-	  var elmOverlay = props.elmOverlay,
-	      elmOverlayBody = props.elmOverlayBody,
-	      overlayStyle = elmOverlay.style,
-	      overlayBodyStyle = elmOverlayBody.style,
-	      overlayCmpStyle = props.window.getComputedStyle(elmOverlay, ''),
-	      overlayBodyBBox = props.overlayBodyBBox,
-	      bBox = elmOverlayBody.getBoundingClientRect(),
-	      overlayBodyCurBBox = props.isDoc ? { left: bBox.left, top: bBox.top } : { left: bBox.left + props.window.pageXOffset,
-	    top: bBox.top + props.window.pageYOffset };
-	  overlayStyle.left = parseFloat(overlayCmpStyle.left) + (overlayBodyBBox.left - overlayBodyCurBBox.left) + 'px';
-	  overlayStyle.top = parseFloat(overlayCmpStyle.top) + (overlayBodyBBox.top - overlayBodyCurBBox.top) + 'px';
+	  var overlayBodyStyle = props.elmOverlayBody.style,
+	      overlayBodyBBox = props.overlayBodyBBox;
+	  if (!props.isDoc) {
+	    var overlayStyle = props.elmOverlay.style,
+	        bBox = props.elmAnchor.getBoundingClientRect(),
+	        anchorBBox = { left: bBox.left + props.window.pageXOffset,
+	      top: bBox.top + props.window.pageYOffset };
+	    overlayStyle.left = overlayBodyBBox.left - anchorBBox.left - TARGET_MARGIN + 'px';
+	    overlayStyle.top = overlayBodyBBox.top - anchorBBox.top - TARGET_MARGIN + 'px';
+	  }
 	  overlayBodyStyle.width = overlayBodyBBox.width + 'px';
 	  overlayBodyStyle.height = overlayBodyBBox.height + 'px';
 	}
@@ -464,9 +461,15 @@ var PlainOverlay =
 	    return;
 	  }
 	
+	  var targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
+	  // `visible` of document might make scrollbars.
+	  props.canScroll = targetCmpStyle.overflow !== 'hidden' && (targetCmpStyle.overflowX !== 'hidden' || targetCmpStyle.overflowY !== 'hidden');
+	
 	  var elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
-	    disableScroll(props);
+	    if (props.canScroll) {
+	      disableScroll(props);
+	    } else {}
 	    elmOverlay.classList.remove(STYLE_CLASS_HIDE);
 	    position(props);
 	    elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
@@ -626,8 +629,11 @@ var PlainOverlay =
 	      } // Trident bug
 	    }
 	
-	    // overlay
-	    props.elmOverlay = elmOverlay = elmDocument.createElement('div');
+	    // elmAnchor
+	    (props.elmAnchor = elmDocument.createElement('div')).className = STYLE_CLASS_ANCHOR;
+	
+	    // elmOverlay
+	    props.elmOverlay = elmOverlay = props.elmAnchor.appendChild(elmDocument.createElement('div'));
 	    // Trident bug, multiple and space-separated tokens are ignored.
 	    // elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
 	    elmOverlay.classList.add(STYLE_CLASS);
@@ -647,12 +653,12 @@ var PlainOverlay =
 	      event.preventDefault();
 	    }, true);
 	
-	    // overlayBody
+	    // elmOverlayBody
 	    (props.elmOverlayBody = elmOverlay.appendChild(elmDocument.createElement('div'))).className = STYLE_CLASS_BODY;
 	
-	    props.elmTargetBody.appendChild(elmOverlay);
-	    // Anchor
-	    (props.elmAnchor = props.elmTargetBody.appendChild(elmDocument.createElement('div'))).classList.add(STYLE_CLASS_ANCHOR);
+	    props.elmTargetBody.appendChild(props.elmAnchor);
+	    // elmPointer
+	    (props.elmPointer = props.elmTargetBody.appendChild(elmDocument.createElement('div'))).classList.add(STYLE_CLASS_POINTER);
 	    _setOptions(props, options || {});
 	  }
 	
@@ -872,7 +878,7 @@ var PlainOverlay =
 /* 2 */
 /***/ function(module, exports) {
 
-	module.exports = ".plainoverlay{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent;-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:2.5s;-o-transition-duration:2.5s;-webkit-transition-duration:2.5s;transition-duration:2.5s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;padding:200px;left:-200px;top:-200px;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}body>.plainoverlay{position:fixed}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-anchor{position:absolute;left:0;top:0;width:1px;height:1px;visibility:hidden}.plainoverlay-builtin-face{width:100%;height:100%}.plainoverlay-builtin-face-rect{fill:none;stroke:rgba(80,255,86,.6);stroke-width:2px}";
+	module.exports = ".plainoverlay{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent;-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:2.5s;-o-transition-duration:2.5s;-webkit-transition-duration:2.5s;transition-duration:2.5s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;padding:200px;left:-200px;top:-200px;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}body>.plainoverlay{position:fixed}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-anchor{position:relative;width:0;height:0;margin:0;padding:0;border:0}.plainoverlay-pointer{position:absolute;left:0;top:0;width:1px;height:1px;visibility:hidden}.plainoverlay-builtin-face{width:100%;height:100%}.plainoverlay-builtin-face-rect{fill:none;stroke:rgba(80,255,86,.6);stroke-width:2px}";
 
 /***/ },
 /* 3 */
