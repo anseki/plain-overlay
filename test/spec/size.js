@@ -5,6 +5,7 @@ describe('resizeTarget()', function() {
   var window, document,
     PlainOverlay, insProps, pageDone,
     resizeTarget,
+    TOLERANCE = 0.5,
     WIDTH = 320, HEIGHT = 160;
 
   beforeAll(function(beforeDone) {
@@ -41,8 +42,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -69,8 +70,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -97,8 +98,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -125,8 +126,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -153,8 +154,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -181,8 +182,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -211,8 +212,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -239,8 +240,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -267,8 +268,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -295,8 +296,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -323,8 +324,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -351,8 +352,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -381,8 +382,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -409,8 +410,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -437,8 +438,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -465,8 +466,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -493,8 +494,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -521,8 +522,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -551,8 +552,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -579,8 +580,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -607,8 +608,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -635,8 +636,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -663,8 +664,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -691,8 +692,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -721,8 +722,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -749,8 +750,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -777,8 +778,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -805,8 +806,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -833,8 +834,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');
@@ -861,8 +862,8 @@ describe('resizeTarget()', function() {
     resizeTarget(props, WIDTH, HEIGHT);
 
     bBox = element.getBoundingClientRect();
-    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(0.5);
-    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(0.5);
+    expect(Math.abs(bBox.width - WIDTH)).toBeLessThan(TOLERANCE);
+    expect(Math.abs(bBox.height - HEIGHT)).toBeLessThan(TOLERANCE);
 
     // these are not changed.
     cmpStyle = window.getComputedStyle(element, '');

@@ -390,6 +390,7 @@ function show(props) {
       disableScroll(props);
     } else {
       initOverlayBodyBBox(props)();
+      setStyle(props.elmTarget, {overflow: 'hidden'}, props.savedPropsTarget);
     }
     elmOverlay.classList.remove(STYLE_CLASS_HIDE);
     position(props);

@@ -436,6 +436,11 @@ var PlainOverlay =
 	}
 	window.disableScroll = disableScroll; // [DEBUG/]
 	
+	/*
+	  elmAnchor for:
+	    - keeping the block format context (enable `overflow: hidden`)
+	    - positioning without parent's `position: relative`
+	*/
 	function position(props) {
 	  var overlayBodyStyle = props.elmOverlayBody.style,
 	      overlayBodyBBox = props.overlayBodyBBox;
@@ -462,14 +467,18 @@ var PlainOverlay =
 	  }
 	
 	  var targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
+	  props.canScroll = targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' || targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' || targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto' ||
 	  // `visible` of document might make scrollbars.
-	  props.canScroll = targetCmpStyle.overflow !== 'hidden' && (targetCmpStyle.overflowX !== 'hidden' || targetCmpStyle.overflowY !== 'hidden');
+	  props.isDoc && (targetCmpStyle.overflow === 'visible' || targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
 	
 	  var elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
 	    if (props.canScroll) {
 	      disableScroll(props);
-	    } else {}
+	    } else {
+	      initOverlayBodyBBox(props)();
+	      setStyle(props.elmTarget, { overflow: 'hidden' }, props.savedPropsTarget);
+	    }
 	    elmOverlay.classList.remove(STYLE_CLASS_HIDE);
 	    position(props);
 	    elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
