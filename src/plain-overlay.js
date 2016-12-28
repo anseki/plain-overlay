@@ -347,6 +347,11 @@ function disableScroll(props) {
 }
 window.disableScroll = disableScroll; // [DEBUG/]
 
+// Reproduce collapsed margins.
+// Horizontal margins also be collapsed in vertical mode.
+function overflowHide(props) {
+}
+
 /*
   elmAnchor for:
     - keeping the block format context (enable `overflow: hidden`)
