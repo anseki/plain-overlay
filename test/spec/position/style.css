@@ -1,0 +1,36 @@
+
+.target {
+  width: 200px;
+  height: 150px;
+  background-color: rgb(193, 241, 197);
+}
+
+.target p {
+  background-color: rgb(185, 223, 255);
+}
+
+.target .check-z-index {
+  position: relative;
+  display: inline-block;
+  width: 5em;
+  height: 1em;
+}
+
+.target .check-z-index > span {
+  position: absolute;
+  left: 1em;
+  top: 0;
+  font-weight: bold;
+  color: rgb(185, 223, 255);
+  z-index: 99;
+}
+
+.stage {
+  width: 600px;
+}
+
+.head {
+  font-family: monospace;
+  font-size: 1.2em;
+  font-weight: bold;
+}

@@ -14,15 +14,13 @@ const
   APP_ID = 'plainoverlay', // COPY: default.scss
   STYLE_ELEMENT_ID = `${APP_ID}-style`,
   STYLE_CLASS = APP_ID,
+  STYLE_CLASS_DOC = `${APP_ID}-doc`,
   STYLE_CLASS_SHOW = `${APP_ID}-show`,
   STYLE_CLASS_HIDE = `${APP_ID}-hide`,
   STYLE_CLASS_BODY = `${APP_ID}-body`,
-  STYLE_CLASS_ANCHOR = `${APP_ID}-anchor`,
-  STYLE_CLASS_POINTER = `${APP_ID}-pointer`,
 
   STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
   DURATION = 2500, // COPY: default.scss
-  TARGET_MARGIN = 200, // COPY: default.scss
   TOLERANCE = 0.5,
 
   IS_TRIDENT = !!document.uniqueID,
@@ -52,10 +50,7 @@ const
    * @property {Element} elmTargetBody - Target body element.
    * @property {Element} elmOverlay - Overlay element.
    * @property {Element} elmOverlayBody - Overlay body element.
-   * @property {Element} elmAnchor - Element to position the overlay.
-   * @property {Element} elmPointer - Element to get position.
    * @property {boolean} isDoc - `true` if target is document.
-   * @property {boolean} canScroll - `true` if target can be scrollable element.
    * @property {Window} window - Window that conatins target element.
    * @property {HTMLDocument} document - Document that conatins target element.
    * @property {number} state - Current state.
@@ -90,17 +85,19 @@ window.forceReflow = forceReflow; // [DEBUG/]
  * Set style properties while saving current properties.
  * @param {Element} element - Target element.
  * @param {Object} styleProps - New style properties.
- * @param {Object} [savedStyleProps] - Current style properties holder.
+ * @param {(Object|null)} savedStyleProps - Current style properties holder.
+ * @param {Array} [propNames] - Names of target properties.
  * @returns {Element} Target element itself.
  */
-function setStyle(element, styleProps, savedStyleProps) {
+function setStyle(element, styleProps, savedStyleProps, propNames) {
   const style = element.style;
-  Object.keys(styleProps).forEach(prop => {
+  (propNames || Object.keys(styleProps)).forEach(prop => {
     if (styleProps[prop] != null) {
       if (savedStyleProps && savedStyleProps[prop] == null) {
         savedStyleProps[prop] = style[prop];
       }
       style[prop] = styleProps[prop];
+      styleProps[prop] = null;
     }
   });
   return element;
@@ -114,12 +111,39 @@ function setStyle(element, styleProps, savedStyleProps) {
  * @returns {Element} Target element itself.
  */
 function restoreStyle(element, savedStyleProps, propNames) {
-  return setStyle(element,
-    propNames ? propNames.reduce((styleProps, prop) => {
-      styleProps[prop] = savedStyleProps[prop];
-      return styleProps;
-    }, {}) : savedStyleProps);
+  return setStyle(element, savedStyleProps, null, propNames);
 }
+
+/**
+ * An object that simulates `DOMRect` to indicate a bounding-box.
+ * @typedef {Object} BBox
+ * @property {(number|null)} left - ScreenCTM
+ * @property {(number|null)} top - ScreenCTM
+ * @property {(number|null)} right - ScreenCTM
+ * @property {(number|null)} bottom - ScreenCTM
+ * @property {(number|null)} width
+ * @property {(number|null)} height
+ */
+
+/**
+ * Get an element's bounding-box that contains coordinates relative to the element's document or window.
+ * @param {Element} element - Target element.
+ * @param {Window} [window] - Whether it's relative to the element's window, or document.
+ * @returns {(BBox|null)} - A bounding-box or null when failed.
+ */
+function getBBox(element, window) {
+  var rect = element.getBoundingClientRect(),
+    bBox = {left: rect.left, top: rect.top,
+      right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height};
+  if (window) {
+    bBox.left += window.pageXOffset;
+    bBox.right += window.pageXOffset;
+    bBox.top += window.pageYOffset;
+    bBox.bottom += window.pageYOffset;
+  }
+  return bBox;
+}
+window.getBBox = getBBox; // [DEBUG/]
 
 function scrollLeft(props, value) {
   if (props.isDoc) {
@@ -150,9 +174,9 @@ window.scrollTop = scrollTop; // [DEBUG/]
 function resizeTarget(props, width, height) {
   const elmTargetBody = props.elmTargetBody;
 
-  let bBox = elmTargetBody.getBoundingClientRect();
-  if (Math.abs(bBox.width - width) < TOLERANCE &&
-      Math.abs(bBox.height - height) < TOLERANCE) { return; }
+  let rect = elmTargetBody.getBoundingClientRect();
+  if (Math.abs(rect.width - width) < TOLERANCE &&
+      Math.abs(rect.height - height) < TOLERANCE) { return; }
 
   const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
     boxSizing = targetBodyCmpStyle.boxSizing,
@@ -188,30 +212,30 @@ function resizeTarget(props, width, height) {
 
   // In some browsers, getComputedStyle might return computed values that is not px instead of used values.
   const fixStyle = {};
-  bBox = elmTargetBody.getBoundingClientRect();
-  if (Math.abs(bBox.width - width) >= TOLERANCE) {
+  rect = elmTargetBody.getBoundingClientRect();
+  if (Math.abs(rect.width - width) >= TOLERANCE) {
     // [DEBUG]
-    console.warn(`[resizeTarget] Incorrect width: ${bBox.width}` +
+    console.warn(`[resizeTarget] Incorrect width: ${rect.width}` +
       ` (expected: ${width} passed: ${values.width})`);
     // [/DEBUG]
-    fixStyle.width = `${values.width - (bBox.width - width)}px`;
+    fixStyle.width = `${values.width - (rect.width - width)}px`;
   }
-  if (bBox.height !== height) {
+  if (rect.height !== height) {
     // [DEBUG]
-    console.warn(`[resizeTarget] Incorrect height: ${bBox.height}` +
+    console.warn(`[resizeTarget] Incorrect height: ${rect.height}` +
       ` (expected: ${height} passed: ${values.height})`);
     // [/DEBUG]
-    fixStyle.height = `${values.height - (bBox.height - height)}px`;
+    fixStyle.height = `${values.height - (rect.height - height)}px`;
   }
   setStyle(elmTargetBody, fixStyle, props.savedPropsTargetBody);
 }
 window.resizeTarget = resizeTarget; // [DEBUG/]
 
 // Trident and Edge bug, width and height are interchanged.
-function getTargetClientWH(props) {
+function getDocClientWH(props) {
   const elmTarget = props.elmTarget,
     width = elmTarget.clientWidth, height = elmTarget.clientHeight;
-  if (props.isDoc && (IS_TRIDENT || IS_EDGE)) {
+  if (IS_TRIDENT || IS_EDGE) {
     const targetBodyCmpStyle = props.window.getComputedStyle(props.elmTargetBody, ''),
       wMode = targetBodyCmpStyle.writingMode || targetBodyCmpStyle['writing-mode'], // Trident bug
       direction = targetBodyCmpStyle.direction;
@@ -225,35 +249,7 @@ function getTargetClientWH(props) {
     return {width: width, height: height};
   }
 }
-window.getTargetClientWH = getTargetClientWH; // [DEBUG/]
-
-/**
- * Get bounding box for `props.overlayBodyBBox`.
- * @param {props} props - `props` of instance.
- * @returns {Function} A function to restore elmTargetBody that was changed for getting position.
- */
-function initOverlayBodyBBox(props) {
-  const overlayBodyBBox = props.overlayBodyBBox = getTargetClientWH(props);
-  if (props.isDoc) {
-    overlayBodyBBox.left = overlayBodyBBox.top = 0;
-    return () => {};
-
-  } else {
-    // `elmTarget.getBoundingClientRect` may be able to get these,
-    // but use elmPointer because it is used for getting position of scrollbars.
-    const elmTargetBody = props.elmTargetBody,
-      position = props.window.getComputedStyle(elmTargetBody, '').position,
-      savedProps = {};
-    // Position the elmPointer relative to the elmTargetBody.
-    if (position !== 'relative' && position !== 'absolute' && position !== 'fixed') {
-      setStyle(elmTargetBody, {position: 'relative'}, savedProps);
-    }
-    const bBox = props.elmPointer.getBoundingClientRect();
-    overlayBodyBBox.left = bBox.left + props.window.pageXOffset;
-    overlayBodyBBox.top = bBox.top + props.window.pageYOffset;
-    return () => { restoreStyle(elmTargetBody, savedProps); };
-  }
-}
+window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
 function barLeft(wMode, direction) {
   const svgSpec = wMode === 'rl-tb' || wMode === 'tb-rl' || wMode === 'bt-rl' || wMode === 'rl-bt';
@@ -272,106 +268,91 @@ function barTop(wMode, direction) {
 }
 window.barTop = barTop; // [DEBUG/]
 
-function disableScroll(props) {
+function disableDocBars(props) {
+  const elmTargetBody = props.elmTargetBody,
+    targetBodyRect = elmTargetBody.getBoundingClientRect();
   // Save before `overflow: 'hidden'` because it might change these.
   props.scrollLeft = scrollLeft(props);
   props.scrollTop = scrollTop(props);
 
-  // Init props.overlayBodyBBox.
-  const restoreForBBox = initOverlayBodyBBox(props),
-    overlayBodyBBox = props.overlayBodyBBox;
-
   // Get size of each scrollbar.
-  let barV = -overlayBodyBBox.width, barH = -overlayBodyBBox.height; // elmTarget.clientWidth/clientHeight
-  // Set regardless of whether it's scrollable or not.
+  let clientWH = getDocClientWH(props),
+    barV = -clientWH.width, barH = -clientWH.height; // elmTarget.clientWidth/clientHeight
   setStyle(props.elmTarget, {overflow: 'hidden'}, props.savedPropsTarget);
-  const clientWH = getTargetClientWH(props);
+  clientWH = getDocClientWH(props);
   barV += clientWH.width;
   barH += clientWH.height;
 
   if (barV || barH) {
-    const elmTargetBody = props.elmTargetBody,
-      targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
-      bBox = elmTargetBody.getBoundingClientRect(),
-      targetSize = {width: bBox.width, height: bBox.height};
+    const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, '');
     let propV, propH;
-
-    if (props.isDoc) {
-      // There is no way to get absolute position of document.
-      // We need distance between the document and its window, or a method like `element.screenX`
-      // that gets absolute position of an element.
-      // For the moment, Trident and Edge make a scrollbar at the left/top side when RTL document
-      // or CJK vertical document is rendered.
-      if (IS_TRIDENT || IS_EDGE) {
-        const wMode = targetBodyCmpStyle.writingMode || targetBodyCmpStyle['writing-mode'], // Trident bug
-          direction = targetBodyCmpStyle.direction;
-        if (barV) { propV = barLeft(wMode, direction) ? 'marginLeft' : 'marginRight'; }
-        if (barH) { propH = barTop(wMode, direction) ? 'marginTop' : 'marginBottom'; }
-      } else {
-        if (barV) { propV = 'marginRight'; }
-        if (barH) { propH = 'marginBottom'; }
-      }
-      targetSize.width -= barV;
-      targetSize.height -= barH;
-
+    // There is no way to get absolute position of document.
+    // We need distance between the document and its window, or a method like `element.screenX`
+    // that gets absolute position of an element.
+    // For the moment, Trident and Edge make a scrollbar at the left/top side when RTL document
+    // or CJK vertical document is rendered.
+    if (IS_TRIDENT || IS_EDGE) {
+      const wMode = targetBodyCmpStyle.writingMode || targetBodyCmpStyle['writing-mode'], // Trident bug
+        direction = targetBodyCmpStyle.direction;
+      if (barV) { propV = barLeft(wMode, direction) ? 'marginLeft' : 'marginRight'; }
+      if (barH) { propH = barTop(wMode, direction) ? 'marginTop' : 'marginBottom'; }
     } else {
-      const elmPointer = props.elmPointer;
-      // Blink bug, position is not updated.
-      elmPointer.style.left = '10px'; // Blink bug (reflow can't update)
-      elmPointer.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
-      elmPointer.style.left = '';
-      // To get the position, this is a value closest to a absolute position.
-      // `clientLeft` is unreliable in some browsers (Trident, Edge and browsers in MacOS).
-      const bBoxAfter = elmPointer.getBoundingClientRect();
-      if (barV) {
-        // Since `getBoundingClientRect` might have fraction, expect that the size is more than 2px.
-        propV = overlayBodyBBox.left - (bBoxAfter.left + props.window.pageXOffset) >= 2 ?
-          'paddingLeft' : 'paddingRight';
-      }
-      if (barH) {
-        propH = overlayBodyBBox.top - (bBoxAfter.top + props.window.pageYOffset) >= 2 ?
-          'paddingTop' : 'paddingBottom';
-      }
+      if (barV) { propV = 'marginRight'; }
+      if (barH) { propH = 'marginBottom'; }
     }
 
     const addStyle = {};
     if (barV) { addStyle[propV] = `${parseFloat(targetBodyCmpStyle[propV]) + barV}px`; }
     if (barH) { addStyle[propH] = `${parseFloat(targetBodyCmpStyle[propH]) + barH}px`; }
     setStyle(elmTargetBody, addStyle, props.savedPropsTargetBody);
-    resizeTarget(props, targetSize.width, targetSize.height);
+    resizeTarget(props, targetBodyRect.width, targetBodyRect.height);
 
     scrollLeft(props, props.scrollLeft);
     scrollTop(props, props.scrollTop);
+    return true;
+  } else {
+    restoreStyle(props.elmTarget, props.savedPropsTarget, ['overflow']);
+    return false;
   }
-  restoreForBBox();
 }
-window.disableScroll = disableScroll; // [DEBUG/]
+window.disableDocBars = disableDocBars; // [DEBUG/]
 
-// Reproduce collapsed margins.
-// Horizontal margins also be collapsed in vertical mode.
-function overflowHide(props) {
-}
-
-/*
-  elmAnchor for:
-    - keeping the block format context (enable `overflow: hidden`)
-    - positioning without parent's `position: relative`
-*/
 function position(props) {
-  const overlayBodyStyle = props.elmOverlayBody.style,
-    overlayBodyBBox = props.overlayBodyBBox;
-  if (!props.isDoc) {
-    const overlayStyle = props.elmOverlay.style,
-      bBox = props.elmAnchor.getBoundingClientRect(),
-      anchorBBox = {left: bBox.left + props.window.pageXOffset,
-          top: bBox.top + props.window.pageYOffset};
-    overlayStyle.left = `${overlayBodyBBox.left - anchorBBox.left - TARGET_MARGIN}px`;
-    overlayStyle.top = `${overlayBodyBBox.top - anchorBBox.top - TARGET_MARGIN}px`;
-  }
-  overlayBodyStyle.width = `${overlayBodyBBox.width}px`;
-  overlayBodyStyle.height = `${overlayBodyBBox.height}px`;
+  const elmTargetBody = props.elmTargetBody,
+    targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
+    targetBodyBBox = getBBox(elmTargetBody, props.window),
+
+    elmOverlay = props.elmOverlay,
+    overlayCmpStyle = props.window.getComputedStyle(elmOverlay, ''),
+    overlayBBox = getBBox(elmOverlay, props.window),
+
+    borders = ['Top', 'Right', 'Bottom', 'Left'].reduce((borders, prop) => {
+      borders[prop.toLowerCase()] = parseFloat(targetBodyCmpStyle[`border${prop}Width`]);
+      return borders;
+    }, {}),
+
+    // Get distance between document and origin of `elmOverlay`.
+    offset = {left: overlayBBox.left - parseFloat(overlayCmpStyle.left),
+      top: overlayBBox.top - parseFloat(overlayCmpStyle.top)},
+
+    style = {
+      left: targetBodyBBox.left - offset.left + borders.left,
+      top: targetBodyBBox.top - offset.top + borders.top,
+      width: targetBodyBBox.width - borders.left - borders.right,
+      height: targetBodyBBox.height - borders.top - borders.bottom
+    };
+
+  ['left', 'top', 'width', 'height'].forEach(prop => {
+    if (style[prop]) { style[prop] = `${style[prop]}px`; }
+  });
+
+  setStyle(elmOverlay, style);
 }
 window.position = position; // [DEBUG/]
+
+function disableScroll(props) {
+
+}
 
 /**
  * @param {props} props - `props` of instance.
@@ -385,20 +366,24 @@ function show(props) {
     (targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' ||
       targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' ||
       targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto') ||
-    // `visible` of document might make scrollbars.
+    // document with `visible` might make scrollbars.
     props.isDoc && (targetCmpStyle.overflow === 'visible' ||
       targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
 
   const elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
-    if (props.canScroll) {
-      disableScroll(props);
+    if (props.isDoc) {
+      if (props.canScroll && disableDocBars(props)) { disableScroll(props); }
+      elmOverlay.classList.remove(STYLE_CLASS_HIDE);
     } else {
-      initOverlayBodyBBox(props)();
-      setStyle(props.elmTarget, {overflow: 'hidden'}, props.savedPropsTarget);
+      if (props.window.getComputedStyle(props.elmTargetBody, '').display === 'inline') {
+        setStyle(props.elmTargetBody, {display: 'inline-block'}, props.savedPropsTargetBody);
+      }
+      if (props.canScroll) { disableScroll(props); }
+      elmOverlay.classList.remove(STYLE_CLASS_HIDE);
+      position(props);
     }
-    elmOverlay.classList.remove(STYLE_CLASS_HIDE);
-    position(props);
+
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
   }
   elmOverlay.classList.add(STYLE_CLASS_SHOW);
@@ -513,7 +498,6 @@ class PlainOverlay {
       savedPropsTarget: {},
       savedPropsTargetBody: {}
     };
-    let elmDocument, elmOverlay;
 
     Object.defineProperty(this, '_id', {value: ++insId});
     props._id = this._id;
@@ -530,7 +514,7 @@ class PlainOverlay {
       if (options && !isObject(options)) { throw new Error('Invalid options.'); }
     }
     props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
-    props.document = elmDocument = props.elmTarget.ownerDocument;
+    const elmDocument = props.document = props.elmTarget.ownerDocument;
     props.window = elmDocument.defaultView;
     props.elmTargetBody = props.isDoc ? elmDocument.body : props.elmTarget;
 
@@ -544,16 +528,13 @@ class PlainOverlay {
       if (IS_TRIDENT) { forceReflow(sheet); } // Trident bug
     }
 
-    // elmAnchor
-    (props.elmAnchor = elmDocument.createElement('div'))
-      .className = STYLE_CLASS_ANCHOR;
-
     // elmOverlay
-    props.elmOverlay = elmOverlay = props.elmAnchor.appendChild(elmDocument.createElement('div'));
+    const elmOverlay = props.elmOverlay = elmDocument.createElement('div');
     // Trident bug, multiple and space-separated tokens are ignored.
     // elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     elmOverlay.classList.add(STYLE_CLASS);
     elmOverlay.classList.add(STYLE_CLASS_HIDE);
+    if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
 
     elmOverlay.addEventListener('transitionend', event => {
       if (event.target === elmOverlay && event.propertyName === 'opacity') {
@@ -571,10 +552,7 @@ class PlainOverlay {
     (props.elmOverlayBody = elmOverlay.appendChild(elmDocument.createElement('div')))
       .className = STYLE_CLASS_BODY;
 
-    props.elmTargetBody.appendChild(props.elmAnchor);
-    // elmPointer
-    (props.elmPointer = props.elmTargetBody.appendChild(elmDocument.createElement('div')))
-      .classList.add(STYLE_CLASS_POINTER);
+    elmDocument.body.appendChild(elmOverlay);
     setOptions(props, options || {});
   }
 

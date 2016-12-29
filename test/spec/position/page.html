@@ -3,74 +3,62 @@
 <head>
   <meta charset="utf-8">
   <script src="/plain-overlay.js"></script>
+  <link rel="stylesheet" href="style.css">
   <style>
-
-    .target {
-      background-color: rgb(193, 241, 197);
-    }
-
-    .target p {
-      background-color: rgb(185, 223, 255);
-    }
-
-    .target .check-z-index {
-      position: relative;
-      display: inline-block;
-      width: 8em;
-      height: 1em;
-    }
-
-    .target .check-z-index > span {
-      position: absolute;
-      left: 1em;
-      top: 0;
-      font-weight: bold;
-      color: rgb(185, 223, 255);
-      z-index: 99;
-    }
-
-    .stage {
-      width: 600px;
-    }
-
-    .head {
-      font-family: monospace;
-      font-size: 1.2em;
-      font-weight: bold;
-    }
 
   </style>
 </head>
 <body>
 
-  <div id="case-01" class="stage">
+  <div class="stage">
+    <p class="head">body{position:static}</p>
 
-    <p class="head">head</p>
-
-    <p class="target">Lorem ipsum <span class="check-z-index"><span>check-z-index</span></span> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p>
+    <iframe id="case-01-02" src="page-c1.html"></iframe>
 
   </div>
 
-  <div id="case-02" class="stage">
+  <div class="stage">
+    <p class="head">body{position:relative}</p>
 
-    <p class="head">head</p>
+    <iframe id="case-03-04" src="page-c2.html"></iframe>
 
-    <div class="target" style="position: relative;">
-      <p>Lorem ipsum <span class="check-z-index"><span>check-z-index</span></span> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p>
-      <p>Lorem ipsum <span class="check-z-index"><span>check-z-index</span></span> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p>
+  </div>
+
+  <div id="case-05" class="stage">
+    <p class="head">position:static</p>
+
+    <p class="target">Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+
+  </div>
+
+  <div id="case-06" class="stage">
+    <p class="head">position:absolute</p>
+
+    <div style="position: relative; height: 150px;">
+      <div class="target" style="position: absolute; left: 16px; top: -8px">
+        <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+        <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+      </div>
     </div>
 
   </div>
 
-  <div id="case-03" class="stage">
+  <div id="case-07" class="stage">
+    <p class="head">border:3px</p>
 
-    <p class="head">head</p>
+    <div class="target" style="border: 3px solid lawngreen;">
+      <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+      <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+    </div>
 
-    <div style="position: relative; height: 150px;">
-      <div class="target" style="position: absolute;">
-        <p>Lorem ipsum <span class="check-z-index"><span>check-z-index</span></span> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p>
-        <p>Lorem ipsum <span class="check-z-index"><span>check-z-index</span></span> dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut</p>
-      </div>
+  </div>
+
+  <div id="case-08" class="stage">
+    <p class="head">border:1px 2px 4px 8px</p>
+
+    <div class="target" style="border: solid lawngreen; border-width: 1px 2px 4px 8px;">
+      <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
+      <p>Lorem <span class="check-z-index"><span>check</span></span> ipsum dolor sit amet, consectetur adipiscing elit</p>
     </div>
 
   </div>

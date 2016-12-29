@@ -6,6 +6,7 @@ $media: "";
 
 $app_id: plainoverlay; // COPY: plain-overlay.js
 $duration: 2500ms; // COPY: plain-overlay.js
+$overlay-bg: rgba(136, 136, 136, 0.6);
 $target_margin: 200px; // COPY: plain-overlay.js
 
 .#{$app_id} {
@@ -16,23 +17,31 @@ $target_margin: 200px; // COPY: plain-overlay.js
   opacity: 0;
 
   position: absolute;
-  body > & { position: fixed; }
-  /*
-    In mobile browsers, its UI at the top changes a size of the viewport
-    dynamically, and height of the document is changed.
-    Also, another UI or something might be added at the side of that chrome, in
-    the future. That might change the right side, or the left side of RTL
-    document or CJK vertical document.
-    Then, add all padding, but padding-bottom may be unnecessary.
-  */
-  padding: $target_margin;
-  // Default: position for isDoc
-  left: -$target_margin;
-  top: -$target_margin;
+  left: 0;
+  top: 0;
+  overflow: hidden;
 
-  background-color: rgba(136, 136, 136, 0.6);
+  background-color: $overlay-bg;
   cursor: wait;
   z-index: 9000;
+
+  &.#{$app_id}-doc {
+    position: fixed;
+    left: -$target_margin;
+    top: -$target_margin;
+    overflow: visible;
+    padding: $target_margin; // For mobile browsers
+  }
+}
+
+.#{$app_id}-body {
+  width: 100%;
+  height: 100%;
+
+  .#{$app_id}.#{$app_id}-doc & {
+    width: 100vw;
+    height: 100vh;
+  }
 }
 
 .#{$app_id}-show {
@@ -41,28 +50,6 @@ $target_margin: 200px; // COPY: plain-overlay.js
 
 .#{$app_id}-hide {
   display: none;
-}
-
-.#{$app_id}-body {
-}
-
-.#{$app_id}-anchor {
-  position: relative;
-  width: 0;
-  height: 0;
-  // Override properties that might be specified in other sheets.
-  margin: 0;
-  padding: 0;
-  border: 0 none;
-}
-
-.#{$app_id}-pointer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  visibility: hidden;
 }
 
 .#{$app_id}-builtin-face {

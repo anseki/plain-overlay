@@ -5,7 +5,7 @@
   box-shadow: 0 0 1px transparent;
 }
 
-/* line 11, default.scss */
+/* line 12, default.scss */
 .plainoverlay {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -21,63 +21,50 @@
   transition-timing-function: linear;
   opacity: 0;
   position: absolute;
-  /*
-    In mobile browsers, its UI at the top changes a size of the viewport
-    dynamically, and height of the document is changed.
-    Also, another UI or something might be added at the side of that chrome, in
-    the future. That might change the right side, or the left side of RTL
-    document or CJK vertical document.
-    Then, add all padding, but padding-bottom may be unnecessary.
-  */
-  padding: 200px;
-  left: -200px;
-  top: -200px;
+  left: 0;
+  top: 0;
+  overflow: hidden;
   background-color: rgba(136, 136, 136, 0.6);
   cursor: wait;
   z-index: 9000;
 }
-/* line 19, default.scss */
-body > .plainoverlay {
+/* line 28, default.scss */
+.plainoverlay.plainoverlay-doc {
   position: fixed;
+  left: -200px;
+  top: -200px;
+  overflow: visible;
+  padding: 200px;
 }
 
-/* line 38, default.scss */
+/* line 37, default.scss */
+.plainoverlay-body {
+  width: 100%;
+  height: 100%;
+}
+/* line 41, default.scss */
+.plainoverlay.plainoverlay-doc .plainoverlay-body {
+  width: 100vw;
+  height: 100vh;
+}
+
+/* line 47, default.scss */
 .plainoverlay-show {
   opacity: 1;
 }
 
-/* line 42, default.scss */
+/* line 51, default.scss */
 .plainoverlay-hide {
   display: none;
 }
 
-/* line 49, default.scss */
-.plainoverlay-anchor {
-  position: relative;
-  width: 0;
-  height: 0;
-  margin: 0;
-  padding: 0;
-  border: 0 none;
-}
-
-/* line 59, default.scss */
-.plainoverlay-pointer {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1px;
-  height: 1px;
-  visibility: hidden;
-}
-
-/* line 68, default.scss */
+/* line 55, default.scss */
 .plainoverlay-builtin-face {
   width: 100%;
   height: 100%;
 }
 
-/* line 73, default.scss */
+/* line 60, default.scss */
 .plainoverlay-builtin-face-rect {
   fill: none;
   stroke: rgba(80, 255, 86, 0.6);
