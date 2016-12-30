@@ -448,6 +448,44 @@ var PlainOverlay =
 	
 	function disableScroll(props) {}
 	
+	function disableKey(elements) {
+	  var savedAttrs = [];
+	  elements.forEach(function (element) {
+	    var savedAttr = {},
+	        tabIndex = element.tabIndex;
+	    if (tabIndex !== -1) {
+	      savedAttr.element = element;
+	      savedAttr.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
+	      element.tabIndex = -1;
+	    }
+	    var accessKey = element.accessKey;
+	    if (accessKey) {
+	      savedAttr.element = element;
+	      savedAttr.accessKey = accessKey;
+	      element.accessKey = '';
+	    }
+	    if (savedAttr.element) {
+	      savedAttrs.push(savedAttr);
+	    }
+	  });
+	  return savedAttrs;
+	}
+	window.disableKey = disableKey; // [DEBUG/]
+	
+	function restoreKey(savedAttrs) {
+	  savedAttrs.forEach(function (savedAttr) {
+	    if (savedAttr.tabIndex === false) {
+	      savedAttr.element.removeAttribute('tabindex');
+	    } else if (savedAttr.tabIndex != null) {
+	      savedAttr.element.tabIndex = savedAttr.tabIndex;
+	    }
+	    if (savedAttr.accessKey) {
+	      savedAttr.element.accessKey = savedAttr.accessKey;
+	    }
+	  });
+	}
+	window.restoreKey = restoreKey; // [DEBUG/]
+	
 	/**
 	 * @param {props} props - `props` of instance.
 	 * @returns {void}
