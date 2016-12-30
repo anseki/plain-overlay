@@ -417,15 +417,28 @@ var PlainOverlay =
 	  offset = { left: overlayBBox.left - parseFloat(overlayCmpStyle.left),
 	    top: overlayBBox.top - parseFloat(overlayCmpStyle.top) },
 	      style = {
-	    left: targetBodyBBox.left - offset.left + borders.left,
-	    top: targetBodyBBox.top - offset.top + borders.top,
-	    width: targetBodyBBox.width - borders.left - borders.right,
-	    height: targetBodyBBox.height - borders.top - borders.bottom
-	  };
+	    left: targetBodyBBox.left - offset.left + borders.left + 'px',
+	    top: targetBodyBBox.top - offset.top + borders.top + 'px',
+	    width: targetBodyBBox.width - borders.left - borders.right + 'px',
+	    height: targetBodyBBox.height - borders.top - borders.bottom + 'px'
+	  },
+	      reValue = /^([\d\.]+)(px|%)$/;
 	
-	  ['left', 'top', 'width', 'height'].forEach(function (prop) {
-	    if (style[prop]) {
-	      style[prop] = style[prop] + 'px';
+	  // border-radius
+	  [{ prop: 'TopLeft', hBorder: 'left', vBorder: 'top' }, { prop: 'TopRight', hBorder: 'right', vBorder: 'top' }, { prop: 'BottomRight', hBorder: 'right', vBorder: 'bottom' }, { prop: 'BottomLeft', hBorder: 'left', vBorder: 'bottom' }].forEach(function (corner) {
+	    var prop = _cssprefix2.default.getProp('border' + corner.prop + 'Radius', elmTargetBody),
+	        values = targetBodyCmpStyle[prop].split(' ');
+	    var h = values[0],
+	        v = values[1] || values[0],
+	        matches = reValue.exec(h);
+	    h = !matches ? 0 : matches[2] === 'px' ? +matches[1] : matches[1] * targetBodyBBox.width / 100;
+	    matches = reValue.exec(v);
+	    v = !matches ? 0 : matches[2] === 'px' ? +matches[1] : matches[1] * targetBodyBBox.height / 100;
+	
+	    h -= borders[corner.hBorder];
+	    v -= borders[corner.vBorder];
+	    if (h > 0 && v > 0) {
+	      style[prop] = h + 'px ' + v + 'px';
 	    }
 	  });
 	
@@ -516,8 +529,8 @@ var PlainOverlay =
 	    while (elmOverlayBody.firstChild) {
 	      elmOverlayBody.removeChild(elmOverlayBody.firstChild);
 	    }
-	    if (newOptions.face === '') {
-	      options.face = '';
+	    if (newOptions.face === false) {
+	      options.face = false;
 	    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
 	      options.face = newOptions.face;
 	      elmOverlayBody.appendChild(newOptions.face);
