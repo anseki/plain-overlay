@@ -20,6 +20,7 @@ module.exports = {
     library: 'PlainOverlay',
     libraryTarget: 'var'
   },
+  resolve: {packageMains: ['jsnext:main', 'webpack', 'browser', 'web', 'browserify', ['jam', 'main'], 'main']},
   module: {
     loaders: [
       {
