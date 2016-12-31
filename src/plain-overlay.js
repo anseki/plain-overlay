@@ -60,7 +60,7 @@ const
   /** @type {Object.<_id: number, props>} */
   insProps = {};
 
-let insId = 0, propNameTransitionDuration;
+let insId = 0;
 
 // [DEBUG]
 window.insProps = insProps;
@@ -117,10 +117,10 @@ function restoreStyle(element, savedStyleProps, propNames) {
 /**
  * An object that simulates `DOMRect` to indicate a bounding-box.
  * @typedef {Object} BBox
- * @property {(number|null)} left - ScreenCTM
- * @property {(number|null)} top - ScreenCTM
- * @property {(number|null)} right - ScreenCTM
- * @property {(number|null)} bottom - ScreenCTM
+ * @property {(number|null)} left - document coordinate
+ * @property {(number|null)} top - document coordinate
+ * @property {(number|null)} right - document coordinate
+ * @property {(number|null)} bottom - document coordinate
  * @property {(number|null)} width
  * @property {(number|null)} height
  */
@@ -402,7 +402,7 @@ function disableKeys(elements) {
 }
 window.disableKeys = disableKeys; // [DEBUG/]
 
-function restoreKey(savedAttrs) {
+function restoreKeys(savedAttrs) {
   savedAttrs.forEach(savedAttr => {
     try {
       if (savedAttr.tabIndex === false) {
@@ -419,7 +419,18 @@ function restoreKey(savedAttrs) {
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   });
 }
-window.restoreKey = restoreKey; // [DEBUG/]
+window.restoreKeys = restoreKeys; // [DEBUG/]
+
+function avoidFocus(props, element) {
+  if (props.isDoc && element !== element.ownerDocument.body &&
+        !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
+      !props.isDoc && (element === props.elmTargetBody ||
+        props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+    element.blur();
+    return true;
+  }
+  return false;
+}
 
 function finishShowing(props) {
   props.state = STATE_SHOWN;
@@ -434,8 +445,16 @@ function finishHiding(props) {
   props.savedPropsTarget = {};
   props.savedPropsTargetBody = {};
 
-  restoreKey(props.savedAttrs);
+  restoreKeys(props.savedAttrs);
   props.savedAttrs = null;
+  if (props.activeElement) {
+    if (props.isDoc) {
+      (element => {
+        setTimeout(function() { element.focus(); }, 0); // props.state must be STATE_HIDDEN
+      })(props.activeElement);
+    }
+    props.activeElement = null;
+  }
 
   props.state = STATE_HIDDEN;
   // event
@@ -448,18 +467,18 @@ function finishHiding(props) {
 function show(props) {
   if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
 
-  const targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
-  props.canScroll =
-    (targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' ||
-      targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' ||
-      targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto') ||
-    // document with `visible` might make scrollbars.
-    props.isDoc && (targetCmpStyle.overflow === 'visible' ||
-      targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
-
-  const elmTargetBody = props.elmTargetBody, elmOverlay = props.elmOverlay;
+  const elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
-    const targetNodes = [];
+    const targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
+    props.canScroll =
+      (targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' ||
+        targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' ||
+        targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto') ||
+      // document with `visible` might make scrollbars.
+      props.isDoc && (targetCmpStyle.overflow === 'visible' ||
+        targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
+
+    const elmTargetBody = props.elmTargetBody, targetNodes = [];
     window.targetNodes = targetNodes; // [DEBUG/]
 
     if (props.isDoc) {
@@ -485,7 +504,9 @@ function show(props) {
       Array.prototype.push.apply(targetNodes, elmTargetBody.querySelectorAll('*'));
     }
 
+    props.activeElement = props.document.activeElement;
     props.savedAttrs = disableKeys(targetNodes);
+    if (props.activeElement) { avoidFocus(props, props.activeElement); }
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
   }
   elmOverlay.classList.add(STYLE_CLASS_SHOW);
@@ -536,9 +557,7 @@ function setOptions(props, newOptions) {
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
     options.duration = newOptions.duration;
-    propNameTransitionDuration =
-      propNameTransitionDuration || CSSPrefix.getProp('transitionDuration', elmOverlay);
-    elmOverlay.style[propNameTransitionDuration] =
+    elmOverlay.style[CSSPrefix.getProp('transitionDuration', elmOverlay)] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
   }
 
@@ -638,6 +657,15 @@ class PlainOverlay {
         }
       }
     }, false);
+
+    props.elmTargetBody.addEventListener('focus', event => {
+      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+        console.log('avoidFocus'); // [DEBUG/]
+        event.preventDefault();
+        event.stopImmediatePropagation();
+      }
+    }, true);
+
     // Avoid scroll on touch device
     elmOverlay.addEventListener('touchmove', event => { event.preventDefault(); }, true);
 
@@ -710,5 +738,10 @@ class PlainOverlay {
     return (new PlainOverlay(options)).show();
   }
 }
+
+PlainOverlay.STATE_HIDDEN = STATE_HIDDEN;
+PlainOverlay.STATE_SHOWING = STATE_SHOWING;
+PlainOverlay.STATE_SHOWN = STATE_SHOWN;
+PlainOverlay.STATE_HIDING = STATE_HIDING;
 
 export default PlainOverlay;

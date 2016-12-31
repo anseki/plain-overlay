@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/plain-overlay.js"></script>
+</head>
+<body>
+
+  <ul>
+    <li><a href="#">link</a></li>
+    <li><button>button</button></li>
+    <li><input type="text"></li>
+  </ul>
+
+  <div id="target1">
+    target1
+    <ul>
+      <li><a href="#">link</a></li>
+      <li><button>button</button></li>
+      <li><input id="text1" type="text" value="text1"></li>
+    </ul>
+    <p>text</p>
+    <ul>
+      <li><a href="#" tabindex="1">link</a></li>
+      <li><button tabindex="2">button</button></li>
+      <li><input type="text" tabindex="3"></li>
+    </ul>
+    <select>
+      <option>val 1</option>
+      <option>val 2</option>
+      <option>val 3</option>
+    </select>
+    <ul>
+      <li><a href="#" accesskey="x">link</a></li>
+      <li><button accesskey="y">button</button></li>
+      <li><input type="text" accesskey="z"></li>
+    </ul>
+  </div>
+
+  <a href="#" id="target2">target2</a>
+
+  <form>
+    <ul>
+      <li><a href="#">link</a></li>
+      <li><button>button</button></li>
+      <li><input type="text"></li>
+    </ul>
+  </form>
+
+  <button id="btn-target1">overlay target1</button>
+  <button id="btn-target2">overlay target2</button>
+  <button id="btn-body">overlay body</button>
+
+  <script>
+
+    document.getElementById('text1').addEventListener('focus', function(e) {
+      console.log('--------[text1] ' + e.type + ' useCaputure: false');
+      console.log(e);
+    }, false);
+
+    document.getElementById('text1').addEventListener('focus', function(e) {
+      console.log('--------[text1] ' + e.type + ' useCaputure: true');
+      console.log(e);
+    }, true);
+
+    document.getElementById('target2').addEventListener('focus', function(e) {
+      console.log('--------[target2] ' + e.type + ' useCaputure: false');
+      console.log(e);
+    }, false);
+
+    document.getElementById('target2').addEventListener('focus', function(e) {
+      console.log('--------[target2] ' + e.type + ' useCaputure: true');
+      console.log(e);
+    }, true);
+
+    var overlay1 = new PlainOverlay(document.getElementById('target1'));
+    function ovTarget1() {
+      if (overlay1.state === PlainOverlay.STATE_HIDDEN ||
+          overlay1.state === PlainOverlay.STATE_HIDING) {
+        overlay1.show();
+        insProps[overlay1._id].elmOverlay.style.width = '16px';
+      } else {
+        overlay1.hide();
+      }
+    }
+    document.getElementById('btn-target1').addEventListener('click', ovTarget1, false);
+
+    var overlay2 = new PlainOverlay(document.getElementById('target2'));
+    function ovTarget2() {
+      if (overlay2.state === PlainOverlay.STATE_HIDDEN ||
+          overlay2.state === PlainOverlay.STATE_HIDING) {
+        overlay2.show();
+        insProps[overlay2._id].elmOverlay.style.width = '16px';
+      } else {
+        overlay2.hide();
+      }
+    }
+    document.getElementById('btn-target2').addEventListener('click', ovTarget2, false);
+
+    var overlay3 = new PlainOverlay();
+    function ovBody() {
+      if (overlay3.state === PlainOverlay.STATE_HIDDEN ||
+          overlay3.state === PlainOverlay.STATE_HIDING) {
+        overlay3.show();
+        insProps[overlay3._id].elmOverlayBody.style.width = '16px';
+        insProps[overlay3._id].elmOverlay.style.paddingRight = '0';
+      } else {
+        overlay3.hide();
+      }
+    }
+    document.getElementById('btn-body').addEventListener('click', ovBody, false);
+
+  </script>
+
+</body>
+</html>

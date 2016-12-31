@@ -127,8 +127,7 @@ var PlainOverlay =
 	/** @type {Object.<_id: number, props>} */
 	insProps = {};
 	
-	var insId = 0,
-	    propNameTransitionDuration = void 0;
+	var insId = 0;
 	
 	// [DEBUG]
 	window.insProps = insProps;
@@ -186,10 +185,10 @@ var PlainOverlay =
 	/**
 	 * An object that simulates `DOMRect` to indicate a bounding-box.
 	 * @typedef {Object} BBox
-	 * @property {(number|null)} left - ScreenCTM
-	 * @property {(number|null)} top - ScreenCTM
-	 * @property {(number|null)} right - ScreenCTM
-	 * @property {(number|null)} bottom - ScreenCTM
+	 * @property {(number|null)} left - document coordinate
+	 * @property {(number|null)} top - document coordinate
+	 * @property {(number|null)} right - document coordinate
+	 * @property {(number|null)} bottom - document coordinate
 	 * @property {(number|null)} width
 	 * @property {(number|null)} height
 	 */
@@ -473,7 +472,7 @@ var PlainOverlay =
 	}
 	window.disableKeys = disableKeys; // [DEBUG/]
 	
-	function restoreKey(savedAttrs) {
+	function restoreKeys(savedAttrs) {
 	  savedAttrs.forEach(function (savedAttr) {
 	    try {
 	      if (savedAttr.tabIndex === false) {
@@ -490,7 +489,15 @@ var PlainOverlay =
 	    } catch (error) {/* Something might have been changed, and that can be ignored. */}
 	  });
 	}
-	window.restoreKey = restoreKey; // [DEBUG/]
+	window.restoreKeys = restoreKeys; // [DEBUG/]
+	
+	function avoidFocus(props, element) {
+	  if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+	    element.blur();
+	    return true;
+	  }
+	  return false;
+	}
 	
 	function finishShowing(props) {
 	  props.state = STATE_SHOWN;
@@ -505,8 +512,18 @@ var PlainOverlay =
 	  props.savedPropsTarget = {};
 	  props.savedPropsTargetBody = {};
 	
-	  restoreKey(props.savedAttrs);
+	  restoreKeys(props.savedAttrs);
 	  props.savedAttrs = null;
+	  if (props.activeElement) {
+	    if (props.isDoc) {
+	      (function (element) {
+	        setTimeout(function () {
+	          element.focus();
+	        }, 0); // props.state must be STATE_HIDDEN
+	      })(props.activeElement);
+	    }
+	    props.activeElement = null;
+	  }
 	
 	  props.state = STATE_HIDDEN;
 	  // event
@@ -521,16 +538,16 @@ var PlainOverlay =
 	    return;
 	  }
 	
-	  var targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
-	  props.canScroll = targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' || targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' || targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto' ||
-	  // document with `visible` might make scrollbars.
-	  props.isDoc && (targetCmpStyle.overflow === 'visible' || targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
-	
-	  var elmTargetBody = props.elmTargetBody,
-	      elmOverlay = props.elmOverlay;
+	  var elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
 	    (function () {
-	      var targetNodes = [];
+	      var targetCmpStyle = props.window.getComputedStyle(props.elmTarget, '');
+	      props.canScroll = targetCmpStyle.overflow === 'scroll' || targetCmpStyle.overflow === 'auto' || targetCmpStyle.overflowX === 'scroll' || targetCmpStyle.overflowX === 'auto' || targetCmpStyle.overflowY === 'scroll' || targetCmpStyle.overflowY === 'auto' ||
+	      // document with `visible` might make scrollbars.
+	      props.isDoc && (targetCmpStyle.overflow === 'visible' || targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
+	
+	      var elmTargetBody = props.elmTargetBody,
+	          targetNodes = [];
 	      window.targetNodes = targetNodes; // [DEBUG/]
 	
 	      if (props.isDoc) {
@@ -559,7 +576,11 @@ var PlainOverlay =
 	        Array.prototype.push.apply(targetNodes, elmTargetBody.querySelectorAll('*'));
 	      }
 	
+	      props.activeElement = props.document.activeElement;
 	      props.savedAttrs = disableKeys(targetNodes);
+	      if (props.activeElement) {
+	        avoidFocus(props, props.activeElement);
+	      }
 	      elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 	    })();
 	  }
@@ -617,8 +638,7 @@ var PlainOverlay =
 	  // duration
 	  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
 	    options.duration = newOptions.duration;
-	    propNameTransitionDuration = propNameTransitionDuration || _cssprefix2.default.getProp('transitionDuration', elmOverlay);
-	    elmOverlay.style[propNameTransitionDuration] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
+	    elmOverlay.style[_cssprefix2.default.getProp('transitionDuration', elmOverlay)] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
 	  }
 	
 	  if (isObject(newOptions.style)) {
@@ -728,6 +748,15 @@ var PlainOverlay =
 	        }
 	      }
 	    }, false);
+	
+	    props.elmTargetBody.addEventListener('focus', function (event) {
+	      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+	        event.preventDefault();
+	        event.stopImmediatePropagation();
+	        console.log('blur');
+	      }
+	    }, true);
+	
 	    // Avoid scroll on touch device
 	    elmOverlay.addEventListener('touchmove', function (event) {
 	      event.preventDefault();
@@ -811,6 +840,11 @@ var PlainOverlay =
 	
 	  return PlainOverlay;
 	}();
+	
+	PlainOverlay.STATE_HIDDEN = STATE_HIDDEN;
+	PlainOverlay.STATE_SHOWING = STATE_SHOWING;
+	PlainOverlay.STATE_SHOWN = STATE_SHOWN;
+	PlainOverlay.STATE_HIDING = STATE_HIDING;
 	
 	exports.default = PlainOverlay;
 	module.exports = exports['default'];

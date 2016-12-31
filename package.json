@@ -16,7 +16,8 @@
     "iframe",
     "window"
   ],
-  "main": "./src/plain-overlay.js",
+  "main": "plain-overlay.min.js",
+  "jsnext:main": "./src/plain-overlay.js",
   "devDependencies": {
     "anim-event": "0.0.6",
     "babel-core": "^6.18.2",
