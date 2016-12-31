@@ -387,6 +387,7 @@ function disableKey(elements) {
       savedAttr.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
       element.tabIndex = -1;
     }
+
     const accessKey = element.accessKey;
     if (accessKey) {
       savedAttr.element = element;
@@ -403,14 +404,19 @@ window.disableKey = disableKey; // [DEBUG/]
 
 function restoreKey(savedAttrs) {
   savedAttrs.forEach(savedAttr => {
-    if (savedAttr.tabIndex === false) {
-      savedAttr.element.removeAttribute('tabindex');
-    } else if (savedAttr.tabIndex != null) {
-      savedAttr.element.tabIndex = savedAttr.tabIndex;
-    }
-    if (savedAttr.accessKey) {
-      savedAttr.element.accessKey = savedAttr.accessKey;
-    }
+    try {
+      if (savedAttr.tabIndex === false) {
+        savedAttr.element.removeAttribute('tabindex');
+      } else if (savedAttr.tabIndex != null) {
+        savedAttr.element.tabIndex = savedAttr.tabIndex;
+      }
+    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
+
+    try {
+      if (savedAttr.accessKey) {
+        savedAttr.element.accessKey = savedAttr.accessKey;
+      }
+    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   });
 }
 window.restoreKey = restoreKey; // [DEBUG/]
