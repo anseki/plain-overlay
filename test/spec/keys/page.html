@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/plain-overlay.js"></script>
+</head>
+<body>
+
+  <ul>
+    <li><a href="#">link</a></li>
+    <li><button>button</button></li>
+    <li><input type="text"></li>
+  </ul>
+
+  <div id="target-wrap">
+    <div id="target" style="background-color: #ccc;">
+      <ul>
+        <li><a href="#">link</a></li>
+        <li><button>button</button></li>
+        <li><input type="text"></li>
+      </ul>
+      <p>text</p>
+      <ul>
+        <li><a href="#" tabindex="1">link</a></li>
+        <li><button tabindex="2">button</button></li>
+        <li><input type="text" tabindex="3"></li>
+      </ul>
+      <select>
+        <option>val 1</option>
+        <option>val 2</option>
+        <option>val 3</option>
+      </select>
+      <ul>
+        <li><a href="#" accesskey="x">link</a></li>
+        <li><button accesskey="y">button</button></li>
+        <li><input type="text" accesskey="z"></li>
+      </ul>
+    </div>
+  </div>
+
+  <form>
+    <ul>
+      <li><a href="#">link</a></li>
+      <li><button>button</button></li>
+      <li><input type="text"></li>
+    </ul>
+  </form>
+
+</body>
+</html>

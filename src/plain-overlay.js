@@ -377,7 +377,7 @@ function disableScroll(props) {
 
 }
 
-function disableKey(elements) {
+function disableKeys(elements) {
   const savedAttrs = [];
   elements.forEach(element => {
     const savedAttr = {},
@@ -400,7 +400,7 @@ function disableKey(elements) {
   });
   return savedAttrs;
 }
-window.disableKey = disableKey; // [DEBUG/]
+window.disableKeys = disableKeys; // [DEBUG/]
 
 function restoreKey(savedAttrs) {
   savedAttrs.forEach(savedAttr => {
@@ -421,6 +421,26 @@ function restoreKey(savedAttrs) {
 }
 window.restoreKey = restoreKey; // [DEBUG/]
 
+function finishShowing(props) {
+  props.state = STATE_SHOWN;
+  // event
+}
+
+function finishHiding(props) {
+  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
+
+  restoreStyle(props.elmTarget, props.savedPropsTarget);
+  restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
+  props.savedPropsTarget = {};
+  props.savedPropsTargetBody = {};
+
+  restoreKey(props.savedAttrs);
+  props.savedAttrs = null;
+
+  props.state = STATE_HIDDEN;
+  // event
+}
+
 /**
  * @param {props} props - `props` of instance.
  * @returns {void}
@@ -437,20 +457,35 @@ function show(props) {
     props.isDoc && (targetCmpStyle.overflow === 'visible' ||
       targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
 
-  const elmOverlay = props.elmOverlay;
+  const elmTargetBody = props.elmTargetBody, elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
+    const targetNodes = [];
+    window.targetNodes = targetNodes; // [DEBUG/]
+
     if (props.isDoc) {
       if (props.canScroll && disableDocBars(props)) { disableScroll(props); }
       elmOverlay.classList.remove(STYLE_CLASS_HIDE);
+
+      Array.prototype.slice.call(elmTargetBody.childNodes).forEach(childNode => {
+        if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay) {
+          targetNodes.push(childNode);
+          Array.prototype.push.apply(targetNodes, childNode.querySelectorAll('*'));
+        }
+      });
+
     } else {
-      if (props.window.getComputedStyle(props.elmTargetBody, '').display === 'inline') {
-        setStyle(props.elmTargetBody, {display: 'inline-block'}, props.savedPropsTargetBody);
+      if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
+        setStyle(elmTargetBody, {display: 'inline-block'}, props.savedPropsTargetBody);
       }
       if (props.canScroll) { disableScroll(props); }
       elmOverlay.classList.remove(STYLE_CLASS_HIDE);
       position(props);
+
+      targetNodes.push(elmTargetBody);
+      Array.prototype.push.apply(targetNodes, elmTargetBody.querySelectorAll('*'));
     }
 
+    props.savedAttrs = disableKeys(targetNodes);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
   }
   elmOverlay.classList.add(STYLE_CLASS_SHOW);
@@ -463,23 +498,14 @@ function show(props) {
  * @returns {void}
  */
 function hide(props, force) {
+  if (props.state === STATE_HIDDEN) { return; }
   props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
-  props.state = STATE_HIDING;
-}
-
-function finishShowing(props) {
-  props.state = STATE_SHOWN;
-  // event
-}
-
-function finishHiding(props) {
-  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
-  restoreStyle(props.elmTarget, props.savedPropsTarget);
-  restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
-  props.savedPropsTarget = {};
-  props.savedPropsTargetBody = {};
-  props.state = STATE_HIDDEN;
-  // event
+  if (force) {
+    props.state = STATE_HIDDEN; // To skip transitionend.
+    finishHiding(props);
+  } else {
+    props.state = STATE_HIDING;
+  }
 }
 
 /**

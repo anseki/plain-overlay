@@ -448,7 +448,7 @@ var PlainOverlay =
 	
 	function disableScroll(props) {}
 	
-	function disableKey(elements) {
+	function disableKeys(elements) {
 	  var savedAttrs = [];
 	  elements.forEach(function (element) {
 	    var savedAttr = {},
@@ -458,6 +458,7 @@ var PlainOverlay =
 	      savedAttr.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
 	      element.tabIndex = -1;
 	    }
+	
 	    var accessKey = element.accessKey;
 	    if (accessKey) {
 	      savedAttr.element = element;
@@ -470,21 +471,46 @@ var PlainOverlay =
 	  });
 	  return savedAttrs;
 	}
-	window.disableKey = disableKey; // [DEBUG/]
+	window.disableKeys = disableKeys; // [DEBUG/]
 	
 	function restoreKey(savedAttrs) {
 	  savedAttrs.forEach(function (savedAttr) {
-	    if (savedAttr.tabIndex === false) {
-	      savedAttr.element.removeAttribute('tabindex');
-	    } else if (savedAttr.tabIndex != null) {
-	      savedAttr.element.tabIndex = savedAttr.tabIndex;
-	    }
-	    if (savedAttr.accessKey) {
-	      savedAttr.element.accessKey = savedAttr.accessKey;
-	    }
+	    try {
+	      if (savedAttr.tabIndex === false) {
+	        savedAttr.element.removeAttribute('tabindex');
+	      } else if (savedAttr.tabIndex != null) {
+	        savedAttr.element.tabIndex = savedAttr.tabIndex;
+	      }
+	    } catch (error) {/* Something might have been changed, and that can be ignored. */}
+	
+	    try {
+	      if (savedAttr.accessKey) {
+	        savedAttr.element.accessKey = savedAttr.accessKey;
+	      }
+	    } catch (error) {/* Something might have been changed, and that can be ignored. */}
 	  });
 	}
 	window.restoreKey = restoreKey; // [DEBUG/]
+	
+	function finishShowing(props) {
+	  props.state = STATE_SHOWN;
+	  // event
+	}
+	
+	function finishHiding(props) {
+	  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
+	
+	  restoreStyle(props.elmTarget, props.savedPropsTarget);
+	  restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
+	  props.savedPropsTarget = {};
+	  props.savedPropsTargetBody = {};
+	
+	  restoreKey(props.savedAttrs);
+	  props.savedAttrs = null;
+	
+	  props.state = STATE_HIDDEN;
+	  // event
+	}
 	
 	/**
 	 * @param {props} props - `props` of instance.
@@ -500,25 +526,42 @@ var PlainOverlay =
 	  // document with `visible` might make scrollbars.
 	  props.isDoc && (targetCmpStyle.overflow === 'visible' || targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
 	
-	  var elmOverlay = props.elmOverlay;
+	  var elmTargetBody = props.elmTargetBody,
+	      elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
-	    if (props.isDoc) {
-	      if (props.canScroll && disableDocBars(props)) {
-	        disableScroll(props);
-	      }
-	      elmOverlay.classList.remove(STYLE_CLASS_HIDE);
-	    } else {
-	      if (props.window.getComputedStyle(props.elmTargetBody, '').display === 'inline') {
-	        setStyle(props.elmTargetBody, { display: 'inline-block' }, props.savedPropsTargetBody);
-	      }
-	      if (props.canScroll) {
-	        disableScroll(props);
-	      }
-	      elmOverlay.classList.remove(STYLE_CLASS_HIDE);
-	      position(props);
-	    }
+	    (function () {
+	      var targetNodes = [];
+	      window.targetNodes = targetNodes; // [DEBUG/]
 	
-	    elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
+	      if (props.isDoc) {
+	        if (props.canScroll && disableDocBars(props)) {
+	          disableScroll(props);
+	        }
+	        elmOverlay.classList.remove(STYLE_CLASS_HIDE);
+	
+	        Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
+	          if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay) {
+	            targetNodes.push(childNode);
+	            Array.prototype.push.apply(targetNodes, childNode.querySelectorAll('*'));
+	          }
+	        });
+	      } else {
+	        if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
+	          setStyle(elmTargetBody, { display: 'inline-block' }, props.savedPropsTargetBody);
+	        }
+	        if (props.canScroll) {
+	          disableScroll(props);
+	        }
+	        elmOverlay.classList.remove(STYLE_CLASS_HIDE);
+	        position(props);
+	
+	        targetNodes.push(elmTargetBody);
+	        Array.prototype.push.apply(targetNodes, elmTargetBody.querySelectorAll('*'));
+	      }
+	
+	      props.savedAttrs = disableKeys(targetNodes);
+	      elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
+	    })();
 	  }
 	  elmOverlay.classList.add(STYLE_CLASS_SHOW);
 	  props.state = STATE_SHOWING;
@@ -530,23 +573,16 @@ var PlainOverlay =
 	 * @returns {void}
 	 */
 	function _hide(props, force) {
+	  if (props.state === STATE_HIDDEN) {
+	    return;
+	  }
 	  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
-	  props.state = STATE_HIDING;
-	}
-	
-	function finishShowing(props) {
-	  props.state = STATE_SHOWN;
-	  // event
-	}
-	
-	function finishHiding(props) {
-	  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
-	  restoreStyle(props.elmTarget, props.savedPropsTarget);
-	  restoreStyle(props.elmTargetBody, props.savedPropsTargetBody);
-	  props.savedPropsTarget = {};
-	  props.savedPropsTargetBody = {};
-	  props.state = STATE_HIDDEN;
-	  // event
+	  if (force) {
+	    props.state = STATE_HIDDEN; // To skip transitionend.
+	    finishHiding(props);
+	  } else {
+	    props.state = STATE_HIDING;
+	  }
 	}
 	
 	/**
