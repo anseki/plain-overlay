@@ -338,9 +338,6 @@ var PlainOverlay =
 	function disableDocBars(props) {
 	  var elmTargetBody = props.elmTargetBody,
 	      targetBodyRect = elmTargetBody.getBoundingClientRect();
-	  // Save before `overflow: 'hidden'` because it might change these.
-	  props.scrollLeft = scrollLeft(props);
-	  props.scrollTop = scrollTop(props);
 	
 	  // Get size of each scrollbar.
 	  var clientWH = getDocClientWH(props),
@@ -445,8 +442,6 @@ var PlainOverlay =
 	}
 	window.position = position; // [DEBUG/]
 	
-	function disableScroll(props) {}
-	
 	function disableKeys(elements) {
 	  var savedAttrs = [];
 	  elements.forEach(function (element) {
@@ -499,6 +494,16 @@ var PlainOverlay =
 	  return false;
 	}
 	
+	function avoidSelect(props) {
+	  var selection = ('getSelection' in window ? props.window : props.document).getSelection();
+	  if (selection.rangeCount && (props.isDoc || selection.containsNode(props.elmTargetBody, true))) {
+	    selection.removeAllRanges();
+	    props.document.body.focus();
+	    return true;
+	  }
+	  return false;
+	}
+	
 	function finishShowing(props) {
 	  props.state = STATE_SHOWN;
 	  // event
@@ -546,14 +551,20 @@ var PlainOverlay =
 	      // document with `visible` might make scrollbars.
 	      props.isDoc && (targetCmpStyle.overflow === 'visible' || targetCmpStyle.overflowX === 'visible' || targetCmpStyle.overflowY === 'visible');
 	
+	      if (props.canScroll) {
+	        // Save before `overflow: 'hidden'` (`disableDocBars`) because it might change these.
+	        props.scrollLeft = scrollLeft(props);
+	        props.scrollTop = scrollTop(props);
+	      }
+	
 	      var elmTargetBody = props.elmTargetBody,
 	          targetNodes = [];
 	      window.targetNodes = targetNodes; // [DEBUG/]
 	
 	      if (props.isDoc) {
-	        if (props.canScroll && disableDocBars(props)) {
-	          disableScroll(props);
-	        }
+	        if (props.canScroll) {
+	          disableDocBars(props);
+	        } // props.scrollLeft/Top are set
 	        elmOverlay.classList.remove(STYLE_CLASS_HIDE);
 	
 	        Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
@@ -566,10 +577,7 @@ var PlainOverlay =
 	        if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
 	          setStyle(elmTargetBody, { display: 'inline-block' }, props.savedPropsTargetBody);
 	        }
-	        if (props.canScroll) {
-	          disableScroll(props);
-	        }
-	        elmOverlay.classList.remove(STYLE_CLASS_HIDE);
+	        elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
 	        position(props);
 	
 	        targetNodes.push(elmTargetBody);
@@ -581,6 +589,7 @@ var PlainOverlay =
 	      if (props.activeElement) {
 	        avoidFocus(props, props.activeElement);
 	      }
+	      avoidSelect(props);
 	      elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 	    })();
 	  }
@@ -715,7 +724,7 @@ var PlainOverlay =
 	    props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
 	    var elmDocument = props.document = props.elmTarget.ownerDocument;
 	    props.window = elmDocument.defaultView;
-	    props.elmTargetBody = props.isDoc ? elmDocument.body : props.elmTarget;
+	    var elmTargetBody = props.elmTargetBody = props.isDoc ? elmDocument.body : props.elmTarget;
 	
 	    // Setup window
 	    if (!elmDocument.getElementById(STYLE_ELEMENT_ID)) {
@@ -749,17 +758,42 @@ var PlainOverlay =
 	      }
 	    }, false);
 	
-	    props.elmTargetBody.addEventListener('focus', function (event) {
-	      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+	    (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', function (event) {
+	      if (props.state !== STATE_HIDDEN && props.canScroll) {
+	        scrollLeft(props, props.scrollLeft);
+	        scrollTop(props, props.scrollTop);
+	        console.log('avoidScroll'); // [DEBUG/]
 	        event.preventDefault();
 	        event.stopImmediatePropagation();
-	        console.log('blur');
 	      }
 	    }, true);
 	
+	    elmTargetBody.addEventListener('focus', function (event) {
+	      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+	        console.log('avoidFocus'); // [DEBUG/]
+	        event.preventDefault();
+	        event.stopImmediatePropagation();
+	      }
+	    }, true);
+	
+	    (function (listener) {
+	      // simulation "text-select" event
+	      ['keyup', 'mouseup'].forEach(function (type) {
+	        elmTargetBody.addEventListener(type, listener, true);
+	      });
+	    })(function (event) {
+	      if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
+	        console.log('avoidSelect'); // [DEBUG/]
+	        event.preventDefault();
+	        event.stopImmediatePropagation();
+	      }
+	    });
+	
 	    // Avoid scroll on touch device
 	    elmOverlay.addEventListener('touchmove', function (event) {
-	      event.preventDefault();
+	      if (props.state !== STATE_HIDDEN) {
+	        event.preventDefault();
+	      }
 	    }, true);
 	
 	    // elmOverlayBody
