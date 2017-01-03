@@ -51,7 +51,6 @@ const
    * @property {Element} elmOverlay - Overlay element.
    * @property {Element} elmOverlayBody - Overlay body element.
    * @property {boolean} isDoc - `true` if target is document.
-   * @property {boolean} canScroll - `true` if target can be scrollable-element.
    * @property {Window} window - Window that conatins target element.
    * @property {HTMLDocument} document - Document that conatins target element.
    * @property {number} state - Current state.
@@ -146,26 +145,26 @@ function getBBox(element, window) {
 }
 window.getBBox = getBBox; // [DEBUG/]
 
-function scrollLeft(props, value) {
-  if (props.isDoc) {
-    const target = props.window;
+function scrollLeft(element, isDoc, window, value) {
+  if (isDoc) {
+    const target = window;
     if (value != null) { target.scrollTo(value, target.pageYOffset); }
     return target.pageXOffset;
   } else {
-    const target = props.elmTarget;
+    const target = element;
     if (value != null) { target.scrollLeft = value; }
     return target.scrollLeft;
   }
 }
 window.scrollLeft = scrollLeft; // [DEBUG/]
 
-function scrollTop(props, value) {
-  if (props.isDoc) {
-    const target = props.window;
+function scrollTop(element, isDoc, window, value) {
+  if (isDoc) {
+    const target = window;
     if (value != null) { target.scrollTo(target.pageXOffset, value); }
     return target.pageYOffset;
   } else {
-    const target = props.elmTarget;
+    const target = element;
     if (value != null) { target.scrollTop = value; }
     return target.scrollTop;
   }
@@ -252,6 +251,73 @@ function getDocClientWH(props) {
 }
 window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
+function restoreScroll(props, element) {
+
+  function scrollElement(element, isDoc, scrollLeft, scrollTop) {
+    try {
+      scrollLeft(element, isDoc, props.window, scrollLeft);
+      scrollTop(element, isDoc, props.window, scrollTop);
+    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
+  }
+
+  if (element) {
+    return props.savedElementsScroll.some(elementScroll => {
+      if (elementScroll.element === element) {
+        scrollElement(elementScroll.element, elementScroll.isDoc,
+          elementScroll.scrollLeft, elementScroll.scrollTop);
+        return true;
+      }
+      return false;
+    });
+  } else {
+    props.savedElementsScroll.forEach(elementScroll => {
+      scrollElement(elementScroll.element, elementScroll.isDoc,
+        elementScroll.scrollLeft, elementScroll.scrollTop);
+    });
+    return true;
+  }
+}
+
+function restoreAccKeys(props) {
+  props.savedElementsProps.forEach(savedProps => {
+    try {
+      if (savedProps.tabIndex === false) {
+        savedProps.element.removeAttribute('tabindex');
+      } else if (savedProps.tabIndex != null) {
+        savedProps.element.tabIndex = savedProps.tabIndex;
+      }
+    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
+
+    try {
+      if (savedProps.accessKey) {
+        savedProps.element.accessKey = savedProps.accessKey;
+      }
+    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
+  });
+}
+window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
+
+function avoidFocus(props, element) {
+  if (props.isDoc && element !== element.ownerDocument.body &&
+        !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
+      !props.isDoc && (element === props.elmTargetBody ||
+        props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
+    element.blur();
+    return true;
+  }
+  return false;
+}
+
+function avoidSelect(props) {
+  const selection = ('getSelection' in window ? props.window : props.document).getSelection();
+  if (selection.rangeCount && (props.isDoc || selection.containsNode(props.elmTargetBody, true))) {
+    selection.removeAllRanges();
+    props.document.body.focus();
+    return true;
+  }
+  return false;
+}
+
 function barLeft(wMode, direction) {
   const svgSpec = wMode === 'rl-tb' || wMode === 'tb-rl' || wMode === 'bt-rl' || wMode === 'rl-bt';
   return IS_TRIDENT && svgSpec ||
@@ -305,8 +371,8 @@ function disableDocBars(props) {
     setStyle(elmTargetBody, addStyle, props.savedStyleTargetBody);
     resizeTarget(props, targetBodyRect.width, targetBodyRect.height);
 
-    scrollLeft(props, props.scrollLeft);
-    scrollTop(props, props.scrollTop);
+    // `overflow: 'hidden'` might change scroll.
+    restoreScroll(props, props.elmTarget);
     return true;
   } else {
     restoreStyle(props.elmTarget, props.savedStyleTarget, ['overflow']);
@@ -371,81 +437,6 @@ function position(props) {
 }
 window.position = position; // [DEBUG/]
 
-function disableAccKeys(elements) {
-  const savedElementsProps = [];
-  elements.forEach(element => {
-    const savedProps = {},
-      tabIndex = element.tabIndex;
-    if (tabIndex !== -1) {
-      savedProps.element = element;
-      savedProps.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
-      element.tabIndex = -1;
-    }
-
-    const accessKey = element.accessKey;
-    if (accessKey) {
-      savedProps.element = element;
-      savedProps.accessKey = accessKey;
-      element.accessKey = '';
-    }
-    if (savedProps.element) {
-      savedElementsProps.push(savedProps);
-    }
-  });
-  return savedElementsProps;
-}
-window.disableAccKeys = disableAccKeys; // [DEBUG/]
-
-function restoreAccKeys(savedElementsProps) {
-  savedElementsProps.forEach(savedProps => {
-    try {
-      if (savedProps.tabIndex === false) {
-        savedProps.element.removeAttribute('tabindex');
-      } else if (savedProps.tabIndex != null) {
-        savedProps.element.tabIndex = savedProps.tabIndex;
-      }
-    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
-
-    try {
-      if (savedProps.accessKey) {
-        savedProps.element.accessKey = savedProps.accessKey;
-      }
-    } catch (error) { /* Something might have been changed, and that can be ignored. */ }
-  });
-}
-window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
-
-function avoidFocus(props, element) {
-  if (props.isDoc && element !== element.ownerDocument.body &&
-        !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
-      !props.isDoc && (element === props.elmTargetBody ||
-        props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-    element.blur();
-    return true;
-  }
-  return false;
-}
-
-function avoidSelect(props) {
-  const selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  if (selection.rangeCount && (props.isDoc || selection.containsNode(props.elmTargetBody, true))) {
-    selection.removeAllRanges();
-    props.document.body.focus();
-    return true;
-  }
-  return false;
-}
-
-function elementCanScroll(element, isDoc, window) {
-  const cmpStyle = window.getComputedStyle(element, '');
-  return (cmpStyle.overflow === 'scroll' || cmpStyle.overflow === 'auto' ||
-      cmpStyle.overflowX === 'scroll' || cmpStyle.overflowX === 'auto' ||
-      cmpStyle.overflowY === 'scroll' || cmpStyle.overflowY === 'auto') ||
-    // document with `visible` might make scrollbars.
-    isDoc && (cmpStyle.overflow === 'visible' ||
-      cmpStyle.overflowX === 'visible' || cmpStyle.overflowY === 'visible');
-}
-
 function finishShowing(props) {
   props.state = STATE_SHOWN;
   // event
@@ -459,8 +450,9 @@ function finishHiding(props) {
   props.savedStyleTarget = {};
   props.savedStyleTargetBody = {};
 
-  restoreAccKeys(props.savedElementsProps);
-  props.savedElementsProps = null;
+  restoreScroll(props);
+  restoreAccKeys(props);
+  props.savedElementsScroll = props.savedElementsProps = null;
   if (props.activeElement) {
     if (props.isDoc) {
       (element => {
@@ -481,43 +473,89 @@ function finishHiding(props) {
 function show(props) {
   if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
 
-  const elmOverlay = props.elmOverlay;
-  if (props.state === STATE_HIDDEN) {
-    props.canScroll = elementCanScroll(props.elmTarget, props.isDoc, props.window);
+  function getScroll(elements, fromDoc) {
 
-    if (props.canScroll) {
-      // Save before `overflow: 'hidden'` (`disableDocBars`) because it might change these.
-      props.scrollLeft = scrollLeft(props);
-      props.scrollTop = scrollTop(props);
+    function elementCanScroll(element, isDoc) {
+      const cmpStyle = props.window.getComputedStyle(element, ''),
+        tagName = element.nodeName.toLowerCase();
+      return (cmpStyle.overflow === 'scroll' || cmpStyle.overflow === 'auto' ||
+          cmpStyle.overflowX === 'scroll' || cmpStyle.overflowX === 'auto' ||
+          cmpStyle.overflowY === 'scroll' || cmpStyle.overflowY === 'auto') ||
+        // document with `visible` might make scrollbars.
+        isDoc && (cmpStyle.overflow === 'visible' ||
+          cmpStyle.overflowX === 'visible' || cmpStyle.overflowY === 'visible') ||
+        // `overflow` of these differs depending on browser.
+        !isDoc && (tagName === 'textarea' || tagName === 'select');
     }
 
-    const elmTargetBody = props.elmTargetBody, targetNodes = [];
-    window.targetNodes = targetNodes; // [DEBUG/]
+    const elementsScroll = [];
+    elements.forEach((element, i) => {
+      const isDoc = fromDoc && i === 0;
+      if (elementCanScroll(element, isDoc)) {
+        elementsScroll.push({
+          element: element,
+          isDoc: isDoc,
+          scrollLeft: scrollLeft(element, isDoc, props.window),
+          scrollTop: scrollTop(element, isDoc, props.window)
+        });
+      }
+    });
+    return elementsScroll;
+  }
 
+  function disableAccKeys(elements, fromDoc) {
+    const savedElementsProps = [];
+    elements.forEach((element, i) => {
+      if (fromDoc && i === 0) { return; }
+
+      const savedProps = {},
+        tabIndex = element.tabIndex;
+      if (tabIndex !== -1) {
+        savedProps.element = element;
+        savedProps.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
+        element.tabIndex = -1;
+      }
+
+      const accessKey = element.accessKey;
+      if (accessKey) {
+        savedProps.element = element;
+        savedProps.accessKey = accessKey;
+        element.accessKey = '';
+      }
+
+      if (savedProps.element) {
+        savedElementsProps.push(savedProps);
+      }
+    });
+    return savedElementsProps;
+  }
+
+  const elmOverlay = props.elmOverlay;
+  if (props.state === STATE_HIDDEN) {
+    const elmTargetBody = props.elmTargetBody,
+      targetElements = [elmTargetBody];
+    window.targetElements = targetElements; // [DEBUG/]
+
+    elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (props.isDoc) {
-      if (props.canScroll) { disableDocBars(props); } // props.scrollLeft/Top are set
-      elmOverlay.classList.remove(STYLE_CLASS_HIDE);
-
       Array.prototype.slice.call(elmTargetBody.childNodes).forEach(childNode => {
         if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay) {
-          targetNodes.push(childNode);
-          Array.prototype.push.apply(targetNodes, childNode.querySelectorAll('*'));
+          targetElements.push(childNode);
+          Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
         }
       });
-
     } else {
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
         setStyle(elmTargetBody, {display: 'inline-block'}, props.savedStyleTargetBody);
       }
-      elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
       position(props);
-
-      targetNodes.push(elmTargetBody);
-      Array.prototype.push.apply(targetNodes, elmTargetBody.querySelectorAll('*'));
+      Array.prototype.push.apply(targetElements, elmTargetBody.querySelectorAll('*'));
     }
 
+    props.savedElementsScroll = getScroll(targetElements, props.isDoc);
+    if (props.isDoc && props.savedElementsScroll[0].isDoc) { disableDocBars(props); }
+    props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
     props.activeElement = props.document.activeElement;
-    props.savedElementsProps = disableAccKeys(targetNodes);
     if (props.activeElement) { avoidFocus(props, props.activeElement); }
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
@@ -672,9 +710,7 @@ class PlainOverlay {
     }, false);
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
-      if (props.state !== STATE_HIDDEN && props.canScroll) {
-        scrollLeft(props, props.scrollLeft);
-        scrollTop(props, props.scrollTop);
+      if (props.state !== STATE_HIDDEN && restoreScroll(props, event.target)) {
         console.log('avoidScroll'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -762,16 +798,13 @@ class PlainOverlay {
     setOptions(insProps[this._id], {duration: value});
   }
 
-
-
-
   get state() {
     return insProps[this._id].state;
   }
 
-
-
-
+  get style() {
+    return insProps[this._id].elmOverlay.style;
+  }
 
   static show(options) {
     return (new PlainOverlay(options)).show();

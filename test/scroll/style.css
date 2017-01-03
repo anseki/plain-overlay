@@ -1,0 +1,36 @@
+p {
+  font-size: 18px;
+  background-color: rgba(0, 128, 0, 0.4);
+}
+
+#div1 {
+  margin: 10px;
+  padding: 5px;
+  border: 2px solid #ccc;
+  height: 200px;
+  overflow: auto;
+}
+
+iframe {
+  display: block;
+  width: 90%;
+  margin: 10px;
+  border: 2px solid #bf4949;
+  height: 200px;
+}
+
+.face {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  border: 1px solid red;
+}
+
+input {
+  width: 150px;
+}
+
+textarea {
+  width: 150px;
+  height: 3em;
+}
