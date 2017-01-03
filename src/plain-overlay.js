@@ -253,26 +253,24 @@ window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
 function restoreScroll(props, element) {
 
-  function scrollElement(element, isDoc, scrollLeft, scrollTop) {
+  function scrollElement(element, isDoc, left, top) {
     try {
-      scrollLeft(element, isDoc, props.window, scrollLeft);
-      scrollTop(element, isDoc, props.window, scrollTop);
+      scrollLeft(element, isDoc, props.window, left);
+      scrollTop(element, isDoc, props.window, top);
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   }
 
   if (element) {
     return props.savedElementsScroll.some(elementScroll => {
       if (elementScroll.element === element) {
-        scrollElement(elementScroll.element, elementScroll.isDoc,
-          elementScroll.scrollLeft, elementScroll.scrollTop);
+        scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
         return true;
       }
       return false;
     });
   } else {
     props.savedElementsScroll.forEach(elementScroll => {
-      scrollElement(elementScroll.element, elementScroll.isDoc,
-        elementScroll.scrollLeft, elementScroll.scrollTop);
+      scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
     });
     return true;
   }
@@ -336,13 +334,13 @@ function barTop(wMode, direction) {
 window.barTop = barTop; // [DEBUG/]
 
 function disableDocBars(props) {
-  const elmTargetBody = props.elmTargetBody,
+  const elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
     targetBodyRect = elmTargetBody.getBoundingClientRect();
 
   // Get size of each scrollbar.
   let clientWH = getDocClientWH(props),
     barV = -clientWH.width, barH = -clientWH.height; // elmTarget.clientWidth/clientHeight
-  setStyle(props.elmTarget, {overflow: 'hidden'}, props.savedStyleTarget);
+  setStyle(elmTarget, {overflow: 'hidden'}, props.savedStyleTarget);
   clientWH = getDocClientWH(props);
   barV += clientWH.width;
   barH += clientWH.height;
@@ -372,10 +370,10 @@ function disableDocBars(props) {
     resizeTarget(props, targetBodyRect.width, targetBodyRect.height);
 
     // `overflow: 'hidden'` might change scroll.
-    restoreScroll(props, props.elmTarget);
+    restoreScroll(props, elmTarget);
     return true;
   } else {
-    restoreStyle(props.elmTarget, props.savedStyleTarget, ['overflow']);
+    restoreStyle(elmTarget, props.savedStyleTarget, ['overflow']);
     return false;
   }
 }
@@ -495,8 +493,8 @@ function show(props) {
         elementsScroll.push({
           element: element,
           isDoc: isDoc,
-          scrollLeft: scrollLeft(element, isDoc, props.window),
-          scrollTop: scrollTop(element, isDoc, props.window)
+          left: scrollLeft(element, isDoc, props.window),
+          top: scrollTop(element, isDoc, props.window)
         });
       }
     });
@@ -533,7 +531,7 @@ function show(props) {
   const elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
     const elmTargetBody = props.elmTargetBody,
-      targetElements = [elmTargetBody];
+      targetElements = [props.elmTarget];
     window.targetElements = targetElements; // [DEBUG/]
 
     elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
@@ -699,7 +697,11 @@ class PlainOverlay {
     elmOverlay.classList.add(STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
 
-    elmOverlay.addEventListener('transitionend', event => {
+    (listener => {
+      ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
+        elmOverlay.addEventListener(type, listener, true);
+      });
+    })(event => {
       if (event.target === elmOverlay && event.propertyName === 'opacity') {
         if (props.state === STATE_SHOWING) {
           finishShowing(props);
@@ -707,10 +709,15 @@ class PlainOverlay {
           finishHiding(props);
         }
       }
-    }, false);
+    });
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
-      if (props.state !== STATE_HIDDEN && restoreScroll(props, event.target)) {
+      const target = event.target;
+      if (props.state !== STATE_HIDDEN &&
+          restoreScroll(props,
+            props.isDoc &&
+                (target === props.window || target === props.document || target === props.elmTargetBody) ?
+              props.elmTarget : target)) {
         console.log('avoidScroll'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -741,6 +748,7 @@ class PlainOverlay {
     elmOverlay.addEventListener('touchmove', event => {
       if (props.state !== STATE_HIDDEN) {
         event.preventDefault();
+        event.stopImmediatePropagation();
       }
     }, true);
 
