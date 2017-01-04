@@ -4,10 +4,17 @@
 $media: "";
 %anim-init#{$media} { @include anim-init; }
 
-$app_id: plainoverlay; // COPY: plain-overlay.js
+$app_id: plainoverlay;
+$app-doc: #{$app_id}-doc;
+$app-show: #{$app_id}-show;
+$app-hide: #{$app_id}-hide;
+$app-body: #{$app_id}-body;
+
+$app-face: #{$app_id}-builtin-face;
+
 $duration: 2500ms; // COPY: plain-overlay.js
 $overlay-bg: rgba(136, 136, 136, 0.6);
-$target_margin: 200px; // COPY: plain-overlay.js
+$target_margin: 200px;
 
 .#{$app_id} {
   @extend %anim-init#{$media};
@@ -25,7 +32,7 @@ $target_margin: 200px; // COPY: plain-overlay.js
   cursor: wait;
   z-index: 9000;
 
-  &.#{$app_id}-doc {
+  &.#{$app-doc} {
     position: fixed;
     left: -$target_margin;
     top: -$target_margin;
@@ -34,31 +41,39 @@ $target_margin: 200px; // COPY: plain-overlay.js
   }
 }
 
-.#{$app_id}-body {
+.#{$app-body} {
   width: 100%;
   height: 100%;
 
-  .#{$app_id}.#{$app_id}-doc & {
+  .#{$app_id}.#{$app-doc} & {
     width: 100vw;
     height: 100vh;
   }
+
+  @include display-flex;
+  @include justify-content(center);
+  @include align-items(center);
 }
 
-.#{$app_id}-show {
+.#{$app-show} {
   opacity: 1;
 }
 
-.#{$app_id}-hide {
+.#{$app-hide} {
   display: none;
 }
 
-.#{$app_id}-builtin-face {
-  width: 100%;
-  height: 100%;
+##{$app-face}-defs {
+  width: 0;
+  height: 0;
+  position: absolute;
+  left: -100px;
+  top: -100px;
 }
 
-.#{$app_id}-builtin-face-rect {
-  fill: none;
-  stroke: rgba(80, 255, 86, 0.6);
-  stroke-width: 2px;
+.#{$app-face} {
+  width: 90%;
+  height: 90%;
+  max-width: 320px;
+  max-height: 320px;
 }

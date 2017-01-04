@@ -44,6 +44,22 @@ http.createServer((request, response) => {
           serve: '../node_modules/cssprefix/css-prefix.min.js',
           allowOutside: true
         },
+        {
+          match: '/face.html',
+          serve: '../src/face.html',
+          allowOutside: true
+        },
+        {
+          match: '/default.css',
+          serve: '../src/default.css',
+          allowOutside: true
+        },
+        {
+          // for remote access to face.html
+          match: '/test/grid.png',
+          serve: './grid.png',
+          allowOutside: true
+        },
         // test-ext
         {
           match: /^\/ext\/.+/,

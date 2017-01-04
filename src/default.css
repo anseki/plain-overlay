@@ -5,7 +5,7 @@
   box-shadow: 0 0 1px transparent;
 }
 
-/* line 12, default.scss */
+/* line 19, default.scss */
 .plainoverlay {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -28,7 +28,7 @@
   cursor: wait;
   z-index: 9000;
 }
-/* line 28, default.scss */
+/* line 35, default.scss */
 .plainoverlay.plainoverlay-doc {
   position: fixed;
   left: -200px;
@@ -37,36 +37,46 @@
   padding: 200px;
 }
 
-/* line 37, default.scss */
+/* line 44, default.scss */
 .plainoverlay-body {
   width: 100%;
   height: 100%;
+  display: -webkit-flex;
+  display: flex;
+  -webkit-justify-content: center;
+  justify-content: center;
+  -webkit-align-items: center;
+  align-items: center;
 }
-/* line 41, default.scss */
+/* line 48, default.scss */
 .plainoverlay.plainoverlay-doc .plainoverlay-body {
   width: 100vw;
   height: 100vh;
 }
 
-/* line 47, default.scss */
+/* line 58, default.scss */
 .plainoverlay-show {
   opacity: 1;
 }
 
-/* line 51, default.scss */
+/* line 62, default.scss */
 .plainoverlay-hide {
   display: none;
 }
 
-/* line 55, default.scss */
-.plainoverlay-builtin-face {
-  width: 100%;
-  height: 100%;
+/* line 66, default.scss */
+#plainoverlay-builtin-face-defs {
+  width: 0;
+  height: 0;
+  position: absolute;
+  left: -100px;
+  top: -100px;
 }
 
-/* line 60, default.scss */
-.plainoverlay-builtin-face-rect {
-  fill: none;
-  stroke: rgba(80, 255, 86, 0.6);
-  stroke-width: 2px;
+/* line 74, default.scss */
+.plainoverlay-builtin-face {
+  width: 90%;
+  height: 90%;
+  max-width: 320px;
+  max-height: 320px;
 }

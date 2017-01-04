@@ -6,35 +6,96 @@
   <style>
 
     .plainoverlay {
-      left: 0;
-      top: 0;
+      margin: 20px 0;
+      position: static;
+      left: auto;
+      top: auto;
       transition-property: none;
       cursor: auto;
     }
 
     .plainoverlay-body {
-      width: 600px;
-      height: 600px;
       border: 2px solid red;
+    }
+
+    .grid {
+      width: 320px;
+      height: 320px;
       background-image: url("../test/grid.png");
     }
+
+    .grid .plainoverlay-builtin-face {
+      width: 100%;
+      height: 100%;
+    }
+
+    /*#plainoverlay-builtin-face-spin circle {
+      opacity: 0.6;
+    }
+
+    #plainoverlay-builtin-face-spin path {
+      stroke: red;
+      stroke-width: 0.1px;
+    }*/
 
   </style>
 </head>
 <body>
 
-  <div class="plainoverlay plainoverlay-show">
-    <div class="plainoverlay-body">
-
 <!-- @EXPORT@ -->
 
-<svg version="1.1" viewBox="0 0 24 24" class="plainoverlay-builtin-face">
+<svg version="1.1" id="plainoverlay-builtin-face-defs">
 
-  <rect x="1" y="1" width="22" height="22" class="plainoverlay-builtin-face-rect" />
+  <!-- In Gecko, `url()` in outer stylesheet doesn't work. -->
+  <style type="text/css"><![CDATA[
+    #plainoverlay-builtin-face-spin circle,
+    #plainoverlay-builtin-face-spin path {
+      fill: none;
+      stroke-width: 4px;
+    }
+    #plainoverlay-builtin-face-spin circle {
+      stroke: #fff;
+      opacity: 0.25;
+    }
+    #plainoverlay-builtin-face-spin path {
+      stroke-linecap: round;
+      stroke: url("#plainoverlay-builtin-face-grad1");
+    }
+  ]]></style>
+
+  <defs>
+    <linearGradient id="plainoverlay-builtin-face-grad1"
+        gradientUnits="userSpaceOnUse" x1="16" y1="2" x2="30" y2="16">
+      <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="1" stop-color="#fff" stop-opacity="1"/>
+    </linearGradient>
+
+    <g id="plainoverlay-builtin-face-spin">
+      <circle cx="16" cy="16" r="14"/>
+      <path d="M16,2 a14,14 0 0 1 14,14"/>
+    </g>
+  </defs>
 
 </svg>
 
 <!-- @/EXPORT@ -->
+
+  <div class="plainoverlay plainoverlay-show">
+    <div class="plainoverlay-body grid">
+
+      <svg class="plainoverlay-builtin-face" version="1.1" viewBox="0 0 32 32">
+        <use xlink:href="#plainoverlay-builtin-face-spin"/>
+      </svg>
+
+    </div>
+  </div>
+
+  <div class="plainoverlay plainoverlay-show">
+    <div class="plainoverlay-body" style="width: 480px; height: 480px;">
+
+      <svg class="plainoverlay-builtin-face" version="1.1" viewBox="0 0 32 32">
+        <use xlink:href="#plainoverlay-builtin-face-spin"/>
+      </svg>
 
     </div>
   </div>

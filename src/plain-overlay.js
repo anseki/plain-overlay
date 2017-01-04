@@ -11,7 +11,7 @@ import CSS_TEXT from './default.css';
 import FACE from './face.html';
 
 const
-  APP_ID = 'plainoverlay', // COPY: default.scss
+  APP_ID = 'plainoverlay',
   STYLE_ELEMENT_ID = `${APP_ID}-style`,
   STYLE_CLASS = APP_ID,
   STYLE_CLASS_DOC = `${APP_ID}-doc`,
