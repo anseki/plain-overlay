@@ -437,7 +437,7 @@ window.position = position; // [DEBUG/]
 
 function finishShowing(props) {
   props.state = STATE_SHOWN;
-  // event
+  if (props.options.onShow) { props.options.onShow.call(props.ins); }
 }
 
 function finishHiding(props) {
@@ -461,7 +461,7 @@ function finishHiding(props) {
   }
 
   props.state = STATE_HIDDEN;
-  // event
+  if (props.options.onHide) { props.options.onHide.call(props.ins); }
 }
 
 /**
@@ -469,7 +469,6 @@ function finishHiding(props) {
  * @returns {void}
  */
 function show(props) {
-  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
 
   function getScroll(elements, fromDoc) {
 
@@ -528,6 +527,9 @@ function show(props) {
     return savedElementsProps;
   }
 
+  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
+  if (props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) { return; }
+
   const elmOverlay = props.elmOverlay;
   if (props.state === STATE_HIDDEN) {
     const elmTargetBody = props.elmTargetBody,
@@ -569,6 +571,8 @@ function show(props) {
  */
 function hide(props, force) {
   if (props.state === STATE_HIDDEN) { return; }
+  if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
+
   props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
   if (force) {
     props.state = STATE_HIDDEN; // To skip transitionend.
@@ -584,12 +588,11 @@ function hide(props, force) {
  * @returns {void}
  */
 function setOptions(props, newOptions) {
-  const options = props.options,
-    elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
-    elmOverlay = props.elmOverlay, elmOverlayBody = props.elmOverlayBody;
+  const options = props.options;
 
   // face
   if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+    const elmOverlayBody = props.elmOverlayBody;
     // Clear
     while (elmOverlayBody.firstChild) { elmOverlayBody.removeChild(elmOverlayBody.firstChild); }
     if (newOptions.face === false) {
@@ -605,14 +608,23 @@ function setOptions(props, newOptions) {
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
+    const elmOverlay = props.elmOverlay;
     options.duration = newOptions.duration;
     elmOverlay.style[CSSPrefix.getProp('transitionDuration', elmOverlay)] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
   }
 
+  // style
   if (isObject(newOptions.style)) {
     setStyle(props.elmOverlay, newOptions.style);
   }
+
+  // onShow, onHide, onBeforeShow, onBeforeHide
+  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide'].forEach(option => {
+    if (typeof newOptions[option] === 'function') {
+      options[option] = newOptions[option];
+    }
+  });
 }
 
 class PlainOverlay {
@@ -651,6 +663,7 @@ class PlainOverlay {
     }
 
     const props = {
+      ins: this,
       options: { // Initial options (not default)
         face: '',
         duration: DURATION
@@ -804,6 +817,34 @@ class PlainOverlay {
   }
   set duration(value) {
     setOptions(insProps[this._id], {duration: value});
+  }
+
+  get onShow() {
+    return insProps[this._id].options.onShow;
+  }
+  set onShow(value) {
+    setOptions(insProps[this._id], {onShow: value});
+  }
+
+  get onHide() {
+    return insProps[this._id].options.onHide;
+  }
+  set onHide(value) {
+    setOptions(insProps[this._id], {onHide: value});
+  }
+
+  get onBeforeShow() {
+    return insProps[this._id].options.onBeforeShow;
+  }
+  set onBeforeShow(value) {
+    setOptions(insProps[this._id], {onBeforeShow: value});
+  }
+
+  get onBeforeHide() {
+    return insProps[this._id].options.onBeforeHide;
+  }
+  set onBeforeHide(value) {
+    setOptions(insProps[this._id], {onBeforeHide: value});
   }
 
   get state() {

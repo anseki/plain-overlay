@@ -507,7 +507,9 @@ var PlainOverlay =
 	
 	function finishShowing(props) {
 	  props.state = STATE_SHOWN;
-	  // event
+	  if (props.options.onShow) {
+	    props.options.onShow.call(props.ins);
+	  }
 	}
 	
 	function finishHiding(props) {
@@ -533,7 +535,9 @@ var PlainOverlay =
 	  }
 	
 	  props.state = STATE_HIDDEN;
-	  // event
+	  if (props.options.onHide) {
+	    props.options.onHide.call(props.ins);
+	  }
 	}
 	
 	/**
@@ -541,9 +545,6 @@ var PlainOverlay =
 	 * @returns {void}
 	 */
 	function _show(props) {
-	  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) {
-	    return;
-	  }
 	
 	  function getScroll(elements, fromDoc) {
 	
@@ -601,6 +602,13 @@ var PlainOverlay =
 	    return savedElementsProps;
 	  }
 	
+	  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) {
+	    return;
+	  }
+	  if (props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
+	    return;
+	  }
+	
 	  var elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
 	    (function () {
@@ -650,6 +658,10 @@ var PlainOverlay =
 	  if (props.state === STATE_HIDDEN) {
 	    return;
 	  }
+	  if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
+	    return;
+	  }
+	
 	  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
 	  if (force) {
 	    props.state = STATE_HIDDEN; // To skip transitionend.
@@ -665,14 +677,11 @@ var PlainOverlay =
 	 * @returns {void}
 	 */
 	function _setOptions(props, newOptions) {
-	  var options = props.options,
-	      elmTarget = props.elmTarget,
-	      elmTargetBody = props.elmTargetBody,
-	      elmOverlay = props.elmOverlay,
-	      elmOverlayBody = props.elmOverlayBody;
+	  var options = props.options;
 	
 	  // face
 	  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+	    var elmOverlayBody = props.elmOverlayBody;
 	    // Clear
 	    while (elmOverlayBody.firstChild) {
 	      elmOverlayBody.removeChild(elmOverlayBody.firstChild);
@@ -690,13 +699,22 @@ var PlainOverlay =
 	
 	  // duration
 	  if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
+	    var elmOverlay = props.elmOverlay;
 	    options.duration = newOptions.duration;
 	    elmOverlay.style[_cssprefix2.default.getProp('transitionDuration', elmOverlay)] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
 	  }
 	
+	  // style
 	  if (isObject(newOptions.style)) {
 	    setStyle(props.elmOverlay, newOptions.style);
 	  }
+	
+	  // onShow, onHide, onBeforeShow, onBeforeHide
+	  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide'].forEach(function (option) {
+	    if (typeof newOptions[option] === 'function') {
+	      options[option] = newOptions[option];
+	    }
+	  });
 	}
 	
 	var PlainOverlay = function () {
@@ -736,6 +754,7 @@ var PlainOverlay =
 	    }
 	
 	    var props = {
+	      ins: this,
 	      options: { // Initial options (not default)
 	        face: '',
 	        duration: DURATION
@@ -907,6 +926,38 @@ var PlainOverlay =
 	    },
 	    set: function set(value) {
 	      _setOptions(insProps[this._id], { duration: value });
+	    }
+	  }, {
+	    key: 'onShow',
+	    get: function get() {
+	      return insProps[this._id].options.onShow;
+	    },
+	    set: function set(value) {
+	      _setOptions(insProps[this._id], { onShow: value });
+	    }
+	  }, {
+	    key: 'onHide',
+	    get: function get() {
+	      return insProps[this._id].options.onHide;
+	    },
+	    set: function set(value) {
+	      _setOptions(insProps[this._id], { onHide: value });
+	    }
+	  }, {
+	    key: 'onBeforeShow',
+	    get: function get() {
+	      return insProps[this._id].options.onBeforeShow;
+	    },
+	    set: function set(value) {
+	      _setOptions(insProps[this._id], { onBeforeShow: value });
+	    }
+	  }, {
+	    key: 'onBeforeHide',
+	    get: function get() {
+	      return insProps[this._id].options.onBeforeHide;
+	    },
+	    set: function set(value) {
+	      _setOptions(insProps[this._id], { onBeforeHide: value });
 	    }
 	  }, {
 	    key: 'state',
