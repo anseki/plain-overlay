@@ -39,11 +39,8 @@ http.createServer((request, response) => {
           serve: '../node_modules/test-page-loader/test-page-loader.js',
           allowOutside: true
         },
-        {
-          match: '/css-prefix.min.js',
-          serve: '../node_modules/cssprefix/css-prefix.min.js',
-          allowOutside: true
-        },
+
+        // for face.html
         {
           match: '/face.html',
           serve: '../src/face.html',
@@ -55,11 +52,11 @@ http.createServer((request, response) => {
           allowOutside: true
         },
         {
-          // for remote access to face.html
           match: '/test/grid.png',
           serve: './grid.png',
           allowOutside: true
         },
+
         // test-ext
         {
           match: /^\/ext\/.+/,
@@ -86,6 +83,12 @@ http.createServer((request, response) => {
           },
           allowOutside: true
         },
+        // for test-ext
+        {
+          match: '/css-prefix.min.js',
+          serve: '../node_modules/cssprefix/css-prefix.min.js',
+          allowOutside: true
+        }
       ],
       logger: logger
     }))

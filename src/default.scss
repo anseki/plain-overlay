@@ -16,6 +16,8 @@ $duration: 2500ms; // COPY: plain-overlay.js
 $overlay-bg: rgba(136, 136, 136, 0.6);
 $target_margin: 200px;
 
+$face_01-duration: 3s;
+
 .#{$app_id} {
   @extend %anim-init#{$media};
   @include transition-property(opacity);
@@ -63,6 +65,13 @@ $target_margin: 200px;
   display: none;
 }
 
+.#{$app-face} {
+  width: 90%;
+  height: 90%;
+  max-width: 320px;
+  max-height: 320px;
+}
+
 ##{$app-face}-defs {
   width: 0;
   height: 0;
@@ -71,9 +80,31 @@ $target_margin: 200px;
   top: -100px;
 }
 
-.#{$app-face} {
-  width: 90%;
-  height: 90%;
-  max-width: 320px;
-  max-height: 320px;
+##{$app-face}_01 {
+
+  circle {
+    fill: #fff;
+    opacity: 0.25;
+  }
+
+  path {
+    fill: none;
+    stroke-width: 4px;
+    stroke-linecap: round;
+    /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
+    // stroke: url("##{$app-face}_01-grad");
+  }
+}
+
+.#{$app_id}:not(.#{$app-hide}) .#{$app-face}_01 {
+  @extend %anim-init#{$media};
+  @include animation-name(#{$app-face}_01-spin);
+  @include animation-duration($face_01-duration);
+  @include animation-timing-function(linear);
+  @include animation-iteration-count(infinite);
+}
+
+@include keyframes(#{$app-face}_01-spin) {
+  from { @include transform(rotate(0deg)); }
+  to { @include transform(rotate(360deg)); }
 }

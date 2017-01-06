@@ -9,8 +9,14 @@ const webpack = require('webpack'),
 
   BABEL_TARGET_PACKAGES = [
     'cssprefix',
-    'anim-event'
-  ].map(packageName => path.resolve(__dirname, `node_modules/${packageName}`) + path.sep);
+    'anim-event',
+    'anim-sequence'
+  ].map(packageName => path.resolve(__dirname, `node_modules/${packageName}`) + path.sep),
+
+  BABEL_PARAMS = JSON.stringify({
+    presets: ['es2015'],
+    plugins: ['add-module-exports']
+  });
 
 module.exports = {
   entry: './src/plain-overlay.js',
@@ -28,11 +34,7 @@ module.exports = {
         exclude: absPath =>
           !BABEL_TARGET_PACKAGES.find(target => absPath.indexOf(target) === 0) &&
           absPath.split(path.sep).includes('node_modules'),
-        loader: 'babel',
-        query: {
-          presets: ['es2015'],
-          plugins: ['add-module-exports']
-        }
+        loaders: buildMode ? [`babel?${BABEL_PARAMS}`, 'skeleton?config=js'] : [`babel?${BABEL_PARAMS}`]
       },
       {
         test: path.resolve(__dirname, 'src/face.html'),
@@ -43,6 +45,15 @@ module.exports = {
         loaders: ['skeleton?toCode=true', 'clean-css']
       }
     ]
+  },
+
+  js: {
+    procedure: function(content) {
+      return (content + '')
+        .replace(/[^\n]*\[DEBUG\/\][^\n]*\n?/g, '')
+        .replace(/\/\*\s*\[DEBUG\]\s*\*\/[\s\S]*?\/\*\s*\[\/DEBUG\]\s*\*\//g, '')
+        .replace(/[^\n]*\[DEBUG\][\s\S]*?\[\/DEBUG\][^\n]*\n?/g, '');
+    }
   },
 
   svg: {

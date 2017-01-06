@@ -20,6 +20,7 @@
   "jsnext:main": "./src/plain-overlay.js",
   "devDependencies": {
     "anim-event": "0.0.6",
+    "anim-sequence": "0.0.1",
     "babel-core": "^6.18.2",
     "babel-loader": "^6.2.8",
     "babel-plugin-add-module-exports": "^0.2.1",

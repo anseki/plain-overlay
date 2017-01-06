@@ -29,13 +29,17 @@
       height: 100%;
     }
 
-    /*#plainoverlay-builtin-face-spin circle {
+    /*#plainoverlay-builtin-face_01 circle {
       opacity: 0.6;
     }
 
-    #plainoverlay-builtin-face-spin path {
+    #plainoverlay-builtin-face_01 path {
       stroke: red;
       stroke-width: 0.1px;
+    }*/
+
+    /*.plainoverlay {
+      background-color: rgb(136, 0, 136);
     }*/
 
   </style>
@@ -45,37 +49,27 @@
 <!-- @EXPORT@ -->
 
 <svg version="1.1" id="plainoverlay-builtin-face-defs">
-
-  <!-- In Gecko, `url()` in outer stylesheet doesn't work. -->
-  <style type="text/css"><![CDATA[
-    #plainoverlay-builtin-face-spin circle,
-    #plainoverlay-builtin-face-spin path {
-      fill: none;
-      stroke-width: 4px;
-    }
-    #plainoverlay-builtin-face-spin circle {
-      stroke: #fff;
-      opacity: 0.25;
-    }
-    #plainoverlay-builtin-face-spin path {
-      stroke-linecap: round;
-      stroke: url("#plainoverlay-builtin-face-grad1");
-    }
-  ]]></style>
-
   <defs>
-    <linearGradient id="plainoverlay-builtin-face-grad1"
+
+    <linearGradient id="plainoverlay-builtin-face_01-grad"
         gradientUnits="userSpaceOnUse" x1="16" y1="2" x2="30" y2="16">
       <stop offset="0" stop-color="#fff" stop-opacity="0"/>
+      <stop offset="0.2" stop-color="#fff" stop-opacity="0.1"/>
       <stop offset="1" stop-color="#fff" stop-opacity="1"/>
     </linearGradient>
 
-    <g id="plainoverlay-builtin-face-spin">
-      <circle cx="16" cy="16" r="14"/>
-      <path d="M16,2 a14,14 0 0 1 14,14"/>
-    </g>
-  </defs>
+    <!-- Webkit bug, `stroke` of `circle` draws incorrect circle. -->
+    <clipPath id="plainoverlay-builtin-face_01-clip" clip-rule="evenodd">
+      <path d="M-4,-4 H36 V36 H-4 V-4 z M16,4 a12,12 0 0 1 0,24 a12,12 0 0 1 0,-24 z"/>
+    </clipPath>
 
+    <g id="plainoverlay-builtin-face_01">
+      <circle cx="16" cy="16" r="16" clip-path="url(#plainoverlay-builtin-face_01-clip)"/>
+      <!-- Gecko bug, `url()` in outer stylesheet of this `svg` doesn't work. -->
+      <path d="M16,2 a14,14 0 0 1 14,14" stroke="url('#plainoverlay-builtin-face_01-grad')"/>
+    </g>
+
+  </defs>
 </svg>
 
 <!-- @/EXPORT@ -->
@@ -83,8 +77,8 @@
   <div class="plainoverlay plainoverlay-show">
     <div class="plainoverlay-body grid">
 
-      <svg class="plainoverlay-builtin-face" version="1.1" viewBox="0 0 32 32">
-        <use xlink:href="#plainoverlay-builtin-face-spin"/>
+      <svg class="plainoverlay-builtin-face plainoverlay-builtin-face_01" version="1.1" viewBox="0 0 32 32">
+        <use xlink:href="#plainoverlay-builtin-face_01"/>
       </svg>
 
     </div>
@@ -93,8 +87,8 @@
   <div class="plainoverlay plainoverlay-show">
     <div class="plainoverlay-body" style="width: 480px; height: 480px;">
 
-      <svg class="plainoverlay-builtin-face" version="1.1" viewBox="0 0 32 32">
-        <use xlink:href="#plainoverlay-builtin-face-spin"/>
+      <svg class="plainoverlay-builtin-face plainoverlay-builtin-face_01" version="1.1" viewBox="0 0 32 32">
+        <use xlink:href="#plainoverlay-builtin-face_01"/>
       </svg>
 
     </div>

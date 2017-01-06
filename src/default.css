@@ -1,11 +1,11 @@
 /* line 5, default.scss */
-.plainoverlay {
+.plainoverlay, .plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01 {
   -webkit-tap-highlight-color: transparent;
   transform: translateZ(0);
   box-shadow: 0 0 1px transparent;
 }
 
-/* line 19, default.scss */
+/* line 21, default.scss */
 .plainoverlay {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
@@ -28,7 +28,7 @@
   cursor: wait;
   z-index: 9000;
 }
-/* line 35, default.scss */
+/* line 37, default.scss */
 .plainoverlay.plainoverlay-doc {
   position: fixed;
   left: -200px;
@@ -37,7 +37,7 @@
   padding: 200px;
 }
 
-/* line 44, default.scss */
+/* line 46, default.scss */
 .plainoverlay-body {
   width: 100%;
   height: 100%;
@@ -48,23 +48,31 @@
   -webkit-align-items: center;
   align-items: center;
 }
-/* line 48, default.scss */
+/* line 50, default.scss */
 .plainoverlay.plainoverlay-doc .plainoverlay-body {
   width: 100vw;
   height: 100vh;
 }
 
-/* line 58, default.scss */
+/* line 60, default.scss */
 .plainoverlay-show {
   opacity: 1;
 }
 
-/* line 62, default.scss */
+/* line 64, default.scss */
 .plainoverlay-hide {
   display: none;
 }
 
-/* line 66, default.scss */
+/* line 68, default.scss */
+.plainoverlay-builtin-face {
+  width: 90%;
+  height: 90%;
+  max-width: 320px;
+  max-height: 320px;
+}
+
+/* line 75, default.scss */
 #plainoverlay-builtin-face-defs {
   width: 0;
   height: 0;
@@ -73,10 +81,66 @@
   top: -100px;
 }
 
-/* line 74, default.scss */
-.plainoverlay-builtin-face {
-  width: 90%;
-  height: 90%;
-  max-width: 320px;
-  max-height: 320px;
+/* line 85, default.scss */
+#plainoverlay-builtin-face_01 circle {
+  fill: #fff;
+  opacity: 0.25;
+}
+/* line 90, default.scss */
+#plainoverlay-builtin-face_01 path {
+  fill: none;
+  stroke-width: 4px;
+  stroke-linecap: round;
+  /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
+}
+
+/* line 99, default.scss */
+.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01 {
+  -moz-animation-name: plainoverlay-builtin-face_01-spin;
+  -webkit-animation-name: plainoverlay-builtin-face_01-spin;
+  animation-name: plainoverlay-builtin-face_01-spin;
+  -moz-animation-duration: 3s;
+  -webkit-animation-duration: 3s;
+  animation-duration: 3s;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+@-moz-keyframes plainoverlay-builtin-face_01-spin {
+  from {
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@-webkit-keyframes plainoverlay-builtin-face_01-spin {
+  from {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes plainoverlay-builtin-face_01-spin {
+  from {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(360deg);
+    -ms-transform: rotate(360deg);
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
 }
