@@ -858,11 +858,11 @@ class PlainOverlay {
   static show(options) {
     return (new PlainOverlay(options)).show();
   }
-}
 
-PlainOverlay.STATE_HIDDEN = STATE_HIDDEN;
-PlainOverlay.STATE_SHOWING = STATE_SHOWING;
-PlainOverlay.STATE_SHOWN = STATE_SHOWN;
-PlainOverlay.STATE_HIDING = STATE_HIDING;
+  static get STATE_HIDDEN() { return STATE_HIDDEN; }
+  static get STATE_SHOWING() { return STATE_SHOWING; }
+  static get STATE_SHOWN() { return STATE_SHOWN; }
+  static get STATE_HIDING() { return STATE_HIDING; }
+}
 
 export default PlainOverlay;

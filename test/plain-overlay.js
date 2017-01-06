@@ -973,15 +973,30 @@ var PlainOverlay =
 	    value: function show(options) {
 	      return new PlainOverlay(options).show();
 	    }
+	  }, {
+	    key: 'STATE_HIDDEN',
+	    get: function get() {
+	      return STATE_HIDDEN;
+	    }
+	  }, {
+	    key: 'STATE_SHOWING',
+	    get: function get() {
+	      return STATE_SHOWING;
+	    }
+	  }, {
+	    key: 'STATE_SHOWN',
+	    get: function get() {
+	      return STATE_SHOWN;
+	    }
+	  }, {
+	    key: 'STATE_HIDING',
+	    get: function get() {
+	      return STATE_HIDING;
+	    }
 	  }]);
 	
 	  return PlainOverlay;
 	}();
-	
-	PlainOverlay.STATE_HIDDEN = STATE_HIDDEN;
-	PlainOverlay.STATE_SHOWING = STATE_SHOWING;
-	PlainOverlay.STATE_SHOWN = STATE_SHOWN;
-	PlainOverlay.STATE_HIDING = STATE_HIDING;
 	
 	exports.default = PlainOverlay;
 	module.exports = exports['default'];
