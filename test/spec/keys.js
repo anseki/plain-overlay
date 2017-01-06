@@ -1,5 +1,5 @@
 
-describe('disableKeys()', function() {
+describe('disableAccKeys()', function() {
   'use strict';
 
   var window, document,
@@ -18,21 +18,21 @@ describe('disableKeys()', function() {
       pageDone = done;
 
       beforeDone();
-    }, 'disableKeys()');
+    }, 'disableAccKeys()');
   });
 
   afterAll(function() {
     pageDone();
   });
 
-  it('parses target and its nodes', function(done) {
-    var elements = Array.prototype.slice.call(document.querySelectorAll('#target-wrap *')), // #target is included
+  it('parses target and its tree', function(done) {
+    var elements = Array.prototype.slice.call(document.querySelectorAll('#target, #target *')),
       target = document.getElementById('target'),
       html = target.innerHTML,
       overlay = new PlainOverlay(target);
 
     overlay.show();
-    expect(matchArray(window.targetNodes, elements)).toBe(true);
+    expect(matchArray(window.targetElements, elements)).toBe(true);
     expect(target.innerHTML).not.toBe(html);
     expect(target.innerHTML).toMatch(/tabindex="-1"/);
     expect(target.innerHTML).not.toMatch(/accesskey="x"/);
@@ -45,14 +45,14 @@ describe('disableKeys()', function() {
     done();
   });
 
-  it('parses nodes in body except body', function(done) {
-    var elements = Array.prototype.slice.call(document.querySelectorAll('body *')), // body is not included
+  it('parses tree in body except overlay', function(done) {
+    var elements = Array.prototype.slice.call(document.querySelectorAll('html, body *')),
       target = document.body,
       html = target.innerHTML,
       overlay = new PlainOverlay();
 
     overlay.show();
-    expect(matchArray(window.targetNodes, elements)).toBe(true);
+    expect(matchArray(window.targetElements, elements)).toBe(true);
     expect(target.innerHTML).not.toBe(html);
     expect(target.innerHTML).toMatch(/tabindex="-1"/);
     expect(target.innerHTML).not.toMatch(/accesskey="x"/);

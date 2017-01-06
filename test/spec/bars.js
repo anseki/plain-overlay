@@ -5,7 +5,7 @@ describe('disableDocBars()', function() {
   var window, document,
     PlainOverlay, insProps, pageDone,
     IS_TRIDENT, IS_GECKO, IS_EDGE,
-    disableDocBars, table, barSize,
+    table, barSize,
 
     BAR_CASES = { // class
       'none:none': [],
@@ -50,19 +50,16 @@ describe('disableDocBars()', function() {
     var barCase = BAR_CASES[caseKey], label = caseKey + (addMargin ? ' +margin' : '');
     it(label, function(done) {
       addTarget(label, addMargin ? barCase.concat('margin') : barCase, function(iframe) {
-        var overlayIFrame = new PlainOverlay(iframe),
+        var overlayIFrame = PlainOverlay.show(iframe),
           iframeBody = iframe.contentDocument.body,
-          iframeMarginLen = {}, styleIFrame;
+          iframeMarginLen = {},
+          styleIFrame = window.getComputedStyle(iframeBody, '');
 
         // To get it after `beforeAll`.
         if (typeof iframeMargin === 'function') { iframeMargin = iframeMargin(); }
-
         DIR_KEYS.forEach(function(dirKey) {
           iframeMarginLen[dirKey.l] = (iframeMargin[dirKey.l] ? barSize : 0) + (addMargin ? BODY_MARGIN : 0);
         });
-
-        disableDocBars(insProps[overlayIFrame._id]);
-        styleIFrame = window.getComputedStyle(iframeBody, '');
 
         // Check elements
         expect(insProps[overlayIFrame._id].elmTargetBody).toBe(iframeBody);
@@ -82,7 +79,6 @@ describe('disableDocBars()', function() {
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
       insProps = window.insProps;
-      disableDocBars = window.disableDocBars;
       IS_TRIDENT = window.IS_TRIDENT;
       IS_GECKO = window.IS_GECKO;
       IS_EDGE = window.IS_EDGE;

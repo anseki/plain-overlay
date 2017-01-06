@@ -4,14 +4,11 @@ th {
 }
 
 td > iframe {
+  display: block;
   width: 80px;
   height: 80px;
   border: 1px solid #ccc;
   box-sizing: border-box;
-}
-
-td > iframe {
-  display: block;
 }
 
 .spacer {
