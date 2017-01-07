@@ -21,6 +21,8 @@ const
   STYLE_CLASS_BODY = `${APP_ID}-body`,
   FACE_DEFS_ELEMENT_ID = `${APP_ID}-builtin-face-defs`,
 
+  STYLE_CLASS_WEBKIT_IFRAME = `${APP_ID}-webkit-iframe`,
+
   STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
   // DURATION = 2500, // COPY: default.scss
   DURATION = 200, // COPY: default.scss
@@ -561,7 +563,12 @@ function show(props) {
     elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (props.isDoc) {
       Array.prototype.slice.call(elmTargetBody.childNodes).forEach(childNode => {
-        if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay) {
+        if (childNode.nodeType === Node.ELEMENT_NODE &&
+            childNode !== elmOverlay &&
+            // Trident doesn't support SVG#classList
+            (childNode.classList ? !childNode.classList.contains(STYLE_CLASS) :
+              (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) &&
+            childNode.id !== FACE_DEFS_ELEMENT_ID) {
           targetElements.push(childNode);
           Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
         }
@@ -575,7 +582,10 @@ function show(props) {
     }
 
     props.savedElementsScroll = getScroll(targetElements, props.isDoc);
-    if (props.isDoc && props.savedElementsScroll[0].isDoc) { disableDocBars(props); }
+    // savedElementsScroll is empty when document is disconnected.
+    if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
+      disableDocBars(props);
+    }
     props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
     props.activeElement = props.document.activeElement;
     if (props.activeElement) { avoidFocus(props, props.activeElement); }
@@ -736,6 +746,9 @@ class PlainOverlay {
     elmOverlay.classList.add(STYLE_CLASS);
     elmOverlay.classList.add(STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
+
+    // for Webkit bug
+    if (props.window.frameElement) { elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME); }
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {

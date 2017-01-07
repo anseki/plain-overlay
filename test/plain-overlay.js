@@ -87,6 +87,7 @@ var PlainOverlay =
 	    STYLE_CLASS_HIDE = APP_ID + '-hide',
 	    STYLE_CLASS_BODY = APP_ID + '-body',
 	    FACE_DEFS_ELEMENT_ID = APP_ID + '-builtin-face-defs',
+	    STYLE_CLASS_WEBKIT_IFRAME = APP_ID + '-webkit-iframe',
 	    STATE_HIDDEN = 0,
 	    STATE_SHOWING = 1,
 	    STATE_SHOWN = 2,
@@ -640,7 +641,9 @@ var PlainOverlay =
 	      elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
 	      if (props.isDoc) {
 	        Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
-	          if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay) {
+	          if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && (
+	          // Trident doesn't support SVG#classList
+	          childNode.classList ? !childNode.classList.contains(STYLE_CLASS) : (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
 	            targetElements.push(childNode);
 	            Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
 	          }
@@ -654,7 +657,8 @@ var PlainOverlay =
 	      }
 	
 	      props.savedElementsScroll = getScroll(targetElements, props.isDoc);
-	      if (props.isDoc && props.savedElementsScroll[0].isDoc) {
+	      // savedElementsScroll is empty when document is disconnected.
+	      if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
 	        disableDocBars(props);
 	      }
 	      props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
@@ -836,6 +840,11 @@ var PlainOverlay =
 	    elmOverlay.classList.add(STYLE_CLASS_HIDE);
 	    if (props.isDoc) {
 	      elmOverlay.classList.add(STYLE_CLASS_DOC);
+	    }
+	
+	    // for Webkit bug
+	    if (props.window.frameElement) {
+	      elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME);
 	    }
 	
 	    (function (listener) {
@@ -1170,7 +1179,7 @@ var PlainOverlay =
 /* 2 */
 /***/ function(module, exports) {
 
-	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:absolute;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
+	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:absolute;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
 
 /***/ },
 /* 3 */
