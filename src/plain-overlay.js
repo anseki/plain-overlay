@@ -309,9 +309,28 @@ function avoidFocus(props, element) {
   return false;
 }
 
+// Selection.containsNode polyfill for Trident
+function selectionContainsNode(props, selection) {
+  const targetRange = props.document.createRange(),
+    iLen = selection.rangeCount;
+  targetRange.selectNodeContents(props.elmTargetBody);
+  for (let i = 0; i < iLen; i++) {
+    const range = selection.getRangeAt(i);
+    if (range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 &&
+        range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0) {
+      return true;
+    }
+  }
+  return false;
+}
+window.selectionContainsNode = selectionContainsNode; // [DEBUG/]
+
 function avoidSelect(props) {
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  if (selection.rangeCount && (props.isDoc || selection.containsNode(props.elmTargetBody, true))) {
+  if (selection.rangeCount && (props.isDoc ||
+      (selection.containsNode ?
+        selection.containsNode(props.elmTargetBody, true) : selectionContainsNode(props, selection))
+      )) {
     selection.removeAllRanges();
     props.document.body.focus();
     return true;

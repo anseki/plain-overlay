@@ -381,9 +381,24 @@ var PlainOverlay =
 	  return false;
 	}
 	
+	// Selection.containsNode polyfill for Trident
+	function selectionContainsNode(props, selection) {
+	  var targetRange = props.document.createRange(),
+	      iLen = selection.rangeCount;
+	  targetRange.selectNodeContents(props.elmTargetBody);
+	  for (var i = 0; i < iLen; i++) {
+	    var range = selection.getRangeAt(i);
+	    if (range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 && range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0) {
+	      return true;
+	    }
+	  }
+	  return false;
+	}
+	window.selectionContainsNode = selectionContainsNode; // [DEBUG/]
+	
 	function avoidSelect(props) {
 	  var selection = ('getSelection' in window ? props.window : props.document).getSelection();
-	  if (selection.rangeCount && (props.isDoc || selection.containsNode(props.elmTargetBody, true))) {
+	  if (selection.rangeCount && (props.isDoc || (selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selectionContainsNode(props, selection)))) {
 	    selection.removeAllRanges();
 	    props.document.body.focus();
 	    return true;
@@ -1155,7 +1170,7 @@ var PlainOverlay =
 /* 2 */
 /***/ function(module, exports) {
 
-	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:absolute;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
+	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:absolute;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
 
 /***/ },
 /* 3 */

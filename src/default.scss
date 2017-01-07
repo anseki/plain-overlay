@@ -42,6 +42,8 @@ $face_01-duration: 1s;
     top: -$target_margin;
     overflow: visible;
     padding: $target_margin; // For mobile browsers
+    width: 100vw; // Webkit bug, contents size is ignored.
+    height: 100vh; // Webkit bug, contents size is ignored.
   }
 }
 
