@@ -38,7 +38,7 @@ module.exports = {
       },
       {
         test: path.resolve(__dirname, 'src/face.html'),
-        loaders: ['htmlclean', 'skeleton?config=svg']
+        loaders: ['htmlclean', 'skeleton?config=face']
       },
       {
         test: /\.css$/,
@@ -56,9 +56,16 @@ module.exports = {
     }
   },
 
-  svg: {
+  face: {
     procedure: function(content) {
-      return (content + '').replace(/^[\s\S]*?@EXPORT@\s*(?:\*\/\s*|\s*\-\->)?([\s\S]*?)\s*(?:\/\*\s*|\/\/\s*|<\!\-\-\s*)?@\/EXPORT@[\s\S]*$/, '$1');
+      const params = (this.resourceQuery || '').replace(/^\?/, '').split('&')
+        .reduce((params, param) => {
+          const matches = /^(.+?)=(.*)$/.exec(param);
+          if (matches) { params[matches[1]] = matches[2]; }
+          return params;
+        }, {}),
+        re = new RegExp(`^[\\s\\S]*?@EXPORT${params.part ? `\\[${params.part}\\]` : ''}@\\s*(?:\\*\\/\\s*|\\s*\\-\\->)?([\\s\\S]*?)\\s*(?:\\/\\*\\s*|\\/\\/\\s*|<\\!\\-\\-\\s*)?@\\/EXPORT@[\\s\\S]*$`);
+      return (content + '').replace(re, '$1');
     }
   },
 

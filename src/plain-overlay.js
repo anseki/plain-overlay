@@ -8,7 +8,8 @@
 
 import CSSPrefix from 'cssprefix';
 import CSS_TEXT from './default.css';
-import FACE from './face.html';
+import FACE_DEFS from './face.html?part=defs';
+import FACE_01 from './face.html?part=face_01';
 
 const
   APP_ID = 'plainoverlay',
@@ -18,9 +19,11 @@ const
   STYLE_CLASS_SHOW = `${APP_ID}-show`,
   STYLE_CLASS_HIDE = `${APP_ID}-hide`,
   STYLE_CLASS_BODY = `${APP_ID}-body`,
+  FACE_DEFS_ELEMENT_ID = `${APP_ID}-builtin-face-defs`,
 
   STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
-  DURATION = 2500, // COPY: default.scss
+  // DURATION = 2500, // COPY: default.scss
+  DURATION = 200, // COPY: default.scss
   TOLERANCE = 0.5,
 
   IS_TRIDENT = !!document.uniqueID,
@@ -601,8 +604,13 @@ function setOptions(props, newOptions) {
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
     } else {
+      const elmDocument = props.document;
+      if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) { // Add svg defs
+        const defsSvg = (new props.window.DOMParser()).parseFromString(FACE_DEFS, 'image/svg+xml');
+        elmDocument.body.appendChild(defsSvg.documentElement);
+      }
       options.face = void 0;
-      elmOverlayBody.innerHTML = FACE;
+      elmOverlayBody.innerHTML = FACE_01;
     }
   }
 

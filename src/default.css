@@ -5,16 +5,16 @@
   box-shadow: 0 0 1px transparent;
 }
 
-/* line 21, default.scss */
+/* line 23, default.scss */
 .plainoverlay {
   -moz-transition-property: opacity;
   -o-transition-property: opacity;
   -webkit-transition-property: opacity;
   transition-property: opacity;
-  -moz-transition-duration: 2500ms;
-  -o-transition-duration: 2500ms;
-  -webkit-transition-duration: 2500ms;
-  transition-duration: 2500ms;
+  -moz-transition-duration: 200ms;
+  -o-transition-duration: 200ms;
+  -webkit-transition-duration: 200ms;
+  transition-duration: 200ms;
   -moz-transition-timing-function: linear;
   -o-transition-timing-function: linear;
   -webkit-transition-timing-function: linear;
@@ -28,7 +28,7 @@
   cursor: wait;
   z-index: 9000;
 }
-/* line 37, default.scss */
+/* line 39, default.scss */
 .plainoverlay.plainoverlay-doc {
   position: fixed;
   left: -200px;
@@ -37,7 +37,7 @@
   padding: 200px;
 }
 
-/* line 46, default.scss */
+/* line 48, default.scss */
 .plainoverlay-body {
   width: 100%;
   height: 100%;
@@ -48,23 +48,23 @@
   -webkit-align-items: center;
   align-items: center;
 }
-/* line 50, default.scss */
+/* line 52, default.scss */
 .plainoverlay.plainoverlay-doc .plainoverlay-body {
   width: 100vw;
   height: 100vh;
 }
 
-/* line 60, default.scss */
+/* line 62, default.scss */
 .plainoverlay-show {
   opacity: 1;
 }
 
-/* line 64, default.scss */
+/* line 66, default.scss */
 .plainoverlay-hide {
   display: none;
 }
 
-/* line 68, default.scss */
+/* line 70, default.scss */
 .plainoverlay-builtin-face {
   width: 90%;
   height: 90%;
@@ -72,7 +72,7 @@
   max-height: 320px;
 }
 
-/* line 75, default.scss */
+/* line 77, default.scss */
 #plainoverlay-builtin-face-defs {
   width: 0;
   height: 0;
@@ -81,12 +81,12 @@
   top: -100px;
 }
 
-/* line 85, default.scss */
+/* line 87, default.scss */
 #plainoverlay-builtin-face_01 circle {
   fill: #fff;
   opacity: 0.25;
 }
-/* line 90, default.scss */
+/* line 92, default.scss */
 #plainoverlay-builtin-face_01 path {
   fill: none;
   stroke-width: 4px;
@@ -94,14 +94,14 @@
   /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
 }
 
-/* line 99, default.scss */
+/* line 101, default.scss */
 .plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01 {
   -moz-animation-name: plainoverlay-builtin-face_01-spin;
   -webkit-animation-name: plainoverlay-builtin-face_01-spin;
   animation-name: plainoverlay-builtin-face_01-spin;
-  -moz-animation-duration: 3s;
-  -webkit-animation-duration: 3s;
-  animation-duration: 3s;
+  -moz-animation-duration: 1s;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
   -moz-animation-timing-function: linear;
   -webkit-animation-timing-function: linear;
   animation-timing-function: linear;

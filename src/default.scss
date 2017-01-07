@@ -12,11 +12,13 @@ $app-body: #{$app_id}-body;
 
 $app-face: #{$app_id}-builtin-face;
 
-$duration: 2500ms; // COPY: plain-overlay.js
+// $duration: 2500ms; // COPY: plain-overlay.js
+$duration: 200ms; // COPY: plain-overlay.js
 $overlay-bg: rgba(136, 136, 136, 0.6);
 $target_margin: 200px;
 
-$face_01-duration: 3s;
+// $face_01-duration: 3s;
+$face_01-duration: 1s;
 
 .#{$app_id} {
   @extend %anim-init#{$media};
