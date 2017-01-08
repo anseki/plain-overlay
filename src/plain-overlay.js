@@ -639,7 +639,9 @@ function setOptions(props, newOptions) {
         elmDocument.body.appendChild(defsSvg.documentElement);
       }
       options.face = void 0;
-      elmOverlayBody.innerHTML = FACE_01;
+      elmOverlayBody.innerHTML = props.webkitIframe ?
+        // for Webkit bug
+        '<div class="plainoverlay-builtin-face plainoverlay-builtin-face_01"></div>' : FACE_01;
     }
   }
 
@@ -748,7 +750,10 @@ class PlainOverlay {
     if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
 
     // for Webkit bug
-    if (props.window.frameElement) { elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME); }
+    if (IS_WEBKIT && props.window.frameElement) {
+      props.webkitIframe = true;
+      elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME);
+    }
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {

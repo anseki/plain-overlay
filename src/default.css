@@ -83,12 +83,13 @@
   top: -100px;
 }
 
-/* line 91, default.scss */
+/* @EXPORT[face_01]@ */
+/* line 93, default.scss */
 #plainoverlay-builtin-face_01 circle {
   fill: #fff;
   opacity: 0.25;
 }
-/* line 96, default.scss */
+/* line 98, default.scss */
 #plainoverlay-builtin-face_01 path {
   fill: none;
   stroke-width: 4px;
@@ -96,7 +97,7 @@
   /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
 }
 
-/* line 105, default.scss */
+/* line 107, default.scss */
 .plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01 {
   -moz-animation-name: plainoverlay-builtin-face_01-spin;
   -webkit-animation-name: plainoverlay-builtin-face_01-spin;
@@ -145,4 +146,17 @@
     -webkit-transform: rotate(360deg);
     transform: rotate(360deg);
   }
+}
+/* @/EXPORT@ */
+/* line 125, default.scss */
+.plainoverlay-webkit-iframe .plainoverlay-builtin-face_01 {
+  background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxzdHlsZT48IVtDREFUQVsKI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEgY2lyY2xle2ZpbGw6I2ZmZjtvcGFjaXR5Oi4yNX0jcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMSBwYXRoe2ZpbGw6bm9uZTtzdHJva2Utd2lkdGg6NHB4O3N0cm9rZS1saW5lY2FwOnJvdW5kfXVzZXstbW96LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbjstd2Via2l0LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3BpbjthbmltYXRpb24tbmFtZTpwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLXNwaW47LW1vei1hbmltYXRpb24tZHVyYXRpb246MXM7LXdlYmtpdC1hbmltYXRpb24tZHVyYXRpb246MXM7YW5pbWF0aW9uLWR1cmF0aW9uOjFzOy1tb3otYW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjpsaW5lYXI7LXdlYmtpdC1hbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjstbW96LWFuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC1hbmltYXRpb24taXRlcmF0aW9uLWNvdW50OmluZmluaXRlO2FuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC10cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcjt0cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcn1ALW1vei1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LW1vei10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LW1vei10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1ALXdlYmtpdC1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1Aa2V5ZnJhbWVzIHBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbntmcm9tey1tb3otdHJhbnNmb3JtOnJvdGF0ZSgwKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgwKTstd2Via2l0LXRyYW5zZm9ybTpyb3RhdGUoMCk7dHJhbnNmb3JtOnJvdGF0ZSgwKX10b3stbW96LXRyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpOy13ZWJraXQtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpO3RyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKX19Cl1dPjwvc3R5bGU+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWdyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTYiIHkxPSIyIiB4Mj0iMzAiIHkyPSIxNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjAuMiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWNsaXAiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTS00LTRIMzZWMzZILTRWLTR6TTE2IDRhMTIgMTIgMCAwIDEgMCAyNCAxMiAxMiAwIDAgMSAwLTI0eiIvPjwvY2xpcFBhdGg+PGcgaWQ9InBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEiPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE2IiBjbGlwLXBhdGg9InVybCgjcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1jbGlwKSIvPjxwYXRoIGQ9Ik0xNiAyYTE0IDE0IDAgMCAxIDE0IDE0IiBzdHJva2U9InVybCgnI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtZ3JhZCcpIi8+PC9nPjwvZGVmcz48dXNlIHhsaW5rOmhyZWY9IiNwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxIi8+PC9zdmc+');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+/* line 132, default.scss */
+.plainoverlay.plainoverlay-doc.plainoverlay-webkit-iframe .plainoverlay-body {
+  height: 100%;
 }

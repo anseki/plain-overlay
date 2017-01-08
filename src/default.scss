@@ -86,6 +86,8 @@ $face_01-duration: 1s;
   top: -100px;
 }
 
+/* @EXPORT[face_01]@ */
+
 ##{$app-face}_01 {
 
   circle {
@@ -114,4 +116,19 @@ $face_01-duration: 1s;
 @include keyframes(#{$app-face}_01-spin) {
   from { @include transform(rotate(0deg)); }
   to { @include transform(rotate(360deg)); }
+}
+
+/* @/EXPORT@ */
+
+// Webkit bug, standalone SVG
+
+.#{$app-webkit-iframe} .#{$app-face}_01 {
+  background-image: inline-image("../src/face_01.svg");
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+}
+
+.#{$app_id}.#{$app-doc}.#{$app-webkit-iframe} .#{$app-body} {
+  height: 100%; // Webkit bug
 }
