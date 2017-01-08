@@ -527,6 +527,26 @@ var PlainOverlay =
 	}
 	window.position = position; // [DEBUG/]
 	
+	function getTargetElements(props) {
+	  var elmTargetBody = props.elmTargetBody,
+	      elmOverlay = props.elmOverlay,
+	      targetElements = [props.elmTarget];
+	  if (props.isDoc) {
+	    targetElements.push(elmTargetBody);
+	    Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
+	      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && (
+	      // Trident doesn't support SVG#classList
+	      childNode.classList ? !childNode.classList.contains(STYLE_CLASS) : (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
+	        targetElements.push(childNode);
+	        Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
+	      }
+	    });
+	  } else {
+	    Array.prototype.push.apply(targetElements, elmTargetBody.querySelectorAll('*'));
+	  }
+	  return targetElements;
+	}
+	
 	function finishShowing(props) {
 	  props.state = STATE_SHOWN;
 	  if (props.options.onShow) {
@@ -542,24 +562,25 @@ var PlainOverlay =
 	  props.savedStyleTarget = {};
 	  props.savedStyleTargetBody = {};
 	
-	  restoreScroll(props);
+	  (function (element) {
+	    setTimeout(function () {
+	      if (element) {
+	        element.focus();
+	      } // props.state must be STATE_HIDDEN
+	      restoreScroll(props); // After `focus()`
+	      props.savedElementsScroll = null;
+	
+	      if (props.options.onHide) {
+	        props.options.onHide.call(props.ins);
+	      }
+	    }, 0);
+	  })(props.isDoc ? props.activeElement : null);
+	
 	  restoreAccKeys(props);
-	  props.savedElementsScroll = props.savedElementsProps = null;
-	  if (props.activeElement) {
-	    if (props.isDoc) {
-	      (function (element) {
-	        setTimeout(function () {
-	          element.focus();
-	        }, 0); // props.state must be STATE_HIDDEN
-	      })(props.activeElement);
-	    }
-	    props.activeElement = null;
-	  }
+	  props.savedElementsProps = null;
+	  props.activeElement = null;
 	
 	  props.state = STATE_HIDDEN;
-	  if (props.options.onHide) {
-	    props.options.onHide.call(props.ins);
-	  }
 	}
 	
 	/**
@@ -633,42 +654,30 @@ var PlainOverlay =
 	
 	  var elmOverlay = props.elmOverlay;
 	  if (props.state === STATE_HIDDEN) {
-	    (function () {
-	      var elmTargetBody = props.elmTargetBody,
-	          targetElements = [props.elmTarget];
-	      window.targetElements = targetElements; // [DEBUG/]
+	    var targetElements = getTargetElements(props);
+	    window.targetElements = targetElements; // [DEBUG/]
 	
-	      elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
-	      if (props.isDoc) {
-	        Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
-	          if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && (
-	          // Trident doesn't support SVG#classList
-	          childNode.classList ? !childNode.classList.contains(STYLE_CLASS) : (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
-	            targetElements.push(childNode);
-	            Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
-	          }
-	        });
-	      } else {
-	        if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
-	          setStyle(elmTargetBody, { display: 'inline-block' }, props.savedStyleTargetBody);
-	        }
-	        position(props);
-	        Array.prototype.push.apply(targetElements, elmTargetBody.querySelectorAll('*'));
+	    elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
+	    if (!props.isDoc) {
+	      var elmTargetBody = props.elmTargetBody;
+	      if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
+	        setStyle(elmTargetBody, { display: 'inline-block' }, props.savedStyleTargetBody);
 	      }
+	      position(props);
+	    }
 	
-	      props.savedElementsScroll = getScroll(targetElements, props.isDoc);
-	      // savedElementsScroll is empty when document is disconnected.
-	      if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
-	        disableDocBars(props);
-	      }
-	      props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
-	      props.activeElement = props.document.activeElement;
-	      if (props.activeElement) {
-	        avoidFocus(props, props.activeElement);
-	      }
-	      avoidSelect(props);
-	      elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
-	    })();
+	    props.savedElementsScroll = getScroll(targetElements, props.isDoc);
+	    // savedElementsScroll is empty when document is disconnected.
+	    if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
+	      disableDocBars(props);
+	    }
+	    props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
+	    props.activeElement = props.document.activeElement;
+	    if (props.activeElement) {
+	      avoidFocus(props, props.activeElement);
+	    }
+	    avoidSelect(props);
+	    elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 	  }
 	  elmOverlay.classList.add(STYLE_CLASS_SHOW);
 	  props.state = STATE_SHOWING;
@@ -748,6 +757,42 @@ var PlainOverlay =
 	      options[option] = newOptions[option];
 	    }
 	  });
+	}
+	
+	function scroll(props, target, dirLeft, value) {
+	  var isDoc = void 0,
+	      curValue = void 0;
+	
+	  if (target) {
+	    var targetElements = getTargetElements(props);
+	    if (targetElements.indexOf(target) === -1) {
+	      return curValue;
+	    } // return undefined
+	    isDoc = target.nodeName.toLowerCase() === 'html';
+	  } else {
+	    target = props.elmTarget;
+	    isDoc = props.isDoc;
+	  }
+	
+	  var elementScroll = value != null && props.savedElementsScroll && (props.savedElementsScroll.find ? props.savedElementsScroll.find(function (elementScroll) {
+	    return elementScroll.element === target;
+	  }) : function (elementsScroll) {
+	    var found = void 0;
+	    elementsScroll.some(function (elementScroll) {
+	      if (elementScroll.element === target) {
+	        found = elementScroll;
+	        return true;
+	      }
+	      return false;
+	    });
+	    return found;
+	  }(props.savedElementsScroll));
+	
+	  curValue = (dirLeft ? scrollLeft : scrollTop)(target, isDoc, props.window, value);
+	  if (elementScroll) {
+	    elementScroll[dirLeft ? 'left' : 'top'] = curValue;
+	  }
+	  return curValue;
 	}
 	
 	var PlainOverlay = function () {
@@ -949,6 +994,16 @@ var PlainOverlay =
 	    value: function hide(force) {
 	      _hide(insProps[this._id], force);
 	      return this;
+	    }
+	  }, {
+	    key: 'scrollLeft',
+	    value: function scrollLeft(value, target) {
+	      return scroll(insProps[this._id], target, true, value);
+	    }
+	  }, {
+	    key: 'scrollTop',
+	    value: function scrollTop(value, target) {
+	      return scroll(insProps[this._id], target, false, value);
 	    }
 	  }, {
 	    key: 'face',

@@ -10,7 +10,7 @@ describe('disableAccKeys()', function() {
       array1.every(function(value1, i) { return value1 === array2[i]; });
   }
 
-  beforeAll(function(beforeDone) {
+  beforeEach(function(beforeDone) {
     loadPage('spec/keys/page.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
@@ -18,11 +18,7 @@ describe('disableAccKeys()', function() {
       pageDone = done;
 
       beforeDone();
-    }, 'disableAccKeys()');
-  });
-
-  afterAll(function() {
-    pageDone();
+    });
   });
 
   it('parses target and its tree', function(done) {
@@ -42,27 +38,37 @@ describe('disableAccKeys()', function() {
     expect(target.innerHTML).not.toMatch(/tabindex="-1"/);
     expect(target.innerHTML).toMatch(/accesskey="x"/);
 
+    window.setTitle('disableAccKeys() #target');
+    pageDone();
     done();
   });
 
   it('parses tree in body except overlay', function(done) {
-    var elements = Array.prototype.slice.call(document.querySelectorAll('html, body *')),
+    var elements = Array.prototype.slice.call(document.querySelectorAll('html, body, body *')),
       target = document.body,
       html = target.innerHTML,
-      overlay = new PlainOverlay();
+      overlay = new PlainOverlay(),
+      saveElement1, saveElement2;
 
     overlay.show();
     expect(matchArray(window.targetElements, elements)).toBe(true);
+    saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
+    saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
     expect(target.innerHTML).not.toBe(html);
     expect(target.innerHTML).toMatch(/tabindex="-1"/);
     expect(target.innerHTML).not.toMatch(/accesskey="x"/);
+    target.appendChild(saveElement1);
+    target.appendChild(saveElement2);
 
     overlay.hide(true);
-    target.removeChild(window.insProps[overlay._id].elmOverlay);
+    saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
+    saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
     expect(target.innerHTML).toBe(html);
     expect(target.innerHTML).not.toMatch(/tabindex="-1"/);
     expect(target.innerHTML).toMatch(/accesskey="x"/);
 
+    window.setTitle('disableAccKeys() body');
+    pageDone();
     done();
   });
 
