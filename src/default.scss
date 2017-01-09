@@ -81,7 +81,7 @@ $face_01-duration: 1s;
 ##{$app-face}-defs {
   width: 0;
   height: 0;
-  position: absolute;
+  position: fixed; // `absolute` might make scrollbars in RTL mode
   left: -100px;
   top: -100px;
 }

@@ -282,18 +282,18 @@ function restoreScroll(props, element) {
 }
 
 function restoreAccKeys(props) {
-  props.savedElementsProps.forEach(savedProps => {
+  props.savedElementsAccKeys.forEach(elementAccKeys => {
     try {
-      if (savedProps.tabIndex === false) {
-        savedProps.element.removeAttribute('tabindex');
-      } else if (savedProps.tabIndex != null) {
-        savedProps.element.tabIndex = savedProps.tabIndex;
+      if (elementAccKeys.tabIndex === false) {
+        elementAccKeys.element.removeAttribute('tabindex');
+      } else if (elementAccKeys.tabIndex != null) {
+        elementAccKeys.element.tabIndex = elementAccKeys.tabIndex;
       }
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
 
     try {
-      if (savedProps.accessKey) {
-        savedProps.element.accessKey = savedProps.accessKey;
+      if (elementAccKeys.accessKey) {
+        elementAccKeys.element.accessKey = elementAccKeys.accessKey;
       }
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   });
@@ -305,7 +305,11 @@ function avoidFocus(props, element) {
         !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
       !props.isDoc && (element === props.elmTargetBody ||
         props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-    element.blur();
+    if (element.blur) { // Trident doesn't support SVG#blur
+      element.blur();
+    } else {
+      element.ownerDocument.body.focus();
+    }
     return true;
   }
   return false;
@@ -495,21 +499,21 @@ function finishHiding(props) {
   props.savedStyleTarget = {};
   props.savedStyleTargetBody = {};
 
-  (element => {
-    setTimeout(function() {
-      if (element) { element.focus(); } // props.state must be STATE_HIDDEN
-      restoreScroll(props); // After `focus()`
-      props.savedElementsScroll = null;
-
-      if (props.options.onHide) { props.options.onHide.call(props.ins); }
-    }, 0);
-  })(props.isDoc ? props.activeElement : null);
-
   restoreAccKeys(props);
-  props.savedElementsProps = null;
+  props.savedElementsAccKeys = null;
+
+  // props.state must be STATE_HIDDEN for below
+  props.state = STATE_HIDDEN;
+
+  if (props.isDoc && props.activeElement) { props.activeElement.focus(); }
   props.activeElement = null;
 
-  props.state = STATE_HIDDEN;
+  setTimeout(function() {
+    restoreScroll(props); // Since `focus()` might scroll, do this after `focus()`.
+    props.savedElementsScroll = null;
+
+    if (props.options.onHide) { props.options.onHide.call(props.ins); }
+  }, 0);
 }
 
 /**
@@ -549,30 +553,30 @@ function show(props) {
   }
 
   function disableAccKeys(elements, fromDoc) {
-    const savedElementsProps = [];
+    const savedElementsAccKeys = [];
     elements.forEach((element, i) => {
       if (fromDoc && i === 0) { return; }
 
-      const savedProps = {},
+      const elementAccKeys = {},
         tabIndex = element.tabIndex;
       if (tabIndex !== -1) {
-        savedProps.element = element;
-        savedProps.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
+        elementAccKeys.element = element;
+        elementAccKeys.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
         element.tabIndex = -1;
       }
 
       const accessKey = element.accessKey;
       if (accessKey) {
-        savedProps.element = element;
-        savedProps.accessKey = accessKey;
+        elementAccKeys.element = element;
+        elementAccKeys.accessKey = accessKey;
         element.accessKey = '';
       }
 
-      if (savedProps.element) {
-        savedElementsProps.push(savedProps);
+      if (elementAccKeys.element) {
+        savedElementsAccKeys.push(elementAccKeys);
       }
     });
-    return savedElementsProps;
+    return savedElementsAccKeys;
   }
 
   if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
@@ -597,7 +601,7 @@ function show(props) {
     if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
       disableDocBars(props);
     }
-    props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
+    props.savedElementsAccKeys = disableAccKeys(targetElements, props.isDoc);
     props.activeElement = props.document.activeElement;
     if (props.activeElement) { avoidFocus(props, props.activeElement); }
     avoidSelect(props);

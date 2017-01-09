@@ -50,7 +50,7 @@ describe('disableDocBars()', function() {
     var barCase = BAR_CASES[caseKey], label = caseKey + (addMargin ? ' +margin' : '');
     it(label, function(done) {
       addTarget(label, addMargin ? barCase.concat('margin') : barCase, function(iframe) {
-        var overlayIFrame = PlainOverlay.show(iframe),
+        var overlay = PlainOverlay.show(iframe),
           iframeBody = iframe.contentDocument.body,
           iframeMarginLen = {},
           styleIFrame = window.getComputedStyle(iframeBody, '');
@@ -62,11 +62,12 @@ describe('disableDocBars()', function() {
         });
 
         // Check elements
-        expect(insProps[overlayIFrame._id].elmTargetBody).toBe(iframeBody);
+        expect(insProps[overlay._id].elmTargetBody).toBe(iframeBody);
 
-        DIR_KEYS.forEach(function(dirKey) {
-          expect(parseFloat(styleIFrame['margin' + dirKey.u])).toBe(iframeMarginLen[dirKey.l]);
-        });
+        expect(parseFloat(styleIFrame['margin' + DIR_KEYS[0].u])).toBe(iframeMarginLen[DIR_KEYS[0].l]);
+        expect(parseFloat(styleIFrame['margin' + DIR_KEYS[1].u])).toBe(iframeMarginLen[DIR_KEYS[1].l]);
+        expect(parseFloat(styleIFrame['margin' + DIR_KEYS[2].u])).toBe(iframeMarginLen[DIR_KEYS[2].l]);
+        expect(parseFloat(styleIFrame['margin' + DIR_KEYS[3].u])).toBe(iframeMarginLen[DIR_KEYS[3].l]);
 
         done();
       });

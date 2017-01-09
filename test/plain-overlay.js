@@ -356,18 +356,18 @@ var PlainOverlay =
 	}
 	
 	function restoreAccKeys(props) {
-	  props.savedElementsProps.forEach(function (savedProps) {
+	  props.savedElementsAccKeys.forEach(function (elementAccKeys) {
 	    try {
-	      if (savedProps.tabIndex === false) {
-	        savedProps.element.removeAttribute('tabindex');
-	      } else if (savedProps.tabIndex != null) {
-	        savedProps.element.tabIndex = savedProps.tabIndex;
+	      if (elementAccKeys.tabIndex === false) {
+	        elementAccKeys.element.removeAttribute('tabindex');
+	      } else if (elementAccKeys.tabIndex != null) {
+	        elementAccKeys.element.tabIndex = elementAccKeys.tabIndex;
 	      }
 	    } catch (error) {/* Something might have been changed, and that can be ignored. */}
 	
 	    try {
-	      if (savedProps.accessKey) {
-	        savedProps.element.accessKey = savedProps.accessKey;
+	      if (elementAccKeys.accessKey) {
+	        elementAccKeys.element.accessKey = elementAccKeys.accessKey;
 	      }
 	    } catch (error) {/* Something might have been changed, and that can be ignored. */}
 	  });
@@ -376,7 +376,12 @@ var PlainOverlay =
 	
 	function avoidFocus(props, element) {
 	  if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
-	    element.blur();
+	    if (element.blur) {
+	      // Trident doesn't support SVG#blur
+	      element.blur();
+	    } else {
+	      element.ownerDocument.body.focus();
+	    }
 	    return true;
 	  }
 	  return false;
@@ -562,25 +567,25 @@ var PlainOverlay =
 	  props.savedStyleTarget = {};
 	  props.savedStyleTargetBody = {};
 	
-	  (function (element) {
-	    setTimeout(function () {
-	      if (element) {
-	        element.focus();
-	      } // props.state must be STATE_HIDDEN
-	      restoreScroll(props); // After `focus()`
-	      props.savedElementsScroll = null;
-	
-	      if (props.options.onHide) {
-	        props.options.onHide.call(props.ins);
-	      }
-	    }, 0);
-	  })(props.isDoc ? props.activeElement : null);
-	
 	  restoreAccKeys(props);
-	  props.savedElementsProps = null;
+	  props.savedElementsAccKeys = null;
+	
+	  // props.state must be STATE_HIDDEN for below
+	  props.state = STATE_HIDDEN;
+	
+	  if (props.isDoc && props.activeElement) {
+	    props.activeElement.focus();
+	  }
 	  props.activeElement = null;
 	
-	  props.state = STATE_HIDDEN;
+	  setTimeout(function () {
+	    restoreScroll(props); // Since `focus()` might scroll, do this after `focus()`.
+	    props.savedElementsScroll = null;
+	
+	    if (props.options.onHide) {
+	      props.options.onHide.call(props.ins);
+	    }
+	  }, 0);
 	}
 	
 	/**
@@ -617,32 +622,32 @@ var PlainOverlay =
 	  }
 	
 	  function disableAccKeys(elements, fromDoc) {
-	    var savedElementsProps = [];
+	    var savedElementsAccKeys = [];
 	    elements.forEach(function (element, i) {
 	      if (fromDoc && i === 0) {
 	        return;
 	      }
 	
-	      var savedProps = {},
+	      var elementAccKeys = {},
 	          tabIndex = element.tabIndex;
 	      if (tabIndex !== -1) {
-	        savedProps.element = element;
-	        savedProps.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
+	        elementAccKeys.element = element;
+	        elementAccKeys.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
 	        element.tabIndex = -1;
 	      }
 	
 	      var accessKey = element.accessKey;
 	      if (accessKey) {
-	        savedProps.element = element;
-	        savedProps.accessKey = accessKey;
+	        elementAccKeys.element = element;
+	        elementAccKeys.accessKey = accessKey;
 	        element.accessKey = '';
 	      }
 	
-	      if (savedProps.element) {
-	        savedElementsProps.push(savedProps);
+	      if (elementAccKeys.element) {
+	        savedElementsAccKeys.push(elementAccKeys);
 	      }
 	    });
-	    return savedElementsProps;
+	    return savedElementsAccKeys;
 	  }
 	
 	  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) {
@@ -671,7 +676,7 @@ var PlainOverlay =
 	    if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
 	      disableDocBars(props);
 	    }
-	    props.savedElementsProps = disableAccKeys(targetElements, props.isDoc);
+	    props.savedElementsAccKeys = disableAccKeys(targetElements, props.isDoc);
 	    props.activeElement = props.document.activeElement;
 	    if (props.activeElement) {
 	      avoidFocus(props, props.activeElement);
@@ -1237,7 +1242,7 @@ var PlainOverlay =
 /* 2 */
 /***/ function(module, exports) {
 
-	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:absolute;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.plainoverlay-webkit-iframe .plainoverlay-builtin-face_01{background-image:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxzdHlsZT48IVtDREFUQVsKI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEgY2lyY2xle2ZpbGw6I2ZmZjtvcGFjaXR5Oi4yNX0jcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMSBwYXRoe2ZpbGw6bm9uZTtzdHJva2Utd2lkdGg6NHB4O3N0cm9rZS1saW5lY2FwOnJvdW5kfXVzZXstbW96LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbjstd2Via2l0LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3BpbjthbmltYXRpb24tbmFtZTpwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLXNwaW47LW1vei1hbmltYXRpb24tZHVyYXRpb246MXM7LXdlYmtpdC1hbmltYXRpb24tZHVyYXRpb246MXM7YW5pbWF0aW9uLWR1cmF0aW9uOjFzOy1tb3otYW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjpsaW5lYXI7LXdlYmtpdC1hbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjstbW96LWFuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC1hbmltYXRpb24taXRlcmF0aW9uLWNvdW50OmluZmluaXRlO2FuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC10cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcjt0cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcn1ALW1vei1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LW1vei10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LW1vei10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1ALXdlYmtpdC1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1Aa2V5ZnJhbWVzIHBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbntmcm9tey1tb3otdHJhbnNmb3JtOnJvdGF0ZSgwKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgwKTstd2Via2l0LXRyYW5zZm9ybTpyb3RhdGUoMCk7dHJhbnNmb3JtOnJvdGF0ZSgwKX10b3stbW96LXRyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpOy13ZWJraXQtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpO3RyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKX19Cl1dPjwvc3R5bGU+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWdyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTYiIHkxPSIyIiB4Mj0iMzAiIHkyPSIxNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjAuMiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWNsaXAiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTS00LTRIMzZWMzZILTRWLTR6TTE2IDRhMTIgMTIgMCAwIDEgMCAyNCAxMiAxMiAwIDAgMSAwLTI0eiIvPjwvY2xpcFBhdGg+PGcgaWQ9InBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEiPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE2IiBjbGlwLXBhdGg9InVybCgjcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1jbGlwKSIvPjxwYXRoIGQ9Ik0xNiAyYTE0IDE0IDAgMCAxIDE0IDE0IiBzdHJva2U9InVybCgnI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtZ3JhZCcpIi8+PC9nPjwvZGVmcz48dXNlIHhsaW5rOmhyZWY9IiNwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxIi8+PC9zdmc+);background-repeat:no-repeat;background-size:contain;background-position:center}.plainoverlay.plainoverlay-doc.plainoverlay-webkit-iframe .plainoverlay-body{height:100%}";
+	module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.plainoverlay-webkit-iframe .plainoverlay-builtin-face_01{background-image:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxzdHlsZT48IVtDREFUQVsKI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEgY2lyY2xle2ZpbGw6I2ZmZjtvcGFjaXR5Oi4yNX0jcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMSBwYXRoe2ZpbGw6bm9uZTtzdHJva2Utd2lkdGg6NHB4O3N0cm9rZS1saW5lY2FwOnJvdW5kfXVzZXstbW96LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbjstd2Via2l0LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3BpbjthbmltYXRpb24tbmFtZTpwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLXNwaW47LW1vei1hbmltYXRpb24tZHVyYXRpb246MXM7LXdlYmtpdC1hbmltYXRpb24tZHVyYXRpb246MXM7YW5pbWF0aW9uLWR1cmF0aW9uOjFzOy1tb3otYW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjpsaW5lYXI7LXdlYmtpdC1hbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjstbW96LWFuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC1hbmltYXRpb24taXRlcmF0aW9uLWNvdW50OmluZmluaXRlO2FuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC10cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcjt0cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcn1ALW1vei1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LW1vei10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LW1vei10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1ALXdlYmtpdC1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1Aa2V5ZnJhbWVzIHBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbntmcm9tey1tb3otdHJhbnNmb3JtOnJvdGF0ZSgwKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgwKTstd2Via2l0LXRyYW5zZm9ybTpyb3RhdGUoMCk7dHJhbnNmb3JtOnJvdGF0ZSgwKX10b3stbW96LXRyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpOy13ZWJraXQtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpO3RyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKX19Cl1dPjwvc3R5bGU+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWdyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTYiIHkxPSIyIiB4Mj0iMzAiIHkyPSIxNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjAuMiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWNsaXAiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTS00LTRIMzZWMzZILTRWLTR6TTE2IDRhMTIgMTIgMCAwIDEgMCAyNCAxMiAxMiAwIDAgMSAwLTI0eiIvPjwvY2xpcFBhdGg+PGcgaWQ9InBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEiPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE2IiBjbGlwLXBhdGg9InVybCgjcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1jbGlwKSIvPjxwYXRoIGQ9Ik0xNiAyYTE0IDE0IDAgMCAxIDE0IDE0IiBzdHJva2U9InVybCgnI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtZ3JhZCcpIi8+PC9nPjwvZGVmcz48dXNlIHhsaW5rOmhyZWY9IiNwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxIi8+PC9zdmc+);background-repeat:no-repeat;background-size:contain;background-position:center}.plainoverlay.plainoverlay-doc.plainoverlay-webkit-iframe .plainoverlay-body{height:100%}";
 
 /***/ },
 /* 3 */

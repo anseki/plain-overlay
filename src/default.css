@@ -78,7 +78,7 @@
 #plainoverlay-builtin-face-defs {
   width: 0;
   height: 0;
-  position: absolute;
+  position: fixed;
   left: -100px;
   top: -100px;
 }
