@@ -955,8 +955,8 @@ class PlainOverlay {
     return insProps[this._id].elmOverlay.style;
   }
 
-  static show(options) {
-    return (new PlainOverlay(options)).show();
+  static show(target, options) {
+    return (new PlainOverlay(target, options)).show();
   }
 
   static get STATE_HIDDEN() { return STATE_HIDDEN; }
