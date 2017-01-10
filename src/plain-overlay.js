@@ -7,6 +7,7 @@
  */
 
 import CSSPrefix from 'cssprefix';
+import AnimEvent from 'anim-event';
 import CSS_TEXT from './default.css';
 import FACE_DEFS from './face.html?part=defs';
 import FACE_01 from './face.html?part=face_01';
@@ -407,10 +408,9 @@ function disableDocBars(props) {
 }
 window.disableDocBars = disableDocBars; // [DEBUG/]
 
-function position(props) {
+function position(props, targetBodyBBox) {
   const elmTargetBody = props.elmTargetBody,
     targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
-    targetBodyBBox = getBBox(elmTargetBody, props.window),
 
     elmOverlay = props.elmOverlay,
     overlayCmpStyle = props.window.getComputedStyle(elmOverlay, ''),
@@ -460,6 +460,7 @@ function position(props) {
   });
 
   setStyle(elmOverlay, style);
+  props.targetBodyBBox = targetBodyBBox;
 }
 window.position = position; // [DEBUG/]
 
@@ -593,13 +594,14 @@ function show(props) {
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
         setStyle(elmTargetBody, {display: 'inline-block'}, props.savedStyleTargetBody);
       }
-      position(props);
+      position(props, getBBox(elmTargetBody, props.window));
     }
 
     props.savedElementsScroll = getScroll(targetElements, props.isDoc);
+    props.disabledDocBars = false;
     // savedElementsScroll is empty when document is disconnected.
     if (props.isDoc && props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
-      disableDocBars(props);
+      props.disabledDocBars = disableDocBars(props);
     }
     props.savedElementsAccKeys = disableAccKeys(targetElements, props.isDoc);
     props.activeElement = props.document.activeElement;
@@ -849,6 +851,39 @@ class PlainOverlay {
       }
     });
 
+    // Gecko bug, multiple calling (parallel) by `requestAnimationFrame`.
+    props.resizing = false;
+    props.window.addEventListener('resize', AnimEvent.add(() => {
+      if (props.resizing) {
+        console.log('`resize` event listener is already running.'); // [DEBUG/]
+        return;
+      }
+      props.resizing = true;
+      if (props.state !== STATE_HIDDEN) {
+        if (props.isDoc) {
+          if (props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
+            if (props.disabledDocBars) { // Restore DocBars
+              console.log('Restore DocBars'); // [DEBUG/]
+              restoreStyle(props.elmTarget, props.savedStyleTarget, ['overflow']);
+              restoreStyle(elmTargetBody, props.savedStyleTargetBody,
+                ['marginLeft', 'marginRight', 'marginTop', 'marginBottom', 'width', 'height']);
+            }
+            console.log('disableDocBars'); // [DEBUG/]
+            props.disabledDocBars = disableDocBars(props);
+          }
+        } else {
+          const bBox = getBBox(elmTargetBody, props.window),
+            lastBBox = props.targetBodyBBox;
+          if (bBox.left !== lastBBox.left || bBox.top !== lastBBox.top ||
+              bBox.width !== lastBBox.width || bBox.height !== lastBBox.height) {
+            console.log('Update position'); // [DEBUG/]
+            position(props, bBox);
+          }
+        }
+      }
+      props.resizing = false;
+    }), true);
+
     // Avoid scroll on touch device
     elmOverlay.addEventListener('touchmove', event => {
       if (props.state !== STATE_HIDDEN) {
@@ -903,6 +938,14 @@ class PlainOverlay {
 
   scrollTop(value, target) {
     return scroll(insProps[this._id], target, false, value);
+  }
+
+  position() {
+    const props = insProps[this._id];
+    if (props.state !== STATE_HIDDEN && !props.isDoc) {
+      position(props, getBBox(props.elmTargetBody, props.window));
+    }
+    return this;
   }
 
   get face() {
