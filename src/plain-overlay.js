@@ -740,7 +740,6 @@ class PlainOverlay {
             nodeName === 'body' ? target.ownerDocument.documentElement : // documentElement of target body
             nodeName === 'iframe' || nodeName === 'frame' ?
               target.contentDocument.documentElement : // documentElement of target frame
-            nodeName === 'script' || nodeName === 'style' || nodeName === 'svg' ? null : // deny
             target;
         }
         if (!validElement) { throw new Error('This element is not accepted.'); }
