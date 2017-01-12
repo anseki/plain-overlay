@@ -62,7 +62,7 @@ The `target` argument is an element that will be covered with the overlay, or `w
 Any element that has a bounding-box is accepted. It can be an element in another window (i.e. `<iframe>`). `<iframe>` is regarded as `window` of that `<iframe>`.  
 The default of `target` argument is current `window`.
 
-The `options` argument is an Object that can have properties as [options](#options).
+The `options` argument is an Object that can have properties as [options](#options). You can also change the options by [`setOptions`](#setoptions) or [`show`](#show) methods or [properties](#properties) of the instance.
 
 For example:
 
@@ -79,15 +79,6 @@ var overlay = new PlainOverlay(document.getElementById('form'), {face: false});
 See also: [`PlainOverlay.show`](#plainoverlay-show)
 
 ## Methods
-
-### `setOptions`
-
-```js
-self = overlay.setOptions(options)
-```
-
-Set one or more options.  
-The `options` argument is an Object that can have properties as [options](#options).
 
 ### `show`
 
@@ -111,7 +102,16 @@ self = overlay.hide([force])
 ```
 
 Hide the overlay.  
-If `true` is specified for `force` argument, hide it immediately without an effect. (See [`duration`](#options-duration) option.)
+If `true` is specified for `force` argument, hide it immediately without an effect. (As to the effect, see [`duration`](#options-duration) option.)
+
+### `setOptions`
+
+```js
+self = overlay.setOptions(options)
+```
+
+Set one or more options.  
+The `options` argument is an Object that can have properties as [options](#options).
 
 ### `scrollLeft`, `scrollTop`
 
@@ -134,7 +134,7 @@ self = overlay.position()
 ```
 
 Update the position of the overlay that covers a part of a web page.  
-If `target` is a part of a web page, the overlay is shown at the same position as that part, and it is re-positioned (and resized) automatically when current window is resized.  
+If `target` is a part of a web page, the overlay is shown at the same position as the `target`, and it is re-positioned (and resized) as needed automatically when current window is resized.  
 You should call `position` method if you moved or resized the `target` without resizing the window.
 
 ## Options
@@ -172,7 +172,7 @@ var overlay = new PlainOverlay({face: document.getElementById('image')});
 *Type:* number  
 *Default:* `200`
 
-A number determining how long (milliseconds) the effect animation for showing and hiding the overlay will run.
+A number determining how long (milliseconds) the effect (fade-in/out) animation for showing and hiding the overlay will run.
 
 ### <a name="options-style"></a>`style`
 

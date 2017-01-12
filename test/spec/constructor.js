@@ -87,11 +87,13 @@ describe('constructor', function() {
   });
 
   it('(svg, {})', function() {
-    var svg = body.appendChild(document.createElement('svg'));
-    expect(function() {
-      var overlay = new PlainOverlay(svg, {});
-      console.log(overlay); // dummy
-    }).toThrowError('This element is not accepted.');
+    var svg = body.appendChild(document.createElement('svg')),
+      overlay = new PlainOverlay(svg, {}),
+      props = insProps[overlay._id];
+
+    expect(props.elmTarget).toBe(svg);
+    expect(props.window).toBe(window);
+    expect(props.document).toBe(document);
   });
 
   it('(iframe, {})', function() {
