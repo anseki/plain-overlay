@@ -134,7 +134,7 @@ self = overlay.position()
 ```
 
 Update the position of the overlay that covers a part of a web page.  
-If `target` is a part of a web page, the overlay is shown at the same position as the `target`, and it is re-positioned (and resized) as needed automatically when current window is resized.  
+If `target` is a part of a web page, the overlay is shown at the same position as the `target`, and it is re-positioned (and resized) as needed automatically when a window that contains the `target` is resized.  
 You should call `position` method if you moved or resized the `target` without resizing the window.
 
 ## Options
@@ -241,6 +241,16 @@ var overlay = new PlainOverlay({
 });
 ```
 
+### `onPosition`
+
+*Type:* function or `undefined`  
+*Default:* `undefined`
+
+A `position` event listener that is called when the overlay is shown (before a showing effect starts), a window that contains the `target` is resized, and [`position`](#position) method is called.  
+In the function, `this` refers to the current PlainOverlay instance.
+
+This is used to adjust your custom [`face`](#options-face) that depends on a layout of the overlay.
+
 ## Properties
 
 ### `state`
@@ -303,9 +313,9 @@ overlay.show({
 
 Get or set [`duration`](#options-duration) option.
 
-### `onShow`, `onHide`, `onBeforeShow`, `onBeforeHide`
+### `onShow`, `onHide`, `onBeforeShow`, `onBeforeHide`, `onPosition`
 
-Get or set [`onShow`, `onHide`, `onBeforeShow`, `onBeforeHide`](#options-onshow-onhide-onbeforeshow-onbeforehide) options.
+Get or set [`onShow`, `onHide`, `onBeforeShow`, `onBeforeHide`](#options-onshow-onhide-onbeforeshow-onbeforehide), and [`onPosition`](#onposition) options.
 
 ## `PlainOverlay.show`
 

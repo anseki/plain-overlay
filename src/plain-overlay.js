@@ -608,6 +608,8 @@ function show(props) {
     if (props.activeElement) { avoidFocus(props, props.activeElement); }
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
+
+    if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
   elmOverlay.classList.add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
@@ -675,8 +677,8 @@ function setOptions(props, newOptions) {
     setStyle(props.elmOverlay, newOptions.style);
   }
 
-  // onShow, onHide, onBeforeShow, onBeforeHide
-  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide'].forEach(option => {
+  // Event listeners
+  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide', 'onPosition'].forEach(option => {
     if (typeof newOptions[option] === 'function') {
       options[option] = newOptions[option];
     }
@@ -879,6 +881,7 @@ class PlainOverlay {
             position(props, bBox);
           }
         }
+        if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
       }
       props.resizing = false;
     }), true);
@@ -941,8 +944,9 @@ class PlainOverlay {
 
   position() {
     const props = insProps[this._id];
-    if (props.state !== STATE_HIDDEN && !props.isDoc) {
-      position(props, getBBox(props.elmTargetBody, props.window));
+    if (props.state !== STATE_HIDDEN) {
+      if (!props.isDoc) { position(props, getBBox(props.elmTargetBody, props.window)); }
+      if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
     }
     return this;
   }
@@ -987,6 +991,13 @@ class PlainOverlay {
   }
   set onBeforeHide(value) {
     setOptions(insProps[this._id], {onBeforeHide: value});
+  }
+
+  get onPosition() {
+    return insProps[this._id].options.onPosition;
+  }
+  set onPosition(value) {
+    setOptions(insProps[this._id], {onPosition: value});
   }
 
   get state() {

@@ -688,6 +688,10 @@ var PlainOverlay =
 	    }
 	    avoidSelect(props);
 	    elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
+	
+	    if (props.options.onPosition) {
+	      props.options.onPosition.call(props.ins);
+	    }
 	  }
 	  elmOverlay.classList.add(STYLE_CLASS_SHOW);
 	  props.state = STATE_SHOWING;
@@ -761,8 +765,8 @@ var PlainOverlay =
 	    setStyle(props.elmOverlay, newOptions.style);
 	  }
 	
-	  // onShow, onHide, onBeforeShow, onBeforeHide
-	  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide'].forEach(function (option) {
+	  // Event listeners
+	  ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide', 'onPosition'].forEach(function (option) {
 	    if (typeof newOptions[option] === 'function') {
 	      options[option] = newOptions[option];
 	    }
@@ -976,6 +980,9 @@ var PlainOverlay =
 	            _position(props, bBox);
 	          }
 	        }
+	        if (props.options.onPosition) {
+	          props.options.onPosition.call(props.ins);
+	        }
 	      }
 	      props.resizing = false;
 	    }), true);
@@ -1050,8 +1057,13 @@ var PlainOverlay =
 	    key: 'position',
 	    value: function position() {
 	      var props = insProps[this._id];
-	      if (props.state !== STATE_HIDDEN && !props.isDoc) {
-	        _position(props, getBBox(props.elmTargetBody, props.window));
+	      if (props.state !== STATE_HIDDEN) {
+	        if (!props.isDoc) {
+	          _position(props, getBBox(props.elmTargetBody, props.window));
+	        }
+	        if (props.options.onPosition) {
+	          props.options.onPosition.call(props.ins);
+	        }
 	      }
 	      return this;
 	    }
@@ -1102,6 +1114,14 @@ var PlainOverlay =
 	    },
 	    set: function set(value) {
 	      _setOptions(insProps[this._id], { onBeforeHide: value });
+	    }
+	  }, {
+	    key: 'onPosition',
+	    get: function get() {
+	      return insProps[this._id].options.onPosition;
+	    },
+	    set: function set(value) {
+	      _setOptions(insProps[this._id], { onPosition: value });
 	    }
 	  }, {
 	    key: 'state',
