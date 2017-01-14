@@ -1,1 +1,578 @@
-My GitHub Page
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="description" content="The simple library for customizable overlay which covers a page, elements or iframe-windows.">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="css/normalize.css">
+  <link rel="stylesheet" href="css/syntax.css">
+  <link rel="stylesheet" href="css/default.css">
+  <link rel="stylesheet" href="css/ex.css">
+  <script src="js/plain-overlay.min.js"></script>
+  <script src="js/ex.js"></script>
+  <script src="js/leader-line.min.js"></script>
+
+  <title>PlainOverlay</title>
+</head>
+<body>
+  <header>
+    <h1><a href="./">PlainOverlay</a></h1>
+    <ul id="gh"><li><a href="https://github.com/anseki/plain-overlay/tarball/master">Download TAR.GZ</a></li><li><a href="https://github.com/anseki/plain-overlay/zipball/master">Download ZIP</a></li><li><a href="https://github.com/anseki/plain-overlay">View on GitHub</a></li></ul>
+  </header>
+  <main>
+
+<p>The simple library for customizable overlay which covers all or part of a web page.</p>
+
+<p>Features:</p>
+
+<!-- include "ex-010.html" -->
+<!-- ================ ex -->
+<div id="ex-010-col">
+
+  <p id="ex-010-p"><span class="label">&lt;p&gt;</span> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+  <button id="ex-010-p-btn">SHOW</button>
+
+  <div id="ex-010-div">
+    <div>
+      <span class="label">&lt;div&gt;</span>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+      <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+    </div>
+  </div>
+  <button id="ex-010-div-btn">SHOW</button>
+
+  <div style="margin-top: 15px;"><span class="label">window</span></div>
+  <button id="ex-010-win1-btn">SHOW</button> (5s)
+
+  <div style="margin-top: 15px;"><span class="label">window</span> Customize with <a href="https://anseki.github.io/leader-line/">LeaderLine</a></div>
+  <button id="ex-010-win2-btn">SHOW</button> (5s)
+
+  <div id="ex-010-win2-face">
+    <svg version="1.1" viewBox="0 0 0 0"><!-- viewBox for Gecko -->
+      <defs>
+        <clipPath id="ex-010-win2-clip" clip-rule="evenodd"><path/></clipPath>
+      </defs>
+      <rect x="0" y="0" clip-path="url(#ex-010-win2-clip)"/>
+    </svg>
+    <div id="ex-010-win2-label">The button you clicked</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  var pFace = document.createElement('div');
+  pFace.id = 'ex-010-p-face';
+  pFace.innerHTML = '<div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div>';
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-p'), {face: pFace}),
+    document.getElementById('ex-010-p-btn'), null, true);
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-div')),
+    document.getElementById('ex-010-div-btn'));
+
+  var win1Face = document.createElement('div');
+  win1Face.id = 'ex-010-win1-face';
+  win1Face.innerHTML = '<div></div><div></div><div></div><div></div><div></div>';
+
+  bindToggleButton(new PlainOverlay({face: win1Face}),
+    document.getElementById('ex-010-win1-btn'), 5000);
+
+  var button = document.getElementById('ex-010-win2-btn'),
+    label = document.getElementById('ex-010-win2-label'),
+    win2Face = document.getElementById('ex-010-win2-face'),
+    svg = win2Face.querySelector('svg'),
+    rect = win2Face.querySelector('rect'),
+    clip = win2Face.querySelector('#ex-010-win2-clip path'),
+    viewBox = svg.viewBox.baseVal,
+    svgStyle = svg.style,
+    documentElement = document.documentElement,
+    line = new LeaderLine(label, button, {hide: true});
+
+  bindToggleButton(
+    new PlainOverlay({
+      face: win2Face,
+      style: {backgroundColor: 'transparent'},
+
+      onBeforeShow: function() { line.show(); },
+      onBeforeHide: function() { line.hide(); },
+
+      onPosition: function() {
+        var viewWidth = documentElement.clientWidth,
+          viewHeight = documentElement.clientHeight,
+          btnRect = button.getBoundingClientRect(),
+          cx = btnRect.left + btnRect.width / 2,
+          cy = btnRect.top + btnRect.height / 2,
+          cr = btnRect.width / 2 + 40;
+
+        viewBox.width = viewWidth;
+        viewBox.height = viewHeight;
+        svgStyle.width = viewWidth + 'px';
+        svgStyle.height = viewHeight + 'px';
+
+        rect.width.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, viewWidth);
+        rect.height.baseVal.newValueSpecifiedUnits(SVGLength.SVG_LENGTHTYPE_PX, viewHeight);
+
+        clip.setAttribute('d', 'M0,0 H' + viewWidth + ' V' + viewHeight + ' H0 V0 z ' +
+          'M' + (cx - cr) + ',' + cy +
+          ' a ' + cr + ',' + (cr * 0.4) + ' 0 1 1 ' + (cr * 2) + ',0' +
+          ' a ' + cr + ',' + (cr * 0.4) + ' 0 1 1 ' + (cr * 2 * -1) + ',0 z');
+
+        line.position();
+      }
+    }),
+    button, 5000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-010.html" -->
+
+<ul>
+<li>Cover all or part of a web page with an overlay.</li>
+<li>Block scrolling anything under the overlay by a mouse or keys.</li>
+<li>Block focusing anything under the overlay by a mouse or Tab key or access-keys.</li>
+<li>Show something like a loading-animation on the overlay.</li>
+<li>No dependencies.</li>
+<li>Single file.</li>
+</ul>
+
+<p>One of the following can be specified as the target that is covered:</p>
+
+<ul>
+<li>A current window</li>
+<li>An element that has a bounding-box</li>
+<li>Another window (i.e. child window such as <code>&lt;iframe&gt;</code>)</li>
+<li>An element in another window</li>
+</ul>
+
+<!-- include "ex-020.html" -->
+<!-- ================ ex -->
+<div id="ex-020">
+
+  <div>
+    <form id="ex-020-form">
+      <span class="label">&lt;form&gt;</span>
+      <div style="margin-top: 5px;">
+        <input type="text" value="text" style="width: 95%;">
+      </div>
+      <div>
+        <label><input type="checkbox">checkbox</label>
+        <label style="margin-left: 10px;"><input type="checkbox">checkbox</label>
+      </div>
+      <div>
+        <textarea id="ex-020-textarea">&lt;textarea&gt;
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</textarea>
+      </div>
+    </form>
+    <div style="margin-top: 10px;"><button id="ex-020-form-btn">SHOW</button></div>
+    <div><button id="ex-020-textarea-btn">SHOW</button> &lt;textarea&gt;</div>
+  </div>
+
+  <div>
+    <div><span class="label">&lt;img&gt;</span></div>
+    <img id="ex-020-img" src="img/ex-020.jpg" alt="ex-020.jpg" width="320" height="213" style="display: block; margin-top: 5px;">
+    <div style="margin-top: 5px;"><button id="ex-020-img-btn">SHOW</button></div>
+  </div>
+
+  <div>
+    <div><span class="label">&lt;table&gt;</span></div>
+    <table id="ex-020-table">
+      <tr><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td></tr>
+      <tr><td></td><td id="ex-020-td" colspan="2" rowspan="2" style="width: auto; height: auto; text-align: center;"><span class="label">&lt;td&gt;</span></td></tr>
+      <tr><td></td></tr>
+      <tr><td></td><td></td><td></td></tr>
+    </table>
+    <div style="margin-top: 10px;"><button id="ex-020-table-btn">SHOW</button></div>
+    <div><button id="ex-020-td-btn">SHOW</button> &lt;td&gt;</div>
+  </div>
+
+  <div>
+    <iframe id="ex-020-iframe" src="ex-020-iframe.html"></iframe>
+    <div style="margin-top: 10px;"><button id="ex-020-iframe-btn">SHOW</button></div>
+    <div><button id="ex-020-p-btn">SHOW</button> inner &lt;p&gt;</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-form')),
+    document.getElementById('ex-020-form-btn'));
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-textarea')),
+    document.getElementById('ex-020-textarea-btn'));
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-img')),
+    document.getElementById('ex-020-img-btn'));
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-table')),
+    document.getElementById('ex-020-table-btn'));
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-td')),
+    document.getElementById('ex-020-td-btn'));
+
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-iframe')),
+    document.getElementById('ex-020-iframe-btn'));
+
+  bindToggleButton(new PlainOverlay(
+      document.getElementById('ex-020-iframe').contentDocument.getElementById('ex-020-p')),
+    document.getElementById('ex-020-p-btn'));
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-020.html" -->
+
+<h2 id="usage">Usage</h2>
+
+<p>Load only a file <code>plain-overlay.min.js</code> into your web page.</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;plain-overlay.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
+</code></pre></div>
+<p>This is simplest case:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+</code></pre></div>
+<p>Now, new overlay is shown and all of the page are covered with it.<br>You can specify an element as the target that is covered.</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">show</span><span class="p">(</span><span class="nx">element</span><span class="p">);</span>
+</code></pre></div>
+<p>Use an instance method to hide the overlay.</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+<span class="c1">// Now, new overlay is shown.</span>
+<span class="c1">// Do something ...</span>
+<span class="nx">overlay</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+<span class="c1">// Now, the overlay is hidden.</span>
+</code></pre></div>
+<p>For options and more details, refer to the following.</p>
+
+<h2 id="constructor">Constructor</h2>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">([</span><span class="nx">target</span><span class="p">][,</span> <span class="nx">options</span><span class="p">])</span>
+</code></pre></div>
+<p>The <code>target</code> argument is an element that will be covered with the overlay, or <code>window</code> (or <code>document</code> or <code>&lt;html&gt;</code> or <code>&lt;body&gt;</code>) that means all of the web page.<br>Any element that has a bounding-box is accepted. It can be an element in another window (i.e. <code>&lt;iframe&gt;</code>). <code>&lt;iframe&gt;</code> is regarded as <code>window</code> of that <code>&lt;iframe&gt;</code>.<br>The default of <code>target</code> argument is current <code>window</code>.</p>
+
+<p>The <code>options</code> argument is an Object that can have properties as <a href="#options">options</a>. You can also change the options by <a href="#setoptions"><code>setOptions</code></a> or <a href="#show"><code>show</code></a> methods or <a href="#properties">properties</a> of the instance.</p>
+
+<p>For example:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Cover all of the web page, with `duration` option</span>
+<span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span><span class="nx">duration</span><span class="o">:</span> <span class="mi">400</span><span class="p">});</span>
+</code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="c1">// Cover a part of the web page, with `face` option</span>
+<span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">(</span><span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;form&#39;</span><span class="p">),</span> <span class="p">{</span><span class="nx">face</span><span class="o">:</span> <span class="kc">false</span><span class="p">});</span>
+</code></pre></div>
+<p>See also: <a href="#plainoverlay-show"><code>PlainOverlay.show</code></a></p>
+
+<h2 id="methods">Methods</h2>
+
+<h3 id="show"><code>show</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">self</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">show</span><span class="p">([</span><span class="nx">options</span><span class="p">])</span>
+</code></pre></div>
+<p>Show the overlay.<br>If <code>options</code> argument is specified, call <a href="#setoptions"><code>setOptions</code></a> method and show the overlay. It works the same as:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">).</span><span class="nx">show</span><span class="p">();</span>
+</code></pre></div>
+<p>See also: <a href="#plainoverlay-show"><code>PlainOverlay.show</code></a></p>
+
+<h3 id="hide"><code>hide</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">self</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">hide</span><span class="p">([</span><span class="nx">force</span><span class="p">])</span>
+</code></pre></div>
+<p>Hide the overlay.<br>If <code>true</code> is specified for <code>force</code> argument, hide it immediately without an effect. (As to the effect, see <a href="#options-duration"><code>duration</code></a> option.)</p>
+
+<h3 id="setoptions"><code>setOptions</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">self</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">setOptions</span><span class="p">(</span><span class="nx">options</span><span class="p">)</span>
+</code></pre></div>
+<p>Set one or more options.<br>The <code>options</code> argument is an Object that can have properties as <a href="#options">options</a>.</p>
+
+<h3 id="scrollleft,-scrolltop"><code>scrollLeft</code>, <code>scrollTop</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">currentLeft</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">scrollLeft</span><span class="p">([</span><span class="nx">newLeft</span><span class="p">[,</span> <span class="nx">scrollTarget</span><span class="p">]])</span>
+</code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">currentTop</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">([</span><span class="nx">newTop</span><span class="p">[,</span> <span class="nx">scrollTarget</span><span class="p">]])</span>
+</code></pre></div>
+<p>Scrolling a window or element is blocked while it is covered with the overlay. <code>scrollLeft</code> and <code>scrollTop</code> methods allow it scroll, and return current value.<br>The value is a number of pixels that a content is scrolled to the left or upward.<br>The default of <code>scrollTarget</code> is a <code>target</code> of the overlay.</p>
+
+<h3 id="position"><code>position</code></h3>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">self</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">position</span><span class="p">()</span>
+</code></pre></div>
+<p>Update the position of the overlay that covers a part of a web page.<br>If <code>target</code> is a part of a web page, the overlay is shown at the same position as the <code>target</code>, and it is re-positioned (and resized) as needed automatically when a window that contains the <code>target</code> is resized.<br>You should call <code>position</code> method if you moved or resized the <code>target</code> without resizing the window.</p>
+
+<h2 id="options">Options</h2>
+
+<h3 id="options-face"><code>face</code></h3>
+
+<p><em>Type:</em> Element, boolean or <code>undefined</code><br><em>Default:</em> <code>undefined</code> (Builtin Face)</p>
+
+<p>Something that is shown on the overlay. This is usually a message or image that means &quot;Please wait...&quot;.<br>If <code>false</code> is specified, nothing is shown on the overlay.</p>
+
+<p>For example, a message:</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;div</span> <span class="na">id=</span><span class="s">&quot;message&quot;</span><span class="nt">&gt;</span>Please wait...<span class="nt">&lt;/div&gt;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span><span class="nx">face</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;message&#39;</span><span class="p">)});</span>
+</code></pre></div>
+<!-- include "ex-030.html" -->
+<!-- ================ ex -->
+<div><button id="ex-030-btn">SHOW</button> (5s)</div>
+
+<div id="ex-030-face">Please wait...</div>
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-030-face')}),
+    document.getElementById('ex-030-btn'), 5000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-030.html" -->
+
+<p>For example, an image:</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;img</span> <span class="na">id=</span><span class="s">&quot;image&quot;</span> <span class="na">src=</span><span class="s">&quot;loading.svg&quot;</span><span class="nt">&gt;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span><span class="nx">face</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;image&#39;</span><span class="p">)});</span>
+</code></pre></div>
+<!-- include "ex-040.html" -->
+<!-- ================ ex -->
+<div><button id="ex-040-btn">SHOW</button> (5s)</div>
+
+<img id="ex-040-face" src="img/ex-040.svg" style="width: 30%; height: auto;">
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-040-face')}),
+    document.getElementById('ex-040-btn'), 5000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-040.html" -->
+
+<h3 id="options-duration"><code>duration</code></h3>
+
+<p><em>Type:</em> number<br><em>Default:</em> <code>200</code></p>
+
+<p>A number determining how long (milliseconds) the effect (fade-in/out) animation for showing and hiding the overlay will run.</p>
+
+<h3 id="options-style"><code>style</code></h3>
+
+<p><em>Type:</em> Object or <code>undefined</code><br><em>Default:</em> <code>undefined</code></p>
+
+<p>An Object that can have CSS properties that are added to the overlay.</p>
+
+<p>Major properties of default style:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">{</span>
+  <span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;rgba(136, 136, 136, 0.6)&#39;</span><span class="p">,</span>
+  <span class="nx">cursor</span><span class="o">:</span> <span class="s1">&#39;wait&#39;</span><span class="p">,</span>
+  <span class="nx">zIndex</span><span class="o">:</span> <span class="mi">9000</span>
+<span class="p">}</span>
+</code></pre></div>
+<p>For example, whity overlay:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span><span class="nx">style</span><span class="o">:</span> <span class="p">{</span><span class="nx">backgroundColor</span><span class="o">:</span> <span class="s1">&#39;rgba(255, 255, 255, 0.6)&#39;</span><span class="p">}});</span>
+</code></pre></div>
+<!-- include "ex-050.html" -->
+<!-- ================ ex -->
+<div><button id="ex-050-btn">SHOW</button> (5s)</div>
+
+<img id="ex-050-face" src="img/ex-050.svg" style="width: 30%; height: auto;">
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  bindToggleButton(new PlainOverlay({
+    face: document.getElementById('ex-050-face'),
+    style: {backgroundColor: 'rgba(255, 255, 255, 0.6)'}
+  }), document.getElementById('ex-050-btn'), 5000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-050.html" -->
+
+<p>Note that some properties that affect the layout (e.g. <code>width</code>, <code>border</code>, etc.) might not work or those might break the overlay.</p>
+
+<p>If you want to change the default style (i.e. style of all overlay in the web page), you can define style rules with <code>.plainoverlay</code> class in your style-sheet.</p>
+
+<p>For example, CSS rule-definition:</p>
+<div class="highlight"><pre><code class="language-css" data-lang="css"><span class="nc">.plainoverlay</span> <span class="p">{</span>
+  <span class="k">background-color</span><span class="o">:</span> <span class="n">rgba</span><span class="p">(</span><span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">255</span><span class="o">,</span> <span class="m">0</span><span class="o">.</span><span class="m">6</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div>
+<h3 id="options-onshow-onhide-onbeforeshow-onbeforehide"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code></h3>
+
+<p><em>Type:</em> function or <code>undefined</code><br><em>Default:</em> <code>undefined</code></p>
+
+<p>Event listeners:</p>
+
+<ul>
+<li><code>onBeforeShow</code> is called when the overlay is about to be shown. If <code>false</code> is returned, the showing is canceled.</li>
+<li><code>onShow</code> is called when a showing effect of the overlay is finished.</li>
+<li><code>onBeforeHide</code> is called when the overlay is about to be hidden. If <code>false</code> is returned, the hiding is canceled.</li>
+<li><code>onHide</code> is called when a hiding effect of the overlay is finished.</li>
+</ul>
+
+<p>In the function, <code>this</code> refers to the current PlainOverlay instance.</p>
+
+<p>For example:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span>
+  <span class="nx">onBeforeShow</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="nx">name</span><span class="p">.</span><span class="nx">value</span><span class="p">)</span> <span class="p">{</span>
+      <span class="k">this</span><span class="p">.</span><span class="nx">face</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;anim&#39;</span><span class="p">;</span> <span class="c1">// Start animation</span>
+    <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+      <span class="nx">alert</span><span class="p">(</span><span class="s1">&#39;Please input your name&#39;</span><span class="p">);</span>
+      <span class="k">return</span> <span class="kc">false</span><span class="p">;</span> <span class="c1">// Cancel the showing the overlay.</span>
+    <span class="p">}</span>
+  <span class="p">},</span>
+  <span class="nx">onHide</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">this</span><span class="p">.</span><span class="nx">face</span><span class="p">.</span><span class="nx">className</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span><span class="p">;</span> <span class="c1">// Stop animation</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<h3 id="onposition"><code>onPosition</code></h3>
+
+<p><em>Type:</em> function or <code>undefined</code><br><em>Default:</em> <code>undefined</code></p>
+
+<p>A <code>position</code> event listener that is called when the overlay is shown (before a showing effect starts), a window that contains the <code>target</code> is resized, and <a href="#position"><code>position</code></a> method is called.<br>In the function, <code>this</code> refers to the current PlainOverlay instance.</p>
+
+<p>This is used to adjust your custom <a href="#options-face"><code>face</code></a> that depends on a layout of the overlay.</p>
+
+<h2 id="properties">Properties</h2>
+
+<h3 id="state"><code>state</code></h3>
+
+<p><em>Type:</em> number<br><em>Read-only</em></p>
+
+<p>A number to indicate current state of the overlay.<br>It is one of the following static constant values:</p>
+
+<ul>
+<li><code>PlainOverlay.STATE_HIDDEN</code> (<code>0</code>): The overlay is being hiding fully.</li>
+<li><code>PlainOverlay.STATE_SHOWING</code> (<code>1</code>): A showing effect of the overlay is running.</li>
+<li><code>PlainOverlay.STATE_SHOWN</code> (<code>2</code>): The overlay is being showing fully.</li>
+<li><code>PlainOverlay.STATE_HIDING</code> (<code>3</code>): A hiding effect of the overlay is running.</li>
+</ul>
+
+<p>For example:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">toggleButton</span><span class="p">.</span><span class="nx">addEventListener</span><span class="p">(</span><span class="s1">&#39;click&#39;</span><span class="p">,</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="nx">overlay</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">STATE_HIDDEN</span> <span class="o">||</span>
+      <span class="nx">overlay</span><span class="p">.</span><span class="nx">state</span> <span class="o">===</span> <span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">STATE_HIDING</span><span class="p">)</span> <span class="p">{</span>
+    <span class="nx">overlay</span><span class="p">.</span><span class="nx">show</span><span class="p">();</span>
+  <span class="p">}</span> <span class="k">else</span> <span class="p">{</span>
+    <span class="nx">overlay</span><span class="p">.</span><span class="nx">hide</span><span class="p">();</span>
+  <span class="p">}</span>
+<span class="p">},</span> <span class="kc">false</span><span class="p">);</span>
+</code></pre></div>
+<h3 id="style"><code>style</code></h3>
+
+<p><em>Type:</em> CSSStyleDeclaration<br><em>Read-only</em></p>
+
+<p>A CSSStyleDeclaration object of the overlay to get or set the CSS properties.</p>
+
+<p>For example:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span><span class="p">.</span><span class="nx">style</span><span class="p">.</span><span class="nx">backgroundImage</span> <span class="o">=</span> <span class="s1">&#39;url(bg.png)&#39;</span><span class="p">;</span>
+</code></pre></div>
+<!-- include "ex-060.html" -->
+<!-- ================ ex -->
+<div><button id="ex-060-btn">SHOW</button> (5s)</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  // preload
+  (new Image()).src = '/img/ex-060.png';
+
+  var overlay = new PlainOverlay();
+  overlay.style.backgroundImage = 'url("img/ex-060.png")';
+  overlay.style.backgroundColor = 'transparent';
+  bindToggleButton(overlay, document.getElementById('ex-060-btn'), 5000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-060.html" -->
+
+<h3 id="face"><code>face</code></h3>
+
+<p>Get or set <a href="#options-face"><code>face</code></a> option.</p>
+
+<p>For example, change it while the overlay is shown:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span><span class="p">.</span><span class="nx">show</span><span class="p">({</span>
+  <span class="nx">face</span><span class="o">:</span> <span class="nx">progressBar</span><span class="p">,</span>
+  <span class="nx">onShow</span><span class="o">:</span> <span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+    <span class="nx">setTimeout</span><span class="p">(</span><span class="kd">function</span><span class="p">()</span> <span class="p">{</span>
+      <span class="nx">overlay</span><span class="p">.</span><span class="nx">face</span> <span class="o">=</span> <span class="nx">countDown</span><span class="p">;</span>
+    <span class="p">},</span> <span class="mi">3000</span><span class="p">);</span>
+  <span class="p">}</span>
+<span class="p">});</span>
+</code></pre></div>
+<!-- include "ex-070.html" -->
+<!-- ================ ex -->
+<div><button id="ex-070-btn">SHOW</button> (5s)</div>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  var progressBar = document.createElement('div'),
+    bar = progressBar.appendChild(document.createElement('div')),
+    countDown = document.createElement('div'),
+    button = document.getElementById('ex-070-btn'),
+    count, overlay, toggle;
+
+  function countNext() {
+    if (count < 0) {
+      toggle();
+      return;
+    }
+    countDown.textContent = count--;
+    setTimeout(countNext, 1000);
+  }
+
+  progressBar.id = 'ex-070-progress';
+  countDown.id = 'ex-070-count';
+
+  overlay = new PlainOverlay({
+    onBeforeShow: function() {
+      bar.style.width = '0';
+      this.face = progressBar;
+    },
+    onShow: function() {
+      bar.style.width = '90%';
+      setTimeout(function() {
+        count = 3;
+        countNext();
+        overlay.face = countDown;
+      }, 3000);
+    }
+  });
+
+  toggle = bindToggleButton(overlay, button, 0);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-070.html" -->
+
+<h3 id="duration"><code>duration</code></h3>
+
+<p>Get or set <a href="#options-duration"><code>duration</code></a> option.</p>
+
+<h3 id="onshow,-onhide,-onbeforeshow,-onbeforehide,-onposition"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code>, <code>onPosition</code></h3>
+
+<p>Get or set <a href="#options-onshow-onhide-onbeforeshow-onbeforehide"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code></a>, and <a href="#onposition"><code>onPosition</code></a> options.</p>
+
+<h2 id="plainoverlay.show"><code>PlainOverlay.show</code></h2>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span> <span class="o">=</span> <span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">show</span><span class="p">([</span><span class="nx">target</span><span class="p">][,</span> <span class="nx">options</span><span class="p">])</span>
+</code></pre></div>
+<p>This static method is a shorthand for:</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="p">(</span><span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">(</span><span class="nx">target</span><span class="p">,</span> <span class="nx">options</span><span class="p">)).</span><span class="nx">show</span><span class="p">()</span>
+</code></pre></div>
+<hr>
+
+<p>Thanks for images: <a href="https://www.flickr.com/photos/137304541@N04/">arian.suresh</a>, <a href="https://github.com/jxnblk/loading/">jxnblk/loading</a>, <a href="http://thepatternlibrary.com/">The Pattern Library</a>, <a href="https://github.com/tobiasahlin/SpinKit">tobiasahlin/SpinKit</a></p>
+
+  </main>
+  <footer>
+    <p class="copyright">PlainOverlay maintained by <a href="https://github.com/anseki">anseki</a></p>
+  </footer>
+
+</body>
+</html>
