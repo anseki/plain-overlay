@@ -2,6 +2,12 @@
 
 The simple library for customizable overlay which covers all or part of a web page.
 
+**<a href="http://anseki.github.io/plain-overlay/">Document and Examples http://anseki.github.io/plain-overlay/</a>**
+
+[![ss-01](ss-01.gif)](http://anseki.github.io/plain-overlay/)
+[![ss-02](ss-02.gif)](http://anseki.github.io/plain-overlay/)
+[![ss-03](ss-03.gif)](http://anseki.github.io/plain-overlay/)
+
 Features:
 
 - Cover all or part of a web page with an overlay.
@@ -296,11 +302,11 @@ overlay.style.backgroundImage = 'url(bg.png)';
 
 Get or set [`face`](#options-face) option.
 
-For example, change it when the overlay is being shown:
+For example, change it while the overlay is shown:
 
 ```js
 overlay.show({
-  face: message,
+  face: progressBar,
   onShow: function() {
     setTimeout(function() {
       overlay.face = countDown;
@@ -328,3 +334,7 @@ This static method is a shorthand for:
 ```js
 (new PlainOverlay(target, options)).show()
 ```
+
+---
+
+Thanks for images: [arian.suresh](https://www.flickr.com/photos/137304541@N04/), [jxnblk/loading](https://github.com/jxnblk/loading/), [The Pattern Library](http://thepatternlibrary.com/), [tobiasahlin/SpinKit](https://github.com/tobiasahlin/SpinKit)
