@@ -381,7 +381,7 @@ var PlainOverlay =
 	function avoidFocus(props, element) {
 	  if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
 	    if (element.blur) {
-	      // Trident doesn't support SVG#blur
+	      // Trident and Edge don't support SVG#blur
 	      element.blur();
 	    } else {
 	      element.ownerDocument.body.focus();
@@ -634,6 +634,7 @@ var PlainOverlay =
 	
 	      var elementAccKeys = {},
 	          tabIndex = element.tabIndex;
+	      // In Trident and Edge, `tabIndex` of all elements are `0` or something even if the element is not focusable.
 	      if (tabIndex !== -1) {
 	        elementAccKeys.element = element;
 	        elementAccKeys.tabIndex = element.hasAttribute('tabindex') ? tabIndex : false;
@@ -887,17 +888,20 @@ var PlainOverlay =
 	      sheet.type = 'text/css';
 	      sheet.id = STYLE_ELEMENT_ID;
 	      sheet.textContent = _default2.default;
-	      if (IS_TRIDENT) {
+	      if (IS_TRIDENT || IS_EDGE) {
 	        forceReflow(sheet);
 	      } // Trident bug
 	    }
 	
 	    // elmOverlay
 	    var elmOverlay = props.elmOverlay = elmDocument.createElement('div');
-	    // Trident bug, multiple and space-separated tokens are ignored.
-	    // elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
-	    elmOverlay.classList.add(STYLE_CLASS);
-	    elmOverlay.classList.add(STYLE_CLASS_HIDE);
+	    if (IS_TRIDENT) {
+	      // Trident bug, multiple arguments and space-separated tokens are ignored.
+	      elmOverlay.classList.add(STYLE_CLASS);
+	      elmOverlay.classList.add(STYLE_CLASS_HIDE);
+	    } else {
+	      elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
+	    }
 	    if (props.isDoc) {
 	      elmOverlay.classList.add(STYLE_CLASS_DOC);
 	    }

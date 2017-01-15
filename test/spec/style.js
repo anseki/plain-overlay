@@ -51,22 +51,20 @@ describe('style', function() {
   });
 
   it('applies style that is merged default and additional', function(done) {
-    if (window.IS_TRIDENT) {
-      // Wait for forceReflow() to finish.
-      setTimeout(function() {
-        // Trident returns zIndex as number
-        expect(frmWindow.getComputedStyle(insProps[frmOverlay1._id].elmOverlay, '').zIndex + '').toBe('9000');
-        expect(frmWindow.getComputedStyle(insProps[frmOverlay1._id].elmOverlay, '').cursor).toBe('pointer');
-        expect(frmWindow.getComputedStyle(insProps[frmOverlay2._id].elmOverlay, '').zIndex + '').toBe('9000');
-        expect(frmWindow.getComputedStyle(insProps[frmOverlay2._id].elmOverlay, '').cursor).toBe('pointer');
-        done();
-      }, 10);
-    } else {
-      expect(frmWindow.getComputedStyle(insProps[frmOverlay1._id].elmOverlay, '').zIndex).toBe('9000');
+    function test() {
+      // Trident returns zIndex as number
+      expect(frmWindow.getComputedStyle(insProps[frmOverlay1._id].elmOverlay, '').zIndex + '').toBe('9000');
       expect(frmWindow.getComputedStyle(insProps[frmOverlay1._id].elmOverlay, '').cursor).toBe('pointer');
-      expect(frmWindow.getComputedStyle(insProps[frmOverlay2._id].elmOverlay, '').zIndex).toBe('9000');
+      expect(frmWindow.getComputedStyle(insProps[frmOverlay2._id].elmOverlay, '').zIndex + '').toBe('9000');
       expect(frmWindow.getComputedStyle(insProps[frmOverlay2._id].elmOverlay, '').cursor).toBe('pointer');
       done();
+    }
+
+    if (window.IS_TRIDENT || window.IS_EDGE) {
+      // Wait for forceReflow() to finish.
+      setTimeout(test, 10);
+    } else {
+      test();
     }
   });
 
