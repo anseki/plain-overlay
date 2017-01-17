@@ -82,7 +82,7 @@ var overlay = new PlainOverlay({duration: 400});
 var overlay = new PlainOverlay(document.getElementById('form'), {face: false});
 ```
 
-See also: [`PlainOverlay.show`](#plainoverlay-show)
+See also: [`PlainOverlay.show`](#plainoverlayshow)
 
 ## Methods
 
@@ -99,7 +99,7 @@ If `options` argument is specified, call [`setOptions`](#setoptions) method and 
 overlay.setOptions(options).show();
 ```
 
-See also: [`PlainOverlay.show`](#plainoverlay-show)
+See also: [`PlainOverlay.show`](#plainoverlayshow)
 
 ### `hide`
 
