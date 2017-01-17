@@ -286,7 +286,7 @@ window.addEventListener('load', function() {
 </code></pre></div>
 <p>Set one or more options.<br>The <code>options</code> argument is an Object that can have properties as <a href="#options">options</a>.</p>
 
-<h3 id="scrollleft,-scrolltop"><code>scrollLeft</code>, <code>scrollTop</code></h3>
+<h3 id="scrollleft-scrolltop"><code>scrollLeft</code>, <code>scrollTop</code></h3>
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">currentLeft</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">scrollLeft</span><span class="p">([</span><span class="nx">newLeft</span><span class="p">[,</span> <span class="nx">scrollTarget</span><span class="p">]])</span>
 </code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">currentTop</span> <span class="o">=</span> <span class="nx">overlay</span><span class="p">.</span><span class="nx">scrollTop</span><span class="p">([</span><span class="nx">newTop</span><span class="p">[,</span> <span class="nx">scrollTarget</span><span class="p">]])</span>
 </code></pre></div>
@@ -478,7 +478,7 @@ window.addEventListener('load', function() {
   'use strict';
 
   // preload
-  (new Image()).src = '/img/ex-060.png';
+  (new Image()).src = 'img/ex-060.png';
 
   var overlay = new PlainOverlay();
   overlay.style.backgroundImage = 'url("img/ex-060.png")';
@@ -556,11 +556,11 @@ window.addEventListener('load', function() {
 
 <p>Get or set <a href="#options-duration"><code>duration</code></a> option.</p>
 
-<h3 id="onshow,-onhide,-onbeforeshow,-onbeforehide,-onposition"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code>, <code>onPosition</code></h3>
+<h3 id="onshow-onhide-onbeforeshow-onbeforehide-onposition"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code>, <code>onPosition</code></h3>
 
 <p>Get or set <a href="#options-onshow-onhide-onbeforeshow-onbeforehide"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code></a>, and <a href="#onposition"><code>onPosition</code></a> options.</p>
 
-<h2 id="plainoverlay.show"><code>PlainOverlay.show</code></h2>
+<h2 id="plainoverlayshow"><code>PlainOverlay.show</code></h2>
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span> <span class="o">=</span> <span class="nx">PlainOverlay</span><span class="p">.</span><span class="nx">show</span><span class="p">([</span><span class="nx">target</span><span class="p">][,</span> <span class="nx">options</span><span class="p">])</span>
 </code></pre></div>
 <p>This static method is a shorthand for:</p>
