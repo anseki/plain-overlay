@@ -138,7 +138,7 @@ function restoreStyle(element, savedStyleProps, propNames) {
  * @returns {(BBox|null)} - A bounding-box or null when failed.
  */
 function getBBox(element, window) {
-  var rect = element.getBoundingClientRect(),
+  const rect = element.getBoundingClientRect(),
     bBox = {left: rect.left, top: rect.top,
       right: rect.right, bottom: rect.bottom, width: rect.width, height: rect.height};
   if (window) {
