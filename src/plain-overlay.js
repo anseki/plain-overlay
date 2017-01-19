@@ -30,8 +30,8 @@ const
   TOLERANCE = 0.5,
 
   IS_TRIDENT = !!document.uniqueID,
-  IS_BLINK = !!(window.chrome && window.chrome.webstore),
-  IS_GECKO = 'MozAppearance' in document.documentElement.style,
+  IS_BLINK = !!(window.chrome && window.chrome.webstore), // [DEBUG/]
+  IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
   IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
     '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
   IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
