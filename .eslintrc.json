@@ -1,6 +1,4 @@
 {
   "root": true,
-  "extends": [
-    "../../_common/eslintrc.json"
-  ]
+  "extends": "../../_common/eslintrc.json"
 }
