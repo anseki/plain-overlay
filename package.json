@@ -40,7 +40,7 @@
     "build": "cross-env NODE_ENV=production webpack",
     "dev": "webpack --display-modules"
   },
-  "homepage": "http://anseki.github.io/plain-overlay/",
+  "homepage": "https://anseki.github.io/plain-overlay/",
   "repository": {
     "type": "git",
     "url": "git://github.com/anseki/plain-overlay.git"

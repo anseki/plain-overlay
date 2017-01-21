@@ -2,11 +2,11 @@
 
 The simple library for customizable overlay which covers all or part of a web page.
 
-**<a href="http://anseki.github.io/plain-overlay/">Document and Examples http://anseki.github.io/plain-overlay/</a>**
+**<a href="https://anseki.github.io/plain-overlay/">Document and Examples https://anseki.github.io/plain-overlay/</a>**
 
-[![ss-01](ss-01.gif)](http://anseki.github.io/plain-overlay/)
-[![ss-02](ss-02.gif)](http://anseki.github.io/plain-overlay/)
-[![ss-03](ss-03.gif)](http://anseki.github.io/plain-overlay/)
+[![ss-01](ss-01.gif)](https://anseki.github.io/plain-overlay/)
+[![ss-02](ss-02.gif)](https://anseki.github.io/plain-overlay/)
+[![ss-03](ss-03.gif)](https://anseki.github.io/plain-overlay/)
 
 Features:
 
@@ -16,7 +16,7 @@ Features:
 - Show something like a loading-animation on the overlay.
 - No dependencies.
 - Single file.
-- Modern browsers are supported. (If you want to support legacy browsers such as IE 9-, see [jQuery-plainOverlay](http://anseki.github.io/jquery-plainoverlay/).)
+- Modern browsers are supported. (If you want to support legacy browsers such as IE 9-, see [jQuery-plainOverlay](https://anseki.github.io/jquery-plainoverlay/).)
 
 One of the following can be specified as the target that is covered:
 

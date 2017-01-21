@@ -16,7 +16,7 @@
     "window"
   ],
   "main": "plain-overlay.min.js",
-  "homepage": "http://anseki.github.io/plain-overlay/",
+  "homepage": "https://anseki.github.io/plain-overlay/",
   "repository": {
     "type": "git",
     "url": "git://github.com/anseki/plain-overlay.git"
