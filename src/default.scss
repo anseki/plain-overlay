@@ -86,14 +86,18 @@ $face_01-duration: 1s;
 
 ##{$app-face}_01 {
 
+  circle,
+  path {
+    fill: none;
+    stroke-width: 40px;
+  }
+
   circle {
-    fill: #fff;
+    stroke: #fff;
     opacity: 0.25;
   }
 
   path {
-    fill: none;
-    stroke-width: 4px;
     stroke-linecap: round;
     /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
     // stroke: url("##{$app-face}_01-grad");

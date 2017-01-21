@@ -84,19 +84,23 @@
 }
 
 /* line 89, default.scss */
-#plainoverlay-builtin-face_01 circle {
-  fill: #fff;
-  opacity: 0.25;
-}
-/* line 94, default.scss */
+#plainoverlay-builtin-face_01 circle,
 #plainoverlay-builtin-face_01 path {
   fill: none;
-  stroke-width: 4px;
+  stroke-width: 40px;
+}
+/* line 95, default.scss */
+#plainoverlay-builtin-face_01 circle {
+  stroke: #fff;
+  opacity: 0.25;
+}
+/* line 100, default.scss */
+#plainoverlay-builtin-face_01 path {
   stroke-linecap: round;
   /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
 }
 
-/* line 103, default.scss */
+/* line 107, default.scss */
 .plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01 {
   -moz-animation-name: plainoverlay-builtin-face_01-spin;
   -webkit-animation-name: plainoverlay-builtin-face_01-spin;
