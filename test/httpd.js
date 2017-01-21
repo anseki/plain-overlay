@@ -88,11 +88,6 @@ http.createServer((request, response) => {
           match: '/css-prefix.min.js',
           serve: '../node_modules/cssprefix/css-prefix.min.js',
           allowOutside: true
-        },
-        {
-          match: '/face_01.svg',
-          serve: '../src/face_01.svg',
-          allowOutside: true
         }
       ],
       logger: logger

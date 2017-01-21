@@ -81,7 +81,7 @@ Object.defineProperty(exports, "__esModule", {
  * AnimEvent
  * https://github.com/anseki/anim-event
  *
- * Copyright (c) 2016 anseki
+ * Copyright (c) 2017 anseki
  * Licensed under the MIT license.
  */
 
@@ -198,7 +198,7 @@ Object.defineProperty(exports, "__esModule", {
  * CSSPrefix
  * https://github.com/anseki/css-prefix
  *
- * Copyright (c) 2016 anseki
+ * Copyright (c) 2017 anseki
  * Licensed under the MIT license.
  */
 
@@ -338,7 +338,7 @@ module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-fa
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide):not(.plainoverlay-webkit-iframe) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}.plainoverlay-webkit-iframe .plainoverlay-builtin-face_01{background-image:url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBzdGFuZGFsb25lPSJubyI/PjxzdmcgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgdmVyc2lvbj0iMS4xIiB2aWV3Qm94PSIwIDAgMzIgMzIiPjxzdHlsZT48IVtDREFUQVsKI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEgY2lyY2xle2ZpbGw6I2ZmZjtvcGFjaXR5Oi4yNX0jcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMSBwYXRoe2ZpbGw6bm9uZTtzdHJva2Utd2lkdGg6NHB4O3N0cm9rZS1saW5lY2FwOnJvdW5kfXVzZXstbW96LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbjstd2Via2l0LWFuaW1hdGlvbi1uYW1lOnBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3BpbjthbmltYXRpb24tbmFtZTpwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLXNwaW47LW1vei1hbmltYXRpb24tZHVyYXRpb246MXM7LXdlYmtpdC1hbmltYXRpb24tZHVyYXRpb246MXM7YW5pbWF0aW9uLWR1cmF0aW9uOjFzOy1tb3otYW5pbWF0aW9uLXRpbWluZy1mdW5jdGlvbjpsaW5lYXI7LXdlYmtpdC1hbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjthbmltYXRpb24tdGltaW5nLWZ1bmN0aW9uOmxpbmVhcjstbW96LWFuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC1hbmltYXRpb24taXRlcmF0aW9uLWNvdW50OmluZmluaXRlO2FuaW1hdGlvbi1pdGVyYXRpb24tY291bnQ6aW5maW5pdGU7LXdlYmtpdC10cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcjt0cmFuc2Zvcm0tb3JpZ2luOmNlbnRlcn1ALW1vei1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LW1vei10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LW1vei10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1ALXdlYmtpdC1rZXlmcmFtZXMgcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1zcGlue2Zyb217LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDApO3RyYW5zZm9ybTpyb3RhdGUoMCl9dG97LXdlYmtpdC10cmFuc2Zvcm06cm90YXRlKDM2MGRlZyk7dHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpfX1Aa2V5ZnJhbWVzIHBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtc3Bpbntmcm9tey1tb3otdHJhbnNmb3JtOnJvdGF0ZSgwKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgwKTstd2Via2l0LXRyYW5zZm9ybTpyb3RhdGUoMCk7dHJhbnNmb3JtOnJvdGF0ZSgwKX10b3stbW96LXRyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKTstbXMtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpOy13ZWJraXQtdHJhbnNmb3JtOnJvdGF0ZSgzNjBkZWcpO3RyYW5zZm9ybTpyb3RhdGUoMzYwZGVnKX19Cl1dPjwvc3R5bGU+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWdyYWQiIGdyYWRpZW50VW5pdHM9InVzZXJTcGFjZU9uVXNlIiB4MT0iMTYiIHkxPSIyIiB4Mj0iMzAiIHkyPSIxNiI+PHN0b3Agb2Zmc2V0PSIwIiBzdG9wLWNvbG9yPSIjZmZmIiBzdG9wLW9wYWNpdHk9IjAiLz48c3RvcCBvZmZzZXQ9IjAuMiIgc3RvcC1jb2xvcj0iI2ZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz48c3RvcCBvZmZzZXQ9IjEiIHN0b3AtY29sb3I9IiNmZmYiIHN0b3Atb3BhY2l0eT0iMSIvPjwvbGluZWFyR3JhZGllbnQ+PGNsaXBQYXRoIGlkPSJwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxLWNsaXAiIGNsaXAtcnVsZT0iZXZlbm9kZCI+PHBhdGggZD0iTS00LTRIMzZWMzZILTRWLTR6TTE2IDRhMTIgMTIgMCAwIDEgMCAyNCAxMiAxMiAwIDAgMSAwLTI0eiIvPjwvY2xpcFBhdGg+PGcgaWQ9InBsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEiPjxjaXJjbGUgY3g9IjE2IiBjeT0iMTYiIHI9IjE2IiBjbGlwLXBhdGg9InVybCgjcGxhaW5vdmVybGF5LWJ1aWx0aW4tZmFjZV8wMS1jbGlwKSIvPjxwYXRoIGQ9Ik0xNiAyYTE0IDE0IDAgMCAxIDE0IDE0IiBzdHJva2U9InVybCgnI3BsYWlub3ZlcmxheS1idWlsdGluLWZhY2VfMDEtZ3JhZCcpIi8+PC9nPjwvZGVmcz48dXNlIHhsaW5rOmhyZWY9IiNwbGFpbm92ZXJsYXktYnVpbHRpbi1mYWNlXzAxIi8+PC9zdmc+);background-repeat:no-repeat;background-size:contain;background-position:center}.plainoverlay.plainoverlay-doc.plainoverlay-webkit-iframe .plainoverlay-body{height:100%}";
+module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle{fill:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{fill:none;stroke-width:4px;stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
 
 /***/ }),
 /* 5 */
@@ -391,7 +391,6 @@ var APP_ID = 'plainoverlay',
     STYLE_CLASS_HIDE = APP_ID + '-hide',
     STYLE_CLASS_BODY = APP_ID + '-body',
     FACE_DEFS_ELEMENT_ID = APP_ID + '-builtin-face-defs',
-    STYLE_CLASS_WEBKIT_IFRAME = APP_ID + '-webkit-iframe',
     STATE_HIDDEN = 0,
     STATE_SHOWING = 1,
     STATE_SHOWN = 2,
@@ -402,13 +401,15 @@ DURATION = 200,
     // COPY: default.scss
 TOLERANCE = 0.5,
     IS_TRIDENT = !!document.uniqueID,
-    IS_BLINK = !!(window.chrome && window.chrome.webstore),
+    IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
+    IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
+    // [DEBUG/]
+IS_BLINK = !!(window.chrome && window.chrome.webstore),
     // [DEBUG/]
 IS_GECKO = 'MozAppearance' in document.documentElement.style,
     // [DEBUG/]
-IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-    IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
-    isObject = function () {
+
+isObject = function () {
   var toString = {}.toString,
       fnToString = {}.hasOwnProperty.toString,
       objFnString = fnToString.call(Object);
@@ -445,10 +446,10 @@ var insId = 0;
 // [DEBUG]
 window.insProps = insProps;
 window.IS_TRIDENT = IS_TRIDENT;
-window.IS_BLINK = IS_BLINK;
-window.IS_GECKO = IS_GECKO;
 window.IS_EDGE = IS_EDGE;
 window.IS_WEBKIT = IS_WEBKIT;
+window.IS_BLINK = IS_BLINK;
+window.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
 function forceReflow(target) {
@@ -1038,11 +1039,14 @@ function _setOptions(props, newOptions) {
       elmOverlayBody.removeChild(elmOverlayBody.firstChild);
     }
     if (newOptions.face === false) {
+      // No face
       options.face = false;
     } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
+      // Specific face
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
     } else {
+      // Builtin face
       var elmDocument = props.document;
       if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) {
         // Add svg defs
@@ -1050,9 +1054,7 @@ function _setOptions(props, newOptions) {
         elmDocument.body.appendChild(defsSvg.documentElement);
       }
       options.face = void 0;
-      elmOverlayBody.innerHTML = props.webkitIframe ?
-      // for Webkit bug
-      '<div class="plainoverlay-builtin-face plainoverlay-builtin-face_01"></div>' : _face4.default;
+      elmOverlayBody.innerHTML = _face4.default;
     }
   }
 
@@ -1206,12 +1208,6 @@ var PlainOverlay = function () {
     }
     if (props.isDoc) {
       elmOverlay.classList.add(STYLE_CLASS_DOC);
-    }
-
-    // for Webkit bug
-    if (IS_WEBKIT && props.window.frameElement) {
-      props.webkitIframe = true;
-      elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME);
     }
 
     (function (listener) {

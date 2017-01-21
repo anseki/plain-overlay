@@ -12,8 +12,6 @@ $app-body: #{$app_id}-body;
 
 $app-face: #{$app_id}-builtin-face;
 
-$app-webkit-iframe: #{$app_id}-webkit-iframe;
-
 // $duration: 2500ms; // COPY: plain-overlay.js
 $duration: 200ms; // COPY: plain-overlay.js
 $overlay-bg: rgba(136, 136, 136, 0.6);
@@ -44,8 +42,8 @@ $face_01-duration: 1s;
     top: -$target_margin;
     overflow: visible;
     padding: $target_margin; // For mobile browsers
-    width: 100vw; // Webkit bug, contents size is ignored.
-    height: 100vh; // Webkit bug, contents size is ignored.
+    width: 100vw; // Webkit 538.1- bug, child element size by `vw` is ignored.
+    height: 100vh; // Webkit 538.1- bug above, add this by way of precaution but height may have no problem.
   }
 }
 
@@ -86,8 +84,6 @@ $face_01-duration: 1s;
   top: -100px;
 }
 
-/* @EXPORT[face_01]@ */
-
 ##{$app-face}_01 {
 
   circle {
@@ -104,8 +100,7 @@ $face_01-duration: 1s;
   }
 }
 
-.#{$app_id}:not(.#{$app-hide}):not(.#{$app-webkit-iframe}) .#{$app-face}_01 {
-  // Webkit bug, flexbox doesn't work with animation in iframe
+.#{$app_id}:not(.#{$app-hide}) .#{$app-face}_01 {
   @extend %anim-init#{$media};
   @include animation-name(#{$app-face}_01-spin);
   @include animation-duration($face_01-duration);
@@ -116,19 +111,4 @@ $face_01-duration: 1s;
 @include keyframes(#{$app-face}_01-spin) {
   from { @include transform(rotate(0deg)); }
   to { @include transform(rotate(360deg)); }
-}
-
-/* @/EXPORT@ */
-
-// Webkit bug, standalone SVG
-
-.#{$app-webkit-iframe} .#{$app-face}_01 {
-  background-image: inline-image("../src/face_01.svg");
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-}
-
-.#{$app_id}.#{$app-doc}.#{$app-webkit-iframe} .#{$app-body} {
-  height: 100%; // Webkit bug
 }

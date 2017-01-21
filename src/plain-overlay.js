@@ -22,19 +22,17 @@ const
   STYLE_CLASS_BODY = `${APP_ID}-body`,
   FACE_DEFS_ELEMENT_ID = `${APP_ID}-builtin-face-defs`,
 
-  STYLE_CLASS_WEBKIT_IFRAME = `${APP_ID}-webkit-iframe`,
-
   STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
   // DURATION = 2500, // COPY: default.scss
   DURATION = 200, // COPY: default.scss
   TOLERANCE = 0.5,
 
   IS_TRIDENT = !!document.uniqueID,
-  IS_BLINK = !!(window.chrome && window.chrome.webstore), // [DEBUG/]
-  IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
   IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
     '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-  IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
+  IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style, // [DEBUG/]
+  IS_BLINK = !!(window.chrome && window.chrome.webstore), // [DEBUG/]
+  IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
 
   isObject = (() => {
     const toString = {}.toString, fnToString = {}.hasOwnProperty.toString,
@@ -71,10 +69,10 @@ let insId = 0;
 // [DEBUG]
 window.insProps = insProps;
 window.IS_TRIDENT = IS_TRIDENT;
-window.IS_BLINK = IS_BLINK;
-window.IS_GECKO = IS_GECKO;
 window.IS_EDGE = IS_EDGE;
 window.IS_WEBKIT = IS_WEBKIT;
+window.IS_BLINK = IS_BLINK;
+window.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
 function forceReflow(target) {
@@ -647,21 +645,19 @@ function setOptions(props, newOptions) {
     const elmOverlayBody = props.elmOverlayBody;
     // Clear
     while (elmOverlayBody.firstChild) { elmOverlayBody.removeChild(elmOverlayBody.firstChild); }
-    if (newOptions.face === false) {
+    if (newOptions.face === false) { // No face
       options.face = false;
-    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) {
+    } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) { // Specific face
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
-    } else {
+    } else { // Builtin face
       const elmDocument = props.document;
       if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) { // Add svg defs
         const defsSvg = (new props.window.DOMParser()).parseFromString(FACE_DEFS, 'image/svg+xml');
         elmDocument.body.appendChild(defsSvg.documentElement);
       }
       options.face = void 0;
-      elmOverlayBody.innerHTML = props.webkitIframe ?
-        // for Webkit bug
-        '<div class="plainoverlay-builtin-face plainoverlay-builtin-face_01"></div>' : FACE_01;
+      elmOverlayBody.innerHTML = FACE_01;
     }
   }
 
@@ -802,12 +798,6 @@ class PlainOverlay {
       elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     }
     if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
-
-    // for Webkit bug
-    if (IS_WEBKIT && props.window.frameElement) {
-      props.webkitIframe = true;
-      elmOverlay.classList.add(STYLE_CLASS_WEBKIT_IFRAME);
-    }
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
