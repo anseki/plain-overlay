@@ -173,6 +173,18 @@ For example, an image:
 var overlay = new PlainOverlay({face: document.getElementById('image')});
 ```
 
+For example, an inline SVG:
+
+```html
+<svg id="svg" version="1.1">
+  <!-- ... -->
+</svg>
+```
+
+```js
+var overlay = new PlainOverlay({face: document.getElementById('svg')});
+```
+
 ### <a name="options-duration"></a>`duration`
 
 *Type:* number  
