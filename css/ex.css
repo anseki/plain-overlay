@@ -1,5 +1,5 @@
 /* line 5, ex.scss */
-.plainoverlay:not(.plainoverlay-hide) #ex-010-p-face > div, .plainoverlay:not(.plainoverlay-hide) #ex-010-win1-face > div, .plainoverlay:not(.plainoverlay-hide) #ex-070-progress div {
+.plainoverlay:not(.plainoverlay-hide) #ex-010-p-face > div, .plainoverlay:not(.plainoverlay-hide) #ex-010-win1-face > div, .plainoverlay:not(.plainoverlay-hide) #ex-041-face, .plainoverlay:not(.plainoverlay-hide) #ex-070-progress div {
   -webkit-tap-highlight-color: transparent;
   transform: translateZ(0);
   box-shadow: 0 0 1px transparent;
@@ -308,7 +308,84 @@ span.label {
   text-shadow: 3px 5px 5px rgba(0, 0, 0, 0.6);
 }
 
-/* line 206, ex.scss */
+/* line 208, ex.scss */
+#ex-041-face {
+  width: 73.73px;
+  height: 125.73px;
+}
+/* line 212, ex.scss */
+#ex-041-face .hourglass-glass {
+  fill: #bbe5ea;
+}
+/* line 216, ex.scss */
+#ex-041-face .hourglass-sand {
+  fill: #636889;
+}
+/* line 220, ex.scss */
+#ex-041-face .hourglass-light {
+  fill: none;
+  stroke: #fff;
+  stroke-width: 4px;
+  stroke-linecap: round;
+}
+/* line 227, ex.scss */
+#ex-041-face .hourglass-base {
+  fill: none;
+  stroke: #7c4c1c;
+  stroke-width: 7.4815px;
+  stroke-linecap: round;
+}
+/* line 234, ex.scss */
+.plainoverlay:not(.plainoverlay-hide) #ex-041-face {
+  -moz-animation-name: hourglass-spin;
+  -webkit-animation-name: hourglass-spin;
+  animation-name: hourglass-spin;
+  -moz-animation-duration: 2000ms;
+  -webkit-animation-duration: 2000ms;
+  animation-duration: 2000ms;
+  -moz-animation-timing-function: linear;
+  -webkit-animation-timing-function: linear;
+  animation-timing-function: linear;
+  -moz-animation-iteration-count: infinite;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
+}
+
+@-moz-keyframes hourglass-spin {
+  80% {
+    -moz-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+}
+@-webkit-keyframes hourglass-spin {
+  80% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+}
+@keyframes hourglass-spin {
+  80% {
+    -moz-transform: rotate(0deg);
+    -ms-transform: rotate(0deg);
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  to {
+    -moz-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    -webkit-transform: rotate(180deg);
+    transform: rotate(180deg);
+  }
+}
+/* line 250, ex.scss */
 #ex-070-progress,
 #ex-070-progress div {
   height: 32px;
@@ -317,7 +394,7 @@ span.label {
   border-radius: 16px;
 }
 
-/* line 212, ex.scss */
+/* line 256, ex.scss */
 #ex-070-progress {
   width: 480px;
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2RkZGRkZCIvPjxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2NjY2NjYyIvPjwvbGluZWFyR3JhZGllbnQ+PC9kZWZzPjxyZWN0IHg9IjAiIHk9IjAiIHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JhZCkiIC8+PC9zdmc+IA==');
@@ -331,7 +408,7 @@ span.label {
   box-shadow: 3px 5px 10px 3px rgba(0, 0, 0, 0.3);
 }
 
-/* line 221, ex.scss */
+/* line 265, ex.scss */
 #ex-070-progress div {
   background-image: url('data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0idXRmLTgiPz4gPHN2ZyB2ZXJzaW9uPSIxLjEiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PGxpbmVhckdyYWRpZW50IGlkPSJncmFkIiBncmFkaWVudFVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgeDE9IjAuNSIgeTE9IjAuMCIgeDI9IjAuNSIgeTI9IjEuMCI+PHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzViYThmOSIvPjxzdG9wIG9mZnNldD0iNTAlIiBzdG9wLWNvbG9yPSIjMmM4ZmY3Ii8+PC9saW5lYXJHcmFkaWVudD48L2RlZnM+PHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmFkKSIgLz48L3N2Zz4g');
   background-size: 100%;
@@ -340,7 +417,7 @@ span.label {
   background-image: -webkit-linear-gradient(#5ba8f9 0%, #2c8ff7 50%);
   background-image: linear-gradient(#5ba8f9 0%, #2c8ff7 50%);
 }
-/* line 227, ex.scss */
+/* line 271, ex.scss */
 .plainoverlay:not(.plainoverlay-hide) #ex-070-progress div {
   -moz-transition-property: width;
   -o-transition-property: width;
@@ -356,7 +433,7 @@ span.label {
   transition-timing-function: linear;
 }
 
-/* line 235, ex.scss */
+/* line 279, ex.scss */
 #ex-070-count {
   color: #fff;
   font-size: 15em;

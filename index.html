@@ -138,7 +138,7 @@ window.addEventListener('load', function() {
 <li>Show something like a loading-animation on the overlay.</li>
 <li>No dependencies.</li>
 <li>Single file.</li>
-<li>Modern browsers are supported. (If you want to support legacy browsers such as IE 9-, see <a href="http://anseki.github.io/jquery-plainoverlay/">jQuery-plainOverlay</a>.)</li>
+<li>Modern browsers are supported. (If you want to support legacy browsers such as IE 9-, see <a href="https://anseki.github.io/jquery-plainoverlay/">jQuery-plainOverlay</a>.)</li>
 </ul>
 
 <p>One of the following can be specified as the target that is covered:</p>
@@ -346,6 +346,36 @@ window.addEventListener('load', function() {
 </script>
 <!-- ================ /ex -->
 <!-- /include "ex-040.html" -->
+
+<p>For example, an inline SVG:</p>
+<div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;svg</span> <span class="na">id=</span><span class="s">&quot;svg&quot;</span> <span class="na">version=</span><span class="s">&quot;1.1&quot;</span><span class="nt">&gt;</span>
+  <span class="c">&lt;!-- ... --&gt;</span>
+<span class="nt">&lt;/svg&gt;</span>
+</code></pre></div><div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span><span class="nx">face</span><span class="o">:</span> <span class="nb">document</span><span class="p">.</span><span class="nx">getElementById</span><span class="p">(</span><span class="s1">&#39;svg&#39;</span><span class="p">)});</span>
+</code></pre></div>
+<!-- include "ex-041.html" -->
+<!-- ================ ex -->
+<div><button id="ex-041-btn">SHOW</button> (10s)</div>
+
+<svg id="ex-041-face" class="hourglass" version="1.1" viewBox="0 0 73.73 125.73">
+  <path class="hourglass-glass" d="M39.2,62.87c0-23.44,30.75-27.07,30.75-57.65H3.79c0,30.59,30.75,34.22,30.75,57.65S3.79,89.93,3.79,120.52 h66.16C69.94,89.93,39.2,86.3,39.2,62.87z"/>
+  <path class="hourglass-sand" d="M63.93,108.87c-24.85-9.08-25.57-9.37-25.57-11.18V55.35c0-6.24,7.41-15.55,11.86-19.96 c2.84-2.81,5.61-5.57,8.01-8.6c0,0-14.71,5.45-21.38,5.45s-21.38-5.45-21.38-5.45c2.41,3.03,5.17,5.8,8.01,8.6 c4.46,4.41,11.86,13.72,11.86,19.96v42.34c0,1.81-0.71,2.09-25.57,11.18c-0.74,1.56-1.45,7.84-1.75,10.65h57.63 C65.38,116.71,64.67,110.44,63.93,108.87z"/>
+  <path class="hourglass-light" d="M48.01,90.3c3.89,2.75,7.89,6.52,10.65,11.95"/>
+  <line class="hourglass-base" x1="3.74" y1="3.74" x2="69.99" y2="3.74"/>
+  <line class="hourglass-base" x1="3.74" y1="121.99" x2="69.99" y2="121.99"/>
+</svg>
+
+<script>
+window.addEventListener('load', function() {
+  'use strict';
+
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-041-face')}),
+    document.getElementById('ex-041-btn'), 10000);
+
+});
+</script>
+<!-- ================ /ex -->
+<!-- /include "ex-041.html" -->
 
 <h3 id="options-duration"><code>duration</code></h3>
 
