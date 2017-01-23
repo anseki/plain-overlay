@@ -1,6 +1,6 @@
 /*
  * PlainOverlay
- * https://github.com/anseki/plain-overlay
+ * https://anseki.github.io/plain-overlay/
  *
  * Copyright (c) 2017 anseki
  * Licensed under the MIT license.
@@ -751,8 +751,8 @@ class PlainOverlay {
     const props = {
       ins: this,
       options: { // Initial options (not default)
-        face: '',
-        duration: DURATION
+        face: {}, // To update forcibly in setOptions.
+        duration: DURATION // Initial state.
       },
       state: STATE_HIDDEN,
       savedStyleTarget: {},
@@ -773,6 +773,7 @@ class PlainOverlay {
       if (!(props.elmTarget = getTarget(target))) { throw new Error('This target is not accepted.'); }
       if (options && !isObject(options)) { throw new Error('Invalid options.'); }
     }
+
     props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
     const elmDocument = props.document = props.elmTarget.ownerDocument;
     props.window = elmDocument.defaultView;
@@ -945,55 +946,6 @@ class PlainOverlay {
     return this;
   }
 
-  get face() {
-    return insProps[this._id].options.face;
-  }
-  set face(value) {
-    setOptions(insProps[this._id], {face: value});
-  }
-
-  get duration() {
-    return insProps[this._id].options.duration;
-  }
-  set duration(value) {
-    setOptions(insProps[this._id], {duration: value});
-  }
-
-  get onShow() {
-    return insProps[this._id].options.onShow;
-  }
-  set onShow(value) {
-    setOptions(insProps[this._id], {onShow: value});
-  }
-
-  get onHide() {
-    return insProps[this._id].options.onHide;
-  }
-  set onHide(value) {
-    setOptions(insProps[this._id], {onHide: value});
-  }
-
-  get onBeforeShow() {
-    return insProps[this._id].options.onBeforeShow;
-  }
-  set onBeforeShow(value) {
-    setOptions(insProps[this._id], {onBeforeShow: value});
-  }
-
-  get onBeforeHide() {
-    return insProps[this._id].options.onBeforeHide;
-  }
-  set onBeforeHide(value) {
-    setOptions(insProps[this._id], {onBeforeHide: value});
-  }
-
-  get onPosition() {
-    return insProps[this._id].options.onPosition;
-  }
-  set onPosition(value) {
-    setOptions(insProps[this._id], {onPosition: value});
-  }
-
   get state() {
     return insProps[this._id].state;
   }
@@ -1001,6 +953,27 @@ class PlainOverlay {
   get style() {
     return insProps[this._id].elmOverlay.style;
   }
+
+  get face() { return insProps[this._id].options.face; }
+  set face(value) { setOptions(insProps[this._id], {face: value}); }
+
+  get duration() { return insProps[this._id].options.duration; }
+  set duration(value) { setOptions(insProps[this._id], {duration: value}); }
+
+  get onShow() { return insProps[this._id].options.onShow; }
+  set onShow(value) { setOptions(insProps[this._id], {onShow: value}); }
+
+  get onHide() { return insProps[this._id].options.onHide; }
+  set onHide(value) { setOptions(insProps[this._id], {onHide: value}); }
+
+  get onBeforeShow() { return insProps[this._id].options.onBeforeShow; }
+  set onBeforeShow(value) { setOptions(insProps[this._id], {onBeforeShow: value}); }
+
+  get onBeforeHide() { return insProps[this._id].options.onBeforeHide; }
+  set onBeforeHide(value) { setOptions(insProps[this._id], {onBeforeHide: value}); }
+
+  get onPosition() { return insProps[this._id].options.onPosition; }
+  set onPosition(value) { setOptions(insProps[this._id], {onPosition: value}); }
 
   static show(target, options) {
     return (new PlainOverlay(target, options)).show();
