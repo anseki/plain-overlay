@@ -353,7 +353,7 @@ Object.defineProperty(exports, "__esModule", {
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * PlainOverlay
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * https://github.com/anseki/plain-overlay
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * https://anseki.github.io/plain-overlay/
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       *
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Copyright (c) 2017 anseki
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Licensed under the MIT license.
@@ -1152,8 +1152,8 @@ var PlainOverlay = function () {
     var props = {
       ins: this,
       options: { // Initial options (not default)
-        face: '',
-        duration: DURATION
+        face: {}, // To update forcibly in setOptions.
+        duration: DURATION // Initial state.
       },
       state: STATE_HIDDEN,
       savedStyleTarget: {},
@@ -1180,6 +1180,7 @@ var PlainOverlay = function () {
         throw new Error('Invalid options.');
       }
     }
+
     props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
     var elmDocument = props.document = props.elmTarget.ownerDocument;
     props.window = elmDocument.defaultView;
@@ -1370,6 +1371,16 @@ var PlainOverlay = function () {
       return this;
     }
   }, {
+    key: 'state',
+    get: function get() {
+      return insProps[this._id].state;
+    }
+  }, {
+    key: 'style',
+    get: function get() {
+      return insProps[this._id].elmOverlay.style;
+    }
+  }, {
     key: 'face',
     get: function get() {
       return insProps[this._id].options.face;
@@ -1424,16 +1435,6 @@ var PlainOverlay = function () {
     },
     set: function set(value) {
       _setOptions(insProps[this._id], { onPosition: value });
-    }
-  }, {
-    key: 'state',
-    get: function get() {
-      return insProps[this._id].state;
-    }
-  }, {
-    key: 'style',
-    get: function get() {
-      return insProps[this._id].elmOverlay.style;
     }
   }], [{
     key: 'show',
