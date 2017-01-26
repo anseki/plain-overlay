@@ -34,26 +34,10 @@ http.createServer((request, response) => {
     (new staticAlias.Server(DOC_ROOT, {
       cache: false,
       alias: [
+        // node_modules
         {
-          match: '/test-page-loader.js',
-          serve: '../node_modules/test-page-loader/test-page-loader.js',
-          allowOutside: true
-        },
-
-        // for face.html
-        {
-          match: '/face.html',
-          serve: '../src/face.html',
-          allowOutside: true
-        },
-        {
-          match: '/default.css',
-          serve: '../src/default.css',
-          allowOutside: true
-        },
-        {
-          match: '/test/grid.png',
-          serve: './grid.png',
+          match: /^\/(?:jasmine-core|test-page-loader|cssprefix)\/.+/,
+          serve: '../node_modules<% reqPath %>',
           allowOutside: true
         },
 
@@ -83,10 +67,22 @@ http.createServer((request, response) => {
           },
           allowOutside: true
         },
-        // for test-ext
+
+
+        // for face.html
         {
-          match: '/css-prefix.min.js',
-          serve: '../node_modules/cssprefix/css-prefix.min.js',
+          match: '/face.html',
+          serve: '../src/face.html',
+          allowOutside: true
+        },
+        {
+          match: '/default.css',
+          serve: '../src/default.css',
+          allowOutside: true
+        },
+        {
+          match: '/test/grid.png',
+          serve: './grid.png',
           allowOutside: true
         }
       ],
