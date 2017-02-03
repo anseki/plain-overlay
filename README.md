@@ -1,5 +1,7 @@
 # PlainOverlay
 
+[![npm](https://img.shields.io/npm/v/plain-overlay.svg)](https://www.npmjs.com/package/plain-overlay) [![GitHub issues](https://img.shields.io/github/issues/anseki/plain-overlay.svg)](https://github.com/anseki/plain-overlay/issues) [![dependencies](https://img.shields.io/badge/dependencies-No%20dependency-brightgreen.svg)](package.json) [![license](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE-MIT)
+
 The simple library for customizable overlay which covers all or part of a web page.
 
 **<a href="https://anseki.github.io/plain-overlay/">Document and Examples https://anseki.github.io/plain-overlay/</a>**
