@@ -16,7 +16,7 @@ Features:
 - Block scrolling anything under the overlay by a mouse or keys.
 - Block focusing anything under the overlay by a mouse or Tab key or access-keys.
 - Show something like a loading-animation on the overlay.
-- No dependencies.
+- No dependency.
 - Single file.
 - Modern browsers are supported. (If you want to support legacy browsers such as IE 9-, see [jQuery-plainOverlay](https://anseki.github.io/jquery-plainoverlay/).)
 
