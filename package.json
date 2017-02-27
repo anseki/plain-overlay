@@ -31,6 +31,7 @@
     "htmlclean-loader": "0.0.4",
     "jasmine-core": "^2.5.2",
     "log4js": "^1.1.0",
+    "m-class-list": "^0.1.1",
     "node-static-alias": "^1.0.0",
     "skeleton-loader": "0.0.7",
     "stats-filelist": "^1.0.0",

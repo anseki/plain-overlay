@@ -8,6 +8,7 @@
 
 import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
+import mClassList from 'm-class-list';
 import CSS_TEXT from './default.css';
 import FACE_DEFS from './face.html?part=defs';
 import FACE_01 from './face.html?part=face_01';
@@ -471,9 +472,7 @@ function getTargetElements(props) {
     Array.prototype.slice.call(elmTargetBody.childNodes).forEach(childNode => {
       if (childNode.nodeType === Node.ELEMENT_NODE &&
           childNode !== elmOverlay &&
-          // Trident doesn't support SVG#classList
-          (childNode.classList ? !childNode.classList.contains(STYLE_CLASS) :
-            (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) &&
+          !mClassList(childNode).contains(STYLE_CLASS) &&
           childNode.id !== FACE_DEFS_ELEMENT_ID) {
         targetElements.push(childNode);
         Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
@@ -491,7 +490,7 @@ function finishShowing(props) {
 }
 
 function finishHiding(props) {
-  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
+  mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
   restoreStyle(props.elmTargetBody, props.savedStyleTargetBody);
@@ -587,7 +586,7 @@ function show(props) {
     const targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
 
-    elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
+    mClassList(elmOverlay).remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (!props.isDoc) {
       const elmTargetBody = props.elmTargetBody;
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
@@ -614,14 +613,12 @@ function show(props) {
       const propName = CSSPrefix.getName('filter'),
         propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`);
       if (propValue) { // undefined if no propName
-        const filterElements =
-          props.isDoc ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
-            childNode.nodeType === Node.ELEMENT_NODE &&
-                childNode !== elmOverlay &&
-                // Trident doesn't support SVG#classList
-                (childNode.classList ? !childNode.classList.contains(STYLE_CLASS) :
-                  (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) &&
-                childNode.id !== FACE_DEFS_ELEMENT_ID)
+        const filterElements = props.isDoc ?
+          Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
+              childNode.nodeType === Node.ELEMENT_NODE &&
+              childNode !== elmOverlay &&
+              !mClassList(childNode).contains(STYLE_CLASS) &&
+              childNode.id !== FACE_DEFS_ELEMENT_ID)
             .map(element => ({element: element, savedStyle: {}})) :
           [{element: props.elmTargetBody, savedStyle: {}}];
 
@@ -636,7 +633,7 @@ function show(props) {
 
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
-  elmOverlay.classList.add(STYLE_CLASS_SHOW);
+  mClassList(elmOverlay).add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
 }
 
@@ -656,7 +653,7 @@ function hide(props, force) {
     props.filterElements = null;
   }
 
-  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
+  mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW);
   if (force) {
     props.state = STATE_HIDDEN; // To skip transitionend.
     finishHiding(props);
@@ -830,14 +827,8 @@ class PlainOverlay {
 
     // elmOverlay
     const elmOverlay = props.elmOverlay = elmDocument.createElement('div');
-    if (IS_TRIDENT) {
-      // Trident bug, multiple arguments and space-separated tokens are ignored.
-      elmOverlay.classList.add(STYLE_CLASS);
-      elmOverlay.classList.add(STYLE_CLASS_HIDE);
-    } else {
-      elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
-    }
-    if (props.isDoc) { elmOverlay.classList.add(STYLE_CLASS_DOC); }
+    mClassList(elmOverlay).add(STYLE_CLASS, STYLE_CLASS_HIDE);
+    if (props.isDoc) { mClassList(elmOverlay).add(STYLE_CLASS_DOC); }
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {

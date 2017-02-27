@@ -64,7 +64,7 @@ var PlainOverlay =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 5);
+/******/ 	return __webpack_require__(__webpack_require__.s = 6);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -376,24 +376,137 @@ module.exports = exports['default'];
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
+"use strict";
+
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+/*
+ * mClassList
+ * https://github.com/anseki/m-class-list
+ *
+ * Copyright (c) 2017 anseki
+ * Licensed under the MIT license.
+ */
+
+function normalize(token) {
+  return (token + '').trim();
+} // Not `||`
+function applyList(list, element) {
+  element.setAttribute('class', list.join(' '));
+}
+
+function _add(list, element, tokens) {
+  if (tokens.filter(function (token) {
+    if (!(token = normalize(token)) || list.indexOf(token) !== -1) {
+      return false;
+    }
+    list.push(token);
+    return true;
+  }).length) {
+    applyList(list, element);
+  }
+}
+
+function _remove(list, element, tokens) {
+  if (tokens.filter(function (token) {
+    var i = void 0;
+    if (!(token = normalize(token)) || (i = list.indexOf(token)) === -1) {
+      return false;
+    }
+    list.splice(i, 1);
+    return true;
+  }).length) {
+    applyList(list, element);
+  }
+}
+
+function _toggle(list, element, token, force) {
+  var i = list.indexOf(token = normalize(token));
+  if (i !== -1) {
+    if (force) {
+      return true;
+    }
+    list.splice(i, 1);
+    applyList(list, element);
+    return false;
+  } else {
+    if (force === false) {
+      return false;
+    }
+    list.push(token);
+    applyList(list, element);
+    return true;
+  }
+}
+
+function _replace(list, element, token, newToken) {
+  var i = void 0;
+  if (!(token = normalize(token)) || !(newToken = normalize(newToken)) || token === newToken || (i = list.indexOf(token)) === -1) {
+    return;
+  }
+  list.splice(i, 1);
+  if (list.indexOf(newToken) === -1) {
+    list.push(newToken);
+  }
+  applyList(list, element);
+}
+
+function mClassList(element) {
+  return !mClassList.ignoreNative && element.classList || function () {
+    var list = (element.getAttribute('class') || '').trim().split(/\s+/).filter(function (token) {
+      return !!token;
+    });
+    return {
+      length: list.length,
+      item: function item(i) {
+        return list[i];
+      },
+      contains: function contains(token) {
+        return list.indexOf(normalize(token)) !== -1;
+      },
+      add: function add() {
+        _add(list, element, Array.prototype.slice.call(arguments));
+      },
+      remove: function remove() {
+        _remove(list, element, Array.prototype.slice.call(arguments));
+      },
+      toggle: function toggle(token, force) {
+        return _toggle(list, element, token, force);
+      },
+      replace: function replace(token, newToken) {
+        return _replace(list, element, token, newToken);
+      }
+    };
+  }();
+}
+
+exports.default = mClassList;
+module.exports = exports['default'];
 
 /***/ }),
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
+module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
+module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
+
+/***/ }),
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -419,15 +532,19 @@ var _animEvent = __webpack_require__(0);
 
 var _animEvent2 = _interopRequireDefault(_animEvent);
 
-var _default = __webpack_require__(4);
+var _mClassList = __webpack_require__(2);
+
+var _mClassList2 = _interopRequireDefault(_mClassList);
+
+var _default = __webpack_require__(5);
 
 var _default2 = _interopRequireDefault(_default);
 
-var _face = __webpack_require__(2);
+var _face = __webpack_require__(3);
 
 var _face2 = _interopRequireDefault(_face);
 
-var _face3 = __webpack_require__(3);
+var _face3 = __webpack_require__(4);
 
 var _face4 = _interopRequireDefault(_face3);
 
@@ -898,9 +1015,7 @@ function getTargetElements(props) {
   if (props.isDoc) {
     targetElements.push(elmTargetBody);
     Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
-      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && (
-      // Trident doesn't support SVG#classList
-      childNode.classList ? !childNode.classList.contains(STYLE_CLASS) : (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
+      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !(0, _mClassList2.default)(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
         targetElements.push(childNode);
         Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
       }
@@ -919,7 +1034,7 @@ function finishShowing(props) {
 }
 
 function finishHiding(props) {
-  props.elmOverlay.classList.add(STYLE_CLASS_HIDE);
+  (0, _mClassList2.default)(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
   restoreStyle(props.elmTargetBody, props.savedStyleTargetBody);
@@ -1022,7 +1137,7 @@ function _show(props) {
     var targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
 
-    elmOverlay.classList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
+    (0, _mClassList2.default)(elmOverlay).remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (!props.isDoc) {
       var elmTargetBody = props.elmTargetBody;
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
@@ -1045,14 +1160,25 @@ function _show(props) {
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 
+    // blur
+    props.filterElements = null;
     if (props.options.blur !== false) {
       var propName = _cssprefix2.default.getName('filter'),
-          propValue = _cssprefix2.default.getValue('filter', 'blur(' + props.options.blur + 'px)'),
-          style = {};
+          propValue = _cssprefix2.default.getValue('filter', 'blur(' + props.options.blur + 'px)');
       if (propValue) {
         // undefined if no propName
-        style[propName] = propValue;
-        setStyle(props.elmTargetBody, style, props.savedStyleTargetBody);
+        var filterElements = props.isDoc ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(function (childNode) {
+          return childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !(0, _mClassList2.default)(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID;
+        }).map(function (element) {
+          return { element: element, savedStyle: {} };
+        }) : [{ element: props.elmTargetBody, savedStyle: {} }];
+
+        filterElements.forEach(function (filterElement) {
+          var style = {}; // new object for each element.
+          style[propName] = propValue;
+          setStyle(filterElement.element, style, filterElement.savedStyle);
+        });
+        props.filterElements = filterElements;
       }
     }
 
@@ -1060,7 +1186,7 @@ function _show(props) {
       props.options.onPosition.call(props.ins);
     }
   }
-  elmOverlay.classList.add(STYLE_CLASS_SHOW);
+  (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
 }
 
@@ -1077,12 +1203,15 @@ function _hide(props, force) {
     return;
   }
 
-  var propName = _cssprefix2.default.getName('filter');
-  if (propName && props.savedStyleTargetBody && props.savedStyleTargetBody[propName] != null) {
-    restoreStyle(props.elmTargetBody, props.savedStyleTargetBody, [propName]);
+  // blur
+  if (props.filterElements) {
+    props.filterElements.forEach(function (filterElement) {
+      restoreStyle(filterElement.element, filterElement.savedStyle);
+    });
+    props.filterElements = null;
   }
 
-  props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
+  (0, _mClassList2.default)(props.elmOverlay).remove(STYLE_CLASS_SHOW);
   if (force) {
     props.state = STATE_HIDDEN; // To skip transitionend.
     finishHiding(props);
@@ -1274,15 +1403,9 @@ var PlainOverlay = function () {
 
     // elmOverlay
     var elmOverlay = props.elmOverlay = elmDocument.createElement('div');
-    if (IS_TRIDENT) {
-      // Trident bug, multiple arguments and space-separated tokens are ignored.
-      elmOverlay.classList.add(STYLE_CLASS);
-      elmOverlay.classList.add(STYLE_CLASS_HIDE);
-    } else {
-      elmOverlay.classList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
-    }
+    (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) {
-      elmOverlay.classList.add(STYLE_CLASS_DOC);
+      (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS_DOC);
     }
 
     (function (listener) {

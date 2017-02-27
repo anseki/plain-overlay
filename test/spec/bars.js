@@ -114,14 +114,19 @@ describe('disableDocBars()', function() {
     addTest('left:bottom', addMargin,
       function() { return IS_TRIDENT || IS_EDGE ? {left: true, bottom: true} : normal; });
     addTest('none:top', addMargin,
-      function() { return IS_TRIDENT || IS_EDGE ? {top: true} : {bottom: true}; });
+      function() {
+        return IS_TRIDENT || IS_EDGE ? {top: true} :
+          IS_GECKO ? {} : {bottom: true}; // Gecko bug, it does not make bottom-bar.
+      });
     addTest('right:top', addMargin,
-      function() { return IS_TRIDENT || IS_EDGE ? {right: true, top: true} : normal; });
+      function() {
+        return IS_TRIDENT || IS_EDGE ? {right: true, top: true} :
+          IS_GECKO ? {right: true} : normal; // Gecko bug, it does not make bottom-bar.
+      });
     addTest('left:top', addMargin,
       function() {
         return IS_TRIDENT || IS_EDGE ? {left: true, top: true} :
-          IS_GECKO ? {right: true} : // Gecko bug
-          normal;
+          IS_GECKO ? {right: true} : normal; // Gecko bug, it does not make bottom-bar.
       });
   });
 
