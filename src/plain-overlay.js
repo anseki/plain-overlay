@@ -438,7 +438,7 @@ function position(props, targetBodyBBox) {
     {prop: 'BottomRight', hBorder: 'right', vBorder: 'bottom'},
     {prop: 'BottomLeft', hBorder: 'left', vBorder: 'bottom'}
   ].forEach(corner => {
-    const prop = CSSPrefix.getProp(`border${corner.prop}Radius`, elmTargetBody),
+    const prop = CSSPrefix.getName(`border${corner.prop}Radius`),
       values = targetBodyCmpStyle[prop].split(' ');
     let h = values[0], v = values[1] || values[0],
       matches = reValue.exec(h);
@@ -608,6 +608,15 @@ function show(props) {
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 
+    if (props.options.blur !== false) {
+      const propName = CSSPrefix.getName('filter'),
+        propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`), style = {};
+      if (propValue) { // undefined if no propName
+        style[propName] = propValue;
+        setStyle(props.elmTargetBody, style, props.savedStyleTargetBody);
+      }
+    }
+
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
   elmOverlay.classList.add(STYLE_CLASS_SHOW);
@@ -622,6 +631,11 @@ function show(props) {
 function hide(props, force) {
   if (props.state === STATE_HIDDEN) { return; }
   if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
+
+  const propName = CSSPrefix.getName('filter');
+  if (propName && props.savedStyleTargetBody && props.savedStyleTargetBody[propName] != null) {
+    restoreStyle(props.elmTargetBody, props.savedStyleTargetBody, [propName]);
+  }
 
   props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
   if (force) {
@@ -665,8 +679,13 @@ function setOptions(props, newOptions) {
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
     const elmOverlay = props.elmOverlay;
     options.duration = newOptions.duration;
-    elmOverlay.style[CSSPrefix.getProp('transitionDuration', elmOverlay)] =
+    elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
+  }
+
+  // blur
+  if (isFinite(newOptions.blur) || newOptions.blur === false) {
+    options.blur = newOptions.blur;
   }
 
   // style
@@ -752,7 +771,8 @@ class PlainOverlay {
       ins: this,
       options: { // Initial options (not default)
         face: {}, // To update forcibly in setOptions.
-        duration: DURATION // Initial state.
+        duration: DURATION, // Initial state.
+        blur: false // Initial state.
       },
       state: STATE_HIDDEN,
       savedStyleTarget: {},
@@ -959,6 +979,9 @@ class PlainOverlay {
 
   get duration() { return insProps[this._id].options.duration; }
   set duration(value) { setOptions(insProps[this._id], {duration: value}); }
+
+  get blur() { return insProps[this._id].options.blur; }
+  set blur(value) { setOptions(insProps[this._id], {blur: value}); }
 
   get onShow() { return insProps[this._id].options.onShow; }
   set onShow(value) { setOptions(insProps[this._id], {onShow: value}); }
