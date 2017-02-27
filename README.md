@@ -194,6 +194,18 @@ var overlay = new PlainOverlay({face: document.getElementById('svg')});
 
 A number determining how long (milliseconds) the effect (fade-in/out) animation for showing and hiding the overlay will run.
 
+### <a name="options-blur"></a>`blur`
+
+*Type:* number or boolean  
+*Default:* `false`
+
+Applies a Gaussian blur to the `target` while the overlay is shown. Note that the current browser might not support it.  
+It is not applied if `false` is specified.
+
+```js
+overlay.blur = 3;
+```
+
 ### <a name="options-style"></a>`style`
 
 *Type:* Object or `undefined`  
@@ -332,6 +344,10 @@ overlay.show({
 ### `duration`
 
 Get or set [`duration`](#options-duration) option.
+
+### `blur`
+
+Get or set [`blur`](#options-blur) option.
 
 ### `onShow`, `onHide`, `onBeforeShow`, `onBeforeHide`, `onPosition`
 
