@@ -70,17 +70,17 @@ window.addEventListener('load', function() {
   pFace.id = 'ex-010-p-face';
   pFace.innerHTML = '<div class="bounce1"></div><div class="bounce2"></div><div class="bounce3"></div>';
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-p'), {face: pFace}),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-p'), {face: pFace, blur: 1}),
     document.getElementById('ex-010-p-btn'), null, true);
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-div')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-010-div'), {blur: 1}),
     document.getElementById('ex-010-div-btn'));
 
   var win1Face = document.createElement('div');
   win1Face.id = 'ex-010-win1-face';
   win1Face.innerHTML = '<div></div><div></div><div></div><div></div><div></div>';
 
-  bindToggleButton(new PlainOverlay({face: win1Face}),
+  bindToggleButton(new PlainOverlay({face: win1Face, blur: 3}),
     document.getElementById('ex-010-win1-btn'), 5000);
 
   var button = document.getElementById('ex-010-win2-btn'),
@@ -206,26 +206,26 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 window.addEventListener('load', function() {
   'use strict';
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-form')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-form'), {blur: 1}),
     document.getElementById('ex-020-form-btn'));
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-textarea')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-textarea'), {blur: 1}),
     document.getElementById('ex-020-textarea-btn'));
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-img')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-img'), {blur: 2}),
     document.getElementById('ex-020-img-btn'));
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-table')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-table'), {blur: 1}),
     document.getElementById('ex-020-table-btn'));
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-td')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-td'), {blur: 1}),
     document.getElementById('ex-020-td-btn'));
 
-  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-iframe')),
+  bindToggleButton(new PlainOverlay(document.getElementById('ex-020-iframe'), {blur: 3}),
     document.getElementById('ex-020-iframe-btn'));
 
   bindToggleButton(new PlainOverlay(
-      document.getElementById('ex-020-iframe').contentDocument.getElementById('ex-020-p')),
+      document.getElementById('ex-020-iframe').contentDocument.getElementById('ex-020-p'), {blur: 1}),
     document.getElementById('ex-020-p-btn'));
 
 });
@@ -235,7 +235,7 @@ window.addEventListener('load', function() {
 
 <h2 id="usage">Usage</h2>
 
-<p>Load only a file <code>plain-overlay.min.js</code> into your web page.</p>
+<p>Load only a <code>plain-overlay.min.js</code> file into your web page.</p>
 <div class="highlight"><pre><code class="language-html" data-lang="html"><span class="nt">&lt;script </span><span class="na">src=</span><span class="s">&quot;plain-overlay.min.js&quot;</span><span class="nt">&gt;&lt;/script&gt;</span>
 </code></pre></div>
 <p>This is simplest case:</p>
@@ -320,7 +320,7 @@ window.addEventListener('load', function() {
 window.addEventListener('load', function() {
   'use strict';
 
-  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-030-face')}),
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-030-face'), blur: 3}),
     document.getElementById('ex-030-btn'), 5000);
 
 });
@@ -341,7 +341,7 @@ window.addEventListener('load', function() {
 window.addEventListener('load', function() {
   'use strict';
 
-  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-040-face')}),
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-040-face'), blur: 2}),
     document.getElementById('ex-040-btn'), 5000);
 
 });
@@ -371,7 +371,7 @@ window.addEventListener('load', function() {
 window.addEventListener('load', function() {
   'use strict';
 
-  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-041-face')}),
+  bindToggleButton(new PlainOverlay({face: document.getElementById('ex-041-face'), blur: 2}),
     document.getElementById('ex-041-btn'), 10000);
 
 });
@@ -385,6 +385,13 @@ window.addEventListener('load', function() {
 
 <p>A number determining how long (milliseconds) the effect (fade-in/out) animation for showing and hiding the overlay will run.</p>
 
+<h3 id="options-blur"><code>blur</code></h3>
+
+<p><em>Type:</em> number or boolean<br><em>Default:</em> <code>false</code></p>
+
+<p>Applies a Gaussian blur to the <code>target</code> while the overlay is shown. Note that the current browser might not support it.<br>It is not applied if <code>false</code> is specified.</p>
+<div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span><span class="p">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</code></pre></div>
 <h3 id="options-style"><code>style</code></h3>
 
 <p><em>Type:</em> Object or <code>undefined</code><br><em>Default:</em> <code>undefined</code></p>
@@ -412,7 +419,8 @@ window.addEventListener('load', function() {
 
   bindToggleButton(new PlainOverlay({
     face: document.getElementById('ex-050-face'),
-    style: {backgroundColor: 'rgba(255, 255, 255, 0.6)'}
+    style: {backgroundColor: 'rgba(255, 255, 255, 0.6)'},
+    blur: 2
   }), document.getElementById('ex-050-btn'), 5000);
 
 });
@@ -512,7 +520,7 @@ window.addEventListener('load', function() {
   // preload
   (new Image()).src = 'img/ex-060.png';
 
-  var overlay = new PlainOverlay();
+  var overlay = new PlainOverlay({blur: 1});
   overlay.style.backgroundImage = 'url("img/ex-060.png")';
   overlay.style.backgroundColor = 'transparent';
   bindToggleButton(overlay, document.getElementById('ex-060-btn'), 5000);
@@ -587,6 +595,10 @@ window.addEventListener('load', function() {
 <h3 id="duration"><code>duration</code></h3>
 
 <p>Get or set <a href="#options-duration"><code>duration</code></a> option.</p>
+
+<h3 id="blur"><code>blur</code></h3>
+
+<p>Get or set <a href="#options-blur"><code>blur</code></a> option.</p>
 
 <h3 id="onshow-onhide-onbeforeshow-onbeforehide-onposition"><code>onShow</code>, <code>onHide</code>, <code>onBeforeShow</code>, <code>onBeforeHide</code>, <code>onPosition</code></h3>
 
