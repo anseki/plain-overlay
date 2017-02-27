@@ -13,7 +13,13 @@ const
   path = require('path'),
   fs = require('fs'),
 
-  EXT_DIR = path.resolve('../../test-ext');
+  MODULE_PACKAGES = [
+    'jasmine-core',
+    'test-page-loader',
+    'cssprefix'
+  ],
+
+  EXT_DIR = path.resolve(__dirname, '../../test-ext');
 
 log4js.configure({
   appenders: [
@@ -33,59 +39,56 @@ http.createServer((request, response) => {
   request.addListener('end', () => {
     (new staticAlias.Server(DOC_ROOT, {
       cache: false,
-      alias: [
-        // node_modules
-        {
-          match: /^\/(?:jasmine-core|test-page-loader|cssprefix)\/.+/,
-          serve: '../node_modules<% reqPath %>',
+      alias: MODULE_PACKAGES.map(packageName => (
+        { // node_modules
+          match: new RegExp(`^/${packageName}/.+`),
+          serve: `${require.resolve(packageName).replace(/([\/\\]node_modules)[\/\\].*$/, '$1')}<% reqPath %>`,
           allowOutside: true
-        },
-
-        // test-ext
-        {
-          match: /^\/ext\/.+/,
-          serve: params => params.reqPath.replace(/^\/ext/, EXT_DIR),
-          allowOutside: true
-        },
-        // test-ext index
-        {
-          match: /^\/ext\/?$/,
-          serve: () => {
-            const indexPath = path.join(EXT_DIR, '.index.html');
-            fs.writeFileSync(indexPath,
-              `<html><head><meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"></head><body><ul>${
-                filelist.getSync(EXT_DIR, {
-                  filter: stats => /^[^\.].*\.html$/.test(stats.name),
-                  listOf: 'fullPath'
-                }).sort()
-                .map(fullPath => {
-                  const htmlPath = path.relative(EXT_DIR, fullPath).replace(path.sep, '/');
-                  return `<li><a href="${htmlPath}">${htmlPath}</a></li>`;
-                }).join('')
-              }</ul></body></html>`);
-            return indexPath;
+        })).concat([
+          // test-ext
+          {
+            match: /^\/ext\/.+/,
+            serve: params => params.reqPath.replace(/^\/ext/, EXT_DIR),
+            allowOutside: true
           },
-          allowOutside: true
-        },
+          // test-ext index
+          {
+            match: /^\/ext\/?$/,
+            serve: () => {
+              const indexPath = path.join(EXT_DIR, '.index.html');
+              fs.writeFileSync(indexPath,
+                `<html><head><meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1"></head><body><ul>${
+                  filelist.getSync(EXT_DIR, {
+                    filter: stats => /^[^\.].*\.html$/.test(stats.name),
+                    listOf: 'fullPath'
+                  }).sort()
+                  .map(fullPath => {
+                    const htmlPath = path.relative(EXT_DIR, fullPath).replace(path.sep, '/');
+                    return `<li><a href="${htmlPath}">${htmlPath}</a></li>`;
+                  }).join('')
+                }</ul></body></html>`);
+              return indexPath;
+            },
+            allowOutside: true
+          },
 
-
-        // for face.html
-        {
-          match: '/face.html',
-          serve: '../src/face.html',
-          allowOutside: true
-        },
-        {
-          match: '/default.css',
-          serve: '../src/default.css',
-          allowOutside: true
-        },
-        {
-          match: '/test/grid.png',
-          serve: './grid.png',
-          allowOutside: true
-        }
-      ],
+          // for face.html
+          {
+            match: '/face.html',
+            serve: '../src/face.html',
+            allowOutside: true
+          },
+          {
+            match: '/default.css',
+            serve: '../src/default.css',
+            allowOutside: true
+          },
+          {
+            match: '/test/grid.png',
+            serve: './grid.png',
+            allowOutside: true
+          }
+        ]),
       logger: logger
     }))
     .serve(request, response, e => {

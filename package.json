@@ -39,7 +39,8 @@
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack",
-    "dev": "webpack --display-modules"
+    "dev": "webpack --display-modules",
+    "test": "node ./test/httpd"
   },
   "homepage": "https://anseki.github.io/plain-overlay/",
   "repository": {

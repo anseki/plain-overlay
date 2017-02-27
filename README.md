@@ -29,7 +29,7 @@ One of the following can be specified as the target that is covered:
 
 ## Usage
 
-Load only a file `plain-overlay.min.js` into your web page.
+Load only a `plain-overlay.min.js` file into your web page.
 
 ```html
 <script src="plain-overlay.min.js"></script>
