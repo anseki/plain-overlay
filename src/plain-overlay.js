@@ -608,12 +608,29 @@ function show(props) {
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 
+    // blur
+    props.filterElements = null;
     if (props.options.blur !== false) {
       const propName = CSSPrefix.getName('filter'),
-        propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`), style = {};
+        propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`);
       if (propValue) { // undefined if no propName
-        style[propName] = propValue;
-        setStyle(props.elmTargetBody, style, props.savedStyleTargetBody);
+        const filterElements =
+          props.isDoc ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
+            childNode.nodeType === Node.ELEMENT_NODE &&
+                childNode !== elmOverlay &&
+                // Trident doesn't support SVG#classList
+                (childNode.classList ? !childNode.classList.contains(STYLE_CLASS) :
+                  (childNode.getAttribute('class') || '').split(/\s/).indexOf(STYLE_CLASS) === -1) &&
+                childNode.id !== FACE_DEFS_ELEMENT_ID)
+            .map(element => ({element: element, savedStyle: {}})) :
+          [{element: props.elmTargetBody, savedStyle: {}}];
+
+        filterElements.forEach(filterElement => {
+          const style = {}; // new object for each element.
+          style[propName] = propValue;
+          setStyle(filterElement.element, style, filterElement.savedStyle);
+        });
+        props.filterElements = filterElements;
       }
     }
 
@@ -632,9 +649,11 @@ function hide(props, force) {
   if (props.state === STATE_HIDDEN) { return; }
   if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
 
-  const propName = CSSPrefix.getName('filter');
-  if (propName && props.savedStyleTargetBody && props.savedStyleTargetBody[propName] != null) {
-    restoreStyle(props.elmTargetBody, props.savedStyleTargetBody, [propName]);
+  // blur
+  if (props.filterElements) {
+    props.filterElements.forEach(
+      filterElement => { restoreStyle(filterElement.element, filterElement.savedStyle); });
+    props.filterElements = null;
   }
 
   props.elmOverlay.classList.remove(STYLE_CLASS_SHOW);
