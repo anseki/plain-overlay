@@ -39,6 +39,7 @@ http.createServer((request, response) => {
   request.addListener('end', () => {
     (new staticAlias.Server(DOC_ROOT, {
       cache: false,
+      headers: {'Cache-Control': 'no-cache, must-revalidate'},
       alias: MODULE_PACKAGES.map(packageName => (
         { // node_modules
           match: new RegExp(`^/${packageName}/.+`),
