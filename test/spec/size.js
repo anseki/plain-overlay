@@ -25,6 +25,10 @@ describe('resizeTarget()', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   // unit:none
 
   it('resizes element (unit:none, position:static, box-sizing:content-box)', function(done) {

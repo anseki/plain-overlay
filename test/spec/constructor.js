@@ -32,6 +32,10 @@ describe('constructor', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   it('(element, {})', function() {
     var overlay = new PlainOverlay(element, {}),
       props = insProps[overlay._id];

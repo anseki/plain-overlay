@@ -1010,4 +1010,6 @@ class PlainOverlay {
   static get STATE_HIDING() { return STATE_HIDING; }
 }
 
+PlainOverlay.limit = true;
+
 export default PlainOverlay;

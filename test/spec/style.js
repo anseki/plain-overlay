@@ -24,6 +24,10 @@ describe('style', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   it('adds single element', function(done) {
     expect(document.getElementsByTagName('style').length).toBe(0);
     overlay1 = new PlainOverlay(document.getElementById('elm-1')); // <style> is added

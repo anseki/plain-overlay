@@ -34,6 +34,10 @@ describe('scroll()', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   it('avoids scrolling DIV', function(done) {
     div.scrollLeft = SCROLL_DIV_LEFT;
     div.scrollTop = SCROLL_DIV_TOP;

@@ -1644,6 +1644,8 @@ var PlainOverlay = function () {
   return PlainOverlay;
 }();
 
+PlainOverlay.limit = true;
+
 exports.default = PlainOverlay;
 module.exports = exports['default'];
 

@@ -103,6 +103,10 @@ describe('disableDocBars()', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   [false, true].forEach(function(addMargin) {
     var normal = {right: true, bottom: true};
     addTest('none:none', addMargin, {});

@@ -1678,6 +1678,10 @@ var PlainOverlay = function () {
   return PlainOverlay;
 }();
 
+/* [FACE/]
+PlainOverlay.limit = true;
+[FACE/] */
+
 exports.default = PlainOverlay;
 module.exports = exports['default'];
 

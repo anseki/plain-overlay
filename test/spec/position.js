@@ -37,6 +37,10 @@ describe('position()', function() {
     pageDone();
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
+
   it('body{position:static}, target{position:static}', function(done) {
     var target = iframe0102Document.getElementById('case-01'),
       overlay = new PlainOverlay(target, {face: testFace(document)}),

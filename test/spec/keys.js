@@ -21,6 +21,13 @@ describe('disableAccKeys()', function() {
     });
   });
 
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function(done) {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+
+    pageDone();
+    done();
+  });
+
   it('parses target and its tree', function(done) {
     var elements = Array.prototype.slice.call(document.querySelectorAll('#target, #target *')),
       target = document.getElementById('target'),
@@ -53,16 +60,22 @@ describe('disableAccKeys()', function() {
     overlay.show();
     expect(matchArray(window.targetElements, elements)).toBe(true);
     saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
-    saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
+    if (!self.top.LIMIT) {
+      saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
+    }
     expect(target.innerHTML).not.toBe(html);
     expect(target.innerHTML).toMatch(/tabindex="-1"/);
     expect(target.innerHTML).not.toMatch(/accesskey="x"/);
     target.appendChild(saveElement1);
-    target.appendChild(saveElement2);
+    if (!self.top.LIMIT) {
+      target.appendChild(saveElement2);
+    }
 
     overlay.hide(true);
     saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
-    saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
+    if (!self.top.LIMIT) {
+      saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
+    }
     expect(target.innerHTML).toBe(html);
     expect(target.innerHTML).not.toMatch(/tabindex="-1"/);
     expect(target.innerHTML).toMatch(/accesskey="x"/);
