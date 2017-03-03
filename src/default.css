@@ -66,7 +66,8 @@
   display: none;
 }
 
-/* line 72, default.scss */
+/* [FACE] */
+/* line 74, default.scss */
 .plainoverlay-builtin-face {
   width: 90%;
   height: 90%;
@@ -74,7 +75,7 @@
   max-height: 320px;
 }
 
-/* line 79, default.scss */
+/* line 81, default.scss */
 #plainoverlay-builtin-face-defs {
   width: 0;
   height: 0;
@@ -83,24 +84,24 @@
   top: -100px;
 }
 
-/* line 89, default.scss */
+/* line 91, default.scss */
 #plainoverlay-builtin-face_01 circle,
 #plainoverlay-builtin-face_01 path {
   fill: none;
   stroke-width: 40px;
 }
-/* line 95, default.scss */
+/* line 97, default.scss */
 #plainoverlay-builtin-face_01 circle {
   stroke: #fff;
   opacity: 0.25;
 }
-/* line 100, default.scss */
+/* line 102, default.scss */
 #plainoverlay-builtin-face_01 path {
   stroke-linecap: round;
   /* Gecko bug, `url()` in outer stylesheet of the `svg` doesn't work. */
 }
 
-/* line 107, default.scss */
+/* line 109, default.scss */
 .plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01 {
   -moz-animation-name: plainoverlay-builtin-face_01-spin;
   -webkit-animation-name: plainoverlay-builtin-face_01-spin;
@@ -150,3 +151,4 @@
     transform: rotate(360deg);
   }
 }
+/* [/FACE] */

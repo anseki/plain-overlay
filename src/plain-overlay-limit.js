@@ -10,10 +10,6 @@ import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
 import CSS_TEXT from './default.css';
-// [FACE]
-import FACE_DEFS from './face.html?part=defs';
-import FACE_01 from './face.html?part=face_01';
-// [/FACE]
 
 const
   APP_ID = 'plainoverlay',
@@ -683,15 +679,7 @@ function setOptions(props, newOptions) {
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
     } else { // Builtin face
-      // [FACE]
-      const elmDocument = props.document;
-      if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) { // Add svg defs
-        const defsSvg = (new props.window.DOMParser()).parseFromString(FACE_DEFS, 'image/svg+xml');
-        elmDocument.body.appendChild(defsSvg.documentElement);
-      }
-      // [/FACE]
       options.face = void 0;
-      elmOverlayBody.innerHTML = FACE_01; // [FACE/]
     }
   }
 

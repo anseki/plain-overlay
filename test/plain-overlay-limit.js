@@ -64,7 +64,7 @@ var PlainOverlay =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 6);
+/******/ 	return __webpack_require__(__webpack_require__.s = 4);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -491,22 +491,10 @@ module.exports = exports['default'];
 /* 3 */
 /***/ (function(module, exports) {
 
-module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
+module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}";
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-moz-transition-property:opacity;-o-transition-property:opacity;-webkit-transition-property:opacity;transition-property:opacity;-moz-transition-duration:.2s;-o-transition-duration:.2s;-webkit-transition-duration:.2s;transition-duration:.2s;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;-webkit-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-moz-animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-duration:1s;-webkit-animation-duration:1s;animation-duration:1s;-moz-animation-timing-function:linear;-webkit-animation-timing-function:linear;animation-timing-function:linear;-moz-animation-iteration-count:infinite;-webkit-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0);transform:rotate(0)}to{-webkit-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-moz-transform:rotate(0);-ms-transform:rotate(0);-webkit-transform:rotate(0);transform:rotate(0)}to{-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-webkit-transform:rotate(360deg);transform:rotate(360deg)}}";
-
-/***/ }),
-/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -524,9 +512,6 @@ var _createClass = function () { function defineProperties(target, props) { for 
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       * Licensed under the MIT license.
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       */
 
-// [FACE]
-
-
 var _cssprefix = __webpack_require__(1);
 
 var _cssprefix2 = _interopRequireDefault(_cssprefix);
@@ -539,23 +524,13 @@ var _mClassList = __webpack_require__(2);
 
 var _mClassList2 = _interopRequireDefault(_mClassList);
 
-var _default = __webpack_require__(5);
+var _default = __webpack_require__(3);
 
 var _default2 = _interopRequireDefault(_default);
-
-var _face = __webpack_require__(3);
-
-var _face2 = _interopRequireDefault(_face);
-
-var _face3 = __webpack_require__(4);
-
-var _face4 = _interopRequireDefault(_face3);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-// [/FACE]
 
 var APP_ID = 'plainoverlay',
     STYLE_ELEMENT_ID = APP_ID + '-style',
@@ -1249,16 +1224,7 @@ function _setOptions(props, newOptions) {
       elmOverlayBody.appendChild(newOptions.face);
     } else {
       // Builtin face
-      // [FACE]
-      var elmDocument = props.document;
-      if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) {
-        // Add svg defs
-        var defsSvg = new props.window.DOMParser().parseFromString(_face2.default, 'image/svg+xml');
-        elmDocument.body.appendChild(defsSvg.documentElement);
-      }
-      // [/FACE]
       options.face = void 0;
-      elmOverlayBody.innerHTML = _face4.default; // [FACE/]
     }
   }
 
@@ -1683,4 +1649,4 @@ module.exports = exports['default'];
 
 /***/ })
 /******/ ]);
-//# sourceMappingURL=plain-overlay.js.map
+//# sourceMappingURL=plain-overlay-limit.js.map

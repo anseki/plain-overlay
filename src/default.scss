@@ -69,6 +69,8 @@ $face_01-duration: 1s;
   display: none;
 }
 
+/* [FACE] */
+
 .#{$app-face} {
   width: 90%;
   height: 90%;
@@ -116,3 +118,5 @@ $face_01-duration: 1s;
   from { @include transform(rotate(0deg)); }
   to { @include transform(rotate(360deg)); }
 }
+
+/* [/FACE] */
