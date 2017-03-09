@@ -78,7 +78,8 @@ module.exports = {
               procedure: function(content) {
                 if (LIMIT) {
                   content = preProc(LIMIT_TAGS, content, this.resourcePath, SRC_PATH);
-                  if (!BUILD && SRC && this.resourcePath === ENTRY_PATH) { // source for limit edition
+                  if (!BUILD && SRC && this.resourcePath === ENTRY_PATH) {
+                    // Save the source code of limited function, to check.
                     const destPath = path.resolve(SRC_PATH, BUILD_FILE);
                     require('fs').writeFileSync(destPath, content);
                     console.log(`Output: ${destPath}`);
@@ -104,7 +105,12 @@ module.exports = {
             loader: 'skeleton-loader',
             options: {
               procedure: function(content) {
-                return LIMIT ? preProc(LIMIT_TAGS, content, this.resourcePath, SRC_PATH) : content;
+                if (LIMIT) {
+                  content = preProc(LIMIT_TAGS, content, this.resourcePath, SRC_PATH);
+                }
+                return BUILD ?
+                  preProc('DEBUG', content, this.resourcePath, IMPORTED_PACKAGES_PATH.concat(SRC_PATH)) :
+                  content;
               }
             }
           }
