@@ -21,7 +21,7 @@ describe('constructor', function() {
       insProps = window.insProps;
       pageDone = done;
 
-      // for toThrowError that does `thrown instanceof Error` (the namespace of that `Error` is current window).
+      // for Jasmine bug, https://github.com/jasmine/jasmine/pull/1275
       self.Error = window.Error;
 
       beforeDone();
