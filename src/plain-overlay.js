@@ -11,8 +11,8 @@ import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
 import CSS_TEXT from './default.css';
 // [FACE]
-import FACE_DEFS from './face.html?part=defs';
-import FACE_01 from './face.html?part=face_01';
+import FACE_DEFS from './face.html?tag=defs';
+import FACE_01 from './face.html?tag=face_01';
 // [/FACE]
 
 const

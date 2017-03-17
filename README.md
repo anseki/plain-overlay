@@ -10,7 +10,7 @@ The simple library for customizable overlay which covers all or part of a web pa
 [![ss-02](ss-02.gif)](https://anseki.github.io/plain-overlay/)
 [![ss-03](ss-03.gif)](https://anseki.github.io/plain-overlay/)
 
-## Features
+**Features:**
 
 - Cover all or part of a web page with an overlay.
 - Block scrolling anything under the overlay by a mouse or keys.
