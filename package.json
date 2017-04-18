@@ -1,6 +1,6 @@
 {
   "name": "plain-overlay",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "title": "PlainOverlay",
   "description": "The simple library for customizable overlay which covers a page, elements or iframe-windows.",
   "keywords": [
@@ -45,6 +45,8 @@
     "dev": "webpack --display-modules",
     "build-limit": "cross-env EDITION=limit NODE_ENV=production webpack",
     "dev-limit": "cross-env EDITION=limit SRC=yes webpack --display-modules",
+    "build-native": "cross-env EDITION=native NODE_ENV=production webpack",
+    "dev-native": "cross-env EDITION=native webpack --display-modules",
     "test": "node ./test/httpd"
   },
   "homepage": "https://anseki.github.io/plain-overlay/",
