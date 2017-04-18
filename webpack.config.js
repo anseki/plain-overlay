@@ -50,7 +50,9 @@ module.exports = {
     path: BUILD_PATH,
     filename: BUILD_FILE,
     library: OBJECT_NAME,
-    libraryTarget: LIBRARY_TARGET},
+    libraryTarget: LIBRARY_TARGET,
+    umdNamedDefine: true
+  },
   resolve: {mainFields: ['jsnext:main', 'browser', 'module', 'main']},
   module: {
     rules: [
