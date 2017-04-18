@@ -1,7 +1,6 @@
 /* eslint-env node, es6 */
 
 'use strict';
-
 const
   BASE_NAME = 'plain-overlay',
   OBJECT_NAME = 'PlainOverlay',
@@ -22,12 +21,14 @@ const
 
   BUILD = process.env.NODE_ENV === 'production',
   LIMIT = process.env.EDITION === 'limit',
+  NATIVE = process.env.EDITION === 'native',
   SRC = process.env.SRC === 'yes',
 
   SRC_PATH = path.resolve(__dirname, 'src'),
   ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
   BUILD_PATH = BUILD ? __dirname : path.resolve(__dirname, 'test'),
-  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${BUILD ? '.min' : ''}.js`,
+  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${NATIVE ? '-native' : ''}${BUILD ? '.min' : ''}.js`,
+  LIBRARY_TARGET = NATIVE ? 'var' : 'umd',
 
   BABEL_RULE = {
     loader: 'babel-loader',
@@ -36,8 +37,12 @@ const
       plugins: ['add-module-exports']
     }
   };
+  
+  
 
 if (!LIMIT && SRC) { throw new Error('This options break source file.'); }
+
+
 
 module.exports = {
   entry: ENTRY_PATH,
@@ -45,7 +50,8 @@ module.exports = {
     path: BUILD_PATH,
     filename: BUILD_FILE,
     library: OBJECT_NAME,
-    libraryTarget: 'var'
+    libraryTarget: LIBRARY_TARGET,
+    umdNamedDefine: true
   },
   resolve: {mainFields: ['jsnext:main', 'browser', 'module', 'main']},
   module: {

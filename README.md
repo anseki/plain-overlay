@@ -28,11 +28,30 @@ One of the following can be specified as the target that is covered:
 - An element in another window
 
 ## Usage
+Below are some of the most common ways to include PlainOverlay to your webpage.
 
-Load PlainOverlay into your web page.
+### Browser
+
+#### Script tag
 
 ```html
-<script src="plain-overlay.min.js"></script>
+<script src="plain-overlay-native.min.js"></script>
+```
+
+#### Babel
+
+[Babel](http://babeljs.io/) is a next generation JavaScript compiler. One of the features is the ability to use ES6/ES2015 modules now, even though browsers do not yet support this feature natively.
+
+```js
+import PlainOverlay from "plain-overlay";
+```
+
+#### Browserify/Webpack
+
+There are several ways to use [Browserify](http://browserify.org/) and [Webpack](https://webpack.github.io/). For more information on using these tools, please refer to the corresponding project's documention. In the script, including PlainOverlay will usually look like this...
+
+```js
+var PlainOverlay = require("plain-overlay");
 ```
 
 This is simplest case:
