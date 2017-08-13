@@ -29,7 +29,7 @@
     "cssprefix": "^2.0.3",
     "htmlclean": "^3.0.2",
     "htmlclean-loader": "1.0.6",
-    "jasmine-core": "^2.5.2",
+    "jasmine-core": "^2.7.0",
     "log4js": "^1.1.1",
     "m-class-list": "^0.1.2",
     "node-static-alias": "^1.0.0",

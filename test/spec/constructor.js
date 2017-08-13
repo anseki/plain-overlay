@@ -21,9 +21,6 @@ describe('constructor', function() {
       insProps = window.insProps;
       pageDone = done;
 
-      // for Jasmine bug, https://github.com/jasmine/jasmine/pull/1275
-      self.Error = window.Error;
-
       beforeDone();
     });
   });
