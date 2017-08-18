@@ -24,6 +24,11 @@ const
 
 if (!LIMIT && SRC) { throw new Error('This options break source file.'); }
 
+// Get compass lib
+let compassLib = require.resolve('compass-mixins');
+if (!/[/\\]compass-mixins[/\\]/.test(compassLib)) { throw new Error('Not found `compass-mixins`'); }
+compassLib = path.dirname(compassLib);
+
 module.exports = [
   {
     resource: {and: [SRC_PATH, /\.js$/]},
@@ -61,10 +66,7 @@ module.exports = [
       {
         loader: 'sass-loader',
         options: {
-          includePaths: [
-            path.resolve(__dirname, 'node_modules/compass-mixins/lib'),
-            path.resolve(__dirname, '../../_common')
-          ],
+          includePaths: [compassLib, path.resolve(__dirname, '../../_common')],
           outputStyle: 'compressed'
         }
       },
