@@ -10,12 +10,21 @@ const
   path = require('path'),
   PKG = require('./package'),
 
-  RULES = require('./webpack.config.rules.js').concat([ // Join `webpack.config.rules.js` files
-    'cssprefix',
-    'anim-event',
-    'm-class-list'
-  ].reduce((rules, packageName) =>
-    rules.concat(require(`./node_modules/${packageName}/webpack.config.rules.js`)), [])),
+  // Get paths for compass and copy to ENV for `webpack.config.rules.js`
+  RULES = ((SASS_PATHS) => { process.env.SASS_PATHS = SASS_PATHS.join('\n'); })([
+    (() => {
+      const lib = require.resolve('compass-mixins');
+      if (!/[/\\]compass-mixins[/\\]/.test(lib)) { throw new Error('Not found `compass-mixins`'); }
+      return path.dirname(lib);
+    })(),
+    path.resolve(__dirname, '../../_common')
+  ]) ||
+    require('./webpack.config.rules.js').concat([ // Join `webpack.config.rules.js` files
+      'cssprefix',
+      'anim-event',
+      'm-class-list'
+    ].reduce((rules, packageName) =>
+      rules.concat(require(`./node_modules/${packageName}/webpack.config.rules.js`)), [])),
 
   BUILD = process.env.NODE_ENV === 'production',
   LIMIT = process.env.EDITION === 'limit',
