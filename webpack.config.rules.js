@@ -49,13 +49,25 @@ module.exports = [
     ]
   },
   {
-    resource: {and: [SRC_PATH, /\.css$/]},
+    resource: {and: [SRC_PATH, /\.scss$/]},
     use: [
       {
         loader: 'skeleton-loader',
-        options: {toCode: true}
+        options: {
+          procedure: content => (content + '').replace(/\n/g, ''), // for node-sass bug?
+          toCode: true
+        }
       },
-      'clean-css-loader',
+      {
+        loader: 'sass-loader',
+        options: {
+          includePaths: [
+            path.resolve(__dirname, 'node_modules/compass-mixins/lib'),
+            path.resolve(__dirname, '../../_common')
+          ],
+          outputStyle: 'compressed'
+        }
+      },
       BUILD ? {
         loader: 'pre-proc-loader',
         options: {removeTag: {tag: 'DEBUG'}}

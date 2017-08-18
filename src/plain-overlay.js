@@ -9,7 +9,7 @@
 import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
-import CSS_TEXT from './default.css';
+import CSS_TEXT from './default.scss';
 // [FACE]
 import FACE_DEFS from './face.html?tag=defs';
 import FACE_01 from './face.html?tag=face_01';

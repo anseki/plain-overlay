@@ -9,7 +9,7 @@
 import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
-import CSS_TEXT from './default.css';
+import CSS_TEXT from './default.scss';
 
 const
   APP_ID = 'plainoverlay',
