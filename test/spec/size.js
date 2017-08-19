@@ -9,7 +9,7 @@ describe('resizeTarget()', function() {
     WIDTH = 320, HEIGHT = 160;
 
   beforeAll(function(beforeDone) {
-    loadPage('spec/size/page.html', function(pageWindow, pageDocument, pageBody, done) {
+    loadPage('spec/size.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;

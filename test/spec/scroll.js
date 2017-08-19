@@ -16,7 +16,7 @@ describe('scroll()', function() {
     SCROLL_DOC_TRY_TOP = 64;
 
   beforeAll(function(beforeDone) {
-    loadPage('spec/scroll/page.html', function(pageWindow, pageDocument, pageBody, done) {
+    loadPage('spec/scroll.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;

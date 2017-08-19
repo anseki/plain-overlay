@@ -11,7 +11,7 @@ describe('disableAccKeys()', function() {
   }
 
   beforeEach(function(beforeDone) {
-    loadPage('spec/keys/page.html', function(pageWindow, pageDocument, pageBody, done) {
+    loadPage('spec/keys.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
