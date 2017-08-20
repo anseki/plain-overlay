@@ -319,16 +319,16 @@ function avoidFocus(props, element) {
 
 // Selection.containsNode polyfill for Trident
 function selContainsNode(selection, node, partialContainment) {
-  const targetRange = node.ownerDocument.createRange(),
+  const nodeRange = node.ownerDocument.createRange(),
     iLen = selection.rangeCount;
-  targetRange.selectNodeContents(node);
+  nodeRange.selectNodeContents(node);
   for (let i = 0; i < iLen; i++) {
-    const range = selection.getRangeAt(i);
+    const selRange = selection.getRangeAt(i);
     if (partialContainment ?
-        range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 &&
-        range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0 :
-        range.compareBoundaryPoints(Range.START_TO_START, targetRange) < 0 &&
-        range.compareBoundaryPoints(Range.END_TO_END, targetRange) > 0) {
+        selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 &&
+        selRange.compareBoundaryPoints(Range.END_TO_START, nodeRange) <= 0 :
+        selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 &&
+        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
       return true;
     }
   }
