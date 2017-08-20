@@ -3,7 +3,7 @@ describe('selContainsNode()', function() {
   'use strict';
 
   var window, document, selContainsNode, p1, span1, NODES = [], pageDone,
-    IS_TRIDENT;
+    IS_TRIDENT, IS_GECKO;
 
   beforeAll(function(beforeDone) {
     loadPage('spec/select.html', function(pageWindow, pageDocument, pageBody, done) {
@@ -11,6 +11,7 @@ describe('selContainsNode()', function() {
       document = pageDocument;
       selContainsNode = window.selContainsNode;
       IS_TRIDENT = window.IS_TRIDENT;
+      IS_GECKO = window.IS_GECKO;
 
       p1 = document.getElementById('p1');
       span1 = document.getElementById('span1');
@@ -41,18 +42,18 @@ describe('selContainsNode()', function() {
     pageDone();
   });
 
-  function setSelection(start, end) {
-    function getPos(index) {
-      var iList = 0;
-      while (true) {
-        if (index <= NODES[iList].end) {
-          return {node: NODES[iList].node, offset: index - NODES[iList].start};
-        }
-        if (iList >= NODES.length - 1) { throw new Error('setSelection'); }
-        iList++;
+  function getPos(index) {
+    var iList = 0;
+    while (true) {
+      if (index <= NODES[iList].end) {
+        return {node: NODES[iList].node, offset: index - NODES[iList].start};
       }
+      if (iList >= NODES.length - 1) { throw new Error('setSelection'); }
+      iList++;
     }
+  }
 
+  function setSelection(start, end) {
     var selection = ('getSelection' in window ? window : document).getSelection(),
       range, posStart, posEnd;
 
@@ -90,6 +91,26 @@ describe('selContainsNode()', function() {
       range.select();
       selection = ('getSelection' in window ? window : document).getSelection(); // Get again
     }
+    return selection;
+  }
+
+  function addSelection(start, end) {
+    if (!IS_GECKO) { throw new Error('It doesn\'t support multiple ranges selection'); }
+
+    var selection = ('getSelection' in window ? window : document).getSelection(),
+      range, posStart, posEnd;
+
+    range = document.createRange();
+    posStart = getPos(start);
+    posEnd = getPos(end);
+    if (start <= end) {
+      posEnd.offset++;
+    } else {
+      posStart.offset++;
+    }
+    range.setStart(posStart.node, posStart.offset);
+    range.setEnd(posEnd.node, posEnd.offset);
+    selection.addRange(range);
     return selection;
   }
 
@@ -144,6 +165,75 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+
+    if (IS_GECKO) { // Multiple ranges
+      // Add `C`
+      addSelection(2, 2);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('AB');
+      expect(selection.getRangeAt(1).toString()).toBe('C');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(false);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(false);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `E`
+      setSelection(indexStart, indexEnd);
+      addSelection(4, 4);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('AB');
+      expect(selection.getRangeAt(1).toString()).toBe('E');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('AB');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(false);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(false);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `CDEFGH`
+      setSelection(indexStart, indexEnd);
+      addSelection(2, 7);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('AB');
+      expect(selection.getRangeAt(1).toString()).toBe('CDEFGH');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(true);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(true);
+    }
 
     done();
   });
@@ -239,6 +329,58 @@ describe('selContainsNode()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
 
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('CD');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `F`
+      setSelection(indexStart, indexEnd);
+      addSelection(5, 5);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('CD');
+      expect(selection.getRangeAt(1).toString()).toBe('F');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('CD');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+    }
+
     done();
   });
 
@@ -290,6 +432,58 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('DE');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `G`
+      setSelection(indexStart, indexEnd);
+      addSelection(6, 6);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('DE');
+      expect(selection.getRangeAt(1).toString()).toBe('G');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('DE');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+    }
 
     done();
   });
@@ -432,6 +626,58 @@ describe('selContainsNode()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
 
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('GH');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `E`
+      setSelection(indexStart, indexEnd);
+      addSelection(4, 4);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('E');
+      expect(selection.getRangeAt(1).toString()).toBe('GH');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('GH');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+    }
+
     done();
   });
 
@@ -483,6 +729,58 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT ? true : false); // Trident changed
     expect(selContainsNode(selection, span1, false)).toBe(false);
+
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('HI');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(false);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(false);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `E`
+      setSelection(indexStart, indexEnd);
+      addSelection(4, 4);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('E');
+      expect(selection.getRangeAt(1).toString()).toBe('HI');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('HI');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(false);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(false);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+    }
 
     done();
   });
@@ -582,6 +880,41 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('DEFG');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('DEFG');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(false);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(false);
+    }
 
     done();
   });
@@ -728,6 +1061,41 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(true);
+
+    if (IS_GECKO) { // Multiple ranges
+      // Add `A`
+      addSelection(0, 0);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('A');
+      expect(selection.getRangeAt(1).toString()).toBe('CDEFGH');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(true);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(true);
+
+      // Add `J`
+      setSelection(indexStart, indexEnd);
+      addSelection(9, 9);
+      selection = ('getSelection' in window ? window : document).getSelection();
+      expect(selection.rangeCount).toBe(2);
+      expect(selection.getRangeAt(0).toString()).toBe('CDEFGH');
+      expect(selection.getRangeAt(1).toString()).toBe('J');
+
+      // containsNode
+      if (selection.containsNode) {
+        expect(selection.containsNode(span1, true)).toBe(true);
+        expect(selection.containsNode(span1, false)).toBe(true);
+      }
+      // selContainsNode
+      expect(selContainsNode(selection, span1, true)).toBe(true);
+      expect(selContainsNode(selection, span1, false)).toBe(true);
+    }
 
     done();
   });
