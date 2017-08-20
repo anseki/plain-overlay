@@ -428,27 +428,30 @@ function avoidFocus(props, element) {
 }
 
 // Selection.containsNode polyfill for Trident
-function selectionContainsNode(props, selection) {
-  var targetRange = props.document.createRange(),
+function selContainsNode(selection, node, partialContainment) {
+  var targetRange = node.ownerDocument.createRange(),
       iLen = selection.rangeCount;
-  targetRange.selectNodeContents(props.elmTargetBody);
+  targetRange.selectNodeContents(node);
   for (var i = 0; i < iLen; i++) {
     var range = selection.getRangeAt(i);
-    if (range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 && range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0) {
+    if (partialContainment ? range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 && range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0 : range.compareBoundaryPoints(Range.START_TO_START, targetRange) < 0 && range.compareBoundaryPoints(Range.END_TO_END, targetRange) > 0) {
       return true;
     }
   }
   return false;
 }
-window.selectionContainsNode = selectionContainsNode; // [DEBUG/]
+window.selContainsNode = selContainsNode; // [DEBUG/]
 
 function avoidSelect(props) {
+  console.log('avoidSelect START'); // [DEBUG/]
   var selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  if (selection.rangeCount && (props.isDoc || (selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selectionContainsNode(props, selection)))) {
-    selection.removeAllRanges();
-    props.document.body.focus();
+  if (selection.rangeCount && (props.isDoc || (selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true)))) {
+    // selection.removeAllRanges();
+    // props.document.body.focus();
+    console.log('avoidSelect DONE'); // [DEBUG/]
     return true;
   }
+  console.log('avoidSelect NO selection'); // [DEBUG/]
   return false;
 }
 
@@ -1008,11 +1011,11 @@ var PlainOverlay = function () {
     (function (listener) {
       // simulation "text-select" event
       ['keyup', 'mouseup'].forEach(function (type) {
-        elmTargetBody.addEventListener(type, listener, true);
+        // To listen to keydown in the target and keyup in outside, it is window, not `elmTargetBody`.
+        props.window.addEventListener(type, listener, true);
       });
     })(function (event) {
       if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
-        console.log('avoidSelect'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
