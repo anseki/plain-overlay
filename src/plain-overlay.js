@@ -327,8 +327,8 @@ function selContainsNode(selection, node, partialContainment) {
     if (partialContainment ?
         range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 &&
         range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0 :
-        range.compareBoundaryPoints(Range.START_TO_START, targetRange) >= 0 &&
-        range.compareBoundaryPoints(Range.END_TO_END, targetRange) <= 0) {
+        range.compareBoundaryPoints(Range.START_TO_START, targetRange) < 0 &&
+        range.compareBoundaryPoints(Range.END_TO_END, targetRange) > 0) {
       return true;
     }
   }
