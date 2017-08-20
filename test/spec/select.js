@@ -1,8 +1,8 @@
 
-describe('selContainsNode()', function() {
+describe('selContainsNode(), nodeContainsSel()', function() {
   'use strict';
 
-  var window, document, selContainsNode, p1, span1, NODES = [], pageDone,
+  var window, document, selContainsNode, nodeContainsSel, p1, span1, NODES = [], pageDone,
     IS_TRIDENT, IS_GECKO;
 
   beforeAll(function(beforeDone) {
@@ -10,6 +10,7 @@ describe('selContainsNode()', function() {
       window = pageWindow;
       document = pageDocument;
       selContainsNode = window.selContainsNode;
+      nodeContainsSel = window.nodeContainsSel;
       IS_TRIDENT = window.IS_TRIDENT;
       IS_GECKO = window.IS_GECKO;
 
@@ -35,7 +36,7 @@ describe('selContainsNode()', function() {
       pageDone = done;
 
       beforeDone();
-    }, 'selContainsNode');
+    }, 'selContainsNode, nodeContainsSel');
   });
 
   afterAll(function() {
@@ -143,6 +144,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -165,6 +168,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `C`
@@ -182,6 +187,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(false);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `E`
       setSelection(indexStart, indexEnd);
@@ -199,6 +206,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -216,6 +225,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(false);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `CDEFGH`
       setSelection(indexStart, indexEnd);
@@ -233,6 +244,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(true);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -259,6 +272,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -281,6 +296,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     done();
   });
@@ -306,6 +323,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -328,6 +347,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -345,6 +366,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `F`
       setSelection(indexStart, indexEnd);
@@ -362,6 +385,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -379,6 +404,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -410,6 +437,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -432,6 +461,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -449,6 +480,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `G`
       setSelection(indexStart, indexEnd);
@@ -466,6 +499,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(true);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -483,6 +518,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -509,6 +546,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -531,6 +570,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     done();
   });
@@ -556,6 +597,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -578,6 +621,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     done();
   });
@@ -603,6 +648,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -625,6 +672,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -642,6 +691,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `E`
       setSelection(indexStart, indexEnd);
@@ -659,6 +710,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -676,6 +729,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -707,6 +762,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT ? true : false); // Trident changed
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -729,6 +786,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT ? true : false); // Trident changed
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -746,6 +805,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(false);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `E`
       setSelection(indexStart, indexEnd);
@@ -763,6 +824,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -780,6 +843,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(false);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -806,6 +871,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -828,6 +895,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(false);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     done();
   });
@@ -858,6 +927,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -880,6 +951,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -897,6 +970,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -914,6 +989,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(false);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
@@ -940,6 +1017,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -962,6 +1041,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     done();
   });
@@ -992,6 +1073,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -1014,6 +1097,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     done();
   });
@@ -1039,6 +1124,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(true);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -1061,6 +1148,8 @@ describe('selContainsNode()', function() {
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(true);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -1078,6 +1167,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(true);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
 
       // Add `J`
       setSelection(indexStart, indexEnd);
@@ -1095,6 +1186,8 @@ describe('selContainsNode()', function() {
       // selContainsNode
       expect(selContainsNode(selection, span1, true)).toBe(true);
       expect(selContainsNode(selection, span1, false)).toBe(true);
+      // nodeContainsSel
+      expect(nodeContainsSel(span1, selection)).toBe(false);
     }
 
     done();
