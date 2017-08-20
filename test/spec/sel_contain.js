@@ -6,7 +6,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     IS_TRIDENT, IS_GECKO;
 
   beforeAll(function(beforeDone) {
-    loadPage('spec/select.html', function(pageWindow, pageDocument, pageBody, done) {
+    loadPage('spec/sel_contain.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
       selContainsNode = window.selContainsNode;
@@ -36,7 +36,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       pageDone = done;
 
       beforeDone();
-    }, 'selContainsNode, nodeContainsSel');
+    }, 'selContainsNode(), nodeContainsSel()');
   });
 
   afterAll(function() {
