@@ -342,7 +342,7 @@ window.selContainsNode = selContainsNode; // [DEBUG/]
  * @param {Selection} selection - The parsed selection.
  * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
  */
-function nodeContainsSelection(node, selection) {
+function nodeContainsSel(node, selection) {
   const nodeRange = node.ownerDocument.createRange(),
     iLen = selection.rangeCount;
   nodeRange.selectNodeContents(node);
@@ -355,7 +355,7 @@ function nodeContainsSelection(node, selection) {
   }
   return true;
 }
-window.nodeContainsSelection = nodeContainsSelection; // [DEBUG/]
+window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 
 function avoidSelect(props) {
   console.log('avoidSelect START'); // [DEBUG/]
