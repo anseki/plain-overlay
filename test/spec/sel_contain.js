@@ -5,44 +5,6 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   var window, document, selContainsNode, nodeContainsSel, p1, span1, NODES = [], pageDone,
     IS_TRIDENT, IS_GECKO;
 
-  beforeAll(function(beforeDone) {
-    loadPage('spec/sel_contain.html', function(pageWindow, pageDocument, pageBody, done) {
-      window = pageWindow;
-      document = pageDocument;
-      selContainsNode = window.selContainsNode;
-      nodeContainsSel = window.nodeContainsSel;
-      IS_TRIDENT = window.IS_TRIDENT;
-      IS_GECKO = window.IS_GECKO;
-
-      p1 = document.getElementById('p1');
-      span1 = document.getElementById('span1');
-
-      // Parse node tree
-      var index = 0;
-      function parseNode(node) {
-        var children = node.childNodes;
-        for (var i = 0; i < children.length; i++) {
-          if (children[i].nodeType === Node.ELEMENT_NODE) {
-            parseNode(children[i]);
-          } else if (children[i].nodeType === Node.TEXT_NODE) {
-            var len = children[i].textContent.length;
-            NODES.push({node: children[i], start: index, end: index + len - 1});
-            index += len;
-          }
-        }
-      }
-      parseNode(p1);
-
-      pageDone = done;
-
-      beforeDone();
-    }, 'selContainsNode(), nodeContainsSel()');
-  });
-
-  afterAll(function() {
-    pageDone();
-  });
-
   function getPos(index) {
     var iList = 0;
     while (true) {
@@ -114,6 +76,48 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     selection.addRange(range);
     return selection;
   }
+
+  beforeAll(function(beforeDone) {
+    loadPage('spec/sel_contain.html', function(pageWindow, pageDocument, pageBody, done) {
+      window = pageWindow;
+      document = pageDocument;
+      selContainsNode = window.selContainsNode;
+      nodeContainsSel = window.nodeContainsSel;
+      IS_TRIDENT = window.IS_TRIDENT;
+      IS_GECKO = window.IS_GECKO;
+
+      p1 = document.getElementById('p1');
+      span1 = document.getElementById('span1');
+
+      // Parse node tree
+      var index = 0;
+      function parseNode(node) {
+        var children = node.childNodes;
+        for (var i = 0; i < children.length; i++) {
+          if (children[i].nodeType === Node.ELEMENT_NODE) {
+            parseNode(children[i]);
+          } else if (children[i].nodeType === Node.TEXT_NODE) {
+            var len = children[i].textContent.length;
+            NODES.push({node: children[i], start: index, end: index + len - 1});
+            index += len;
+          }
+        }
+      }
+      parseNode(p1);
+
+      pageDone = done;
+
+      beforeDone();
+    }, 'selContainsNode(), nodeContainsSel()');
+  });
+
+  afterAll(function() {
+    pageDone();
+  });
+
+  it('Check Edition (to be LIMIT: ' + !!self.top.LIMIT + ')', function() {
+    expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
+  });
 
   it('Check parsed NODES', function(done) {
     expect(NODES.length).toBe(3);
