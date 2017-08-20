@@ -442,7 +442,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(true);
+    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -466,7 +466,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(true);
+    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -932,7 +932,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(true);
+    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -956,7 +956,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(true);
+    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
