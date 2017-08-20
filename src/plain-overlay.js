@@ -336,6 +336,27 @@ function selContainsNode(selection, node, partialContainment) {
 }
 window.selContainsNode = selContainsNode; // [DEBUG/]
 
+/**
+ * Indicates whether the selection is part of the node or not.
+ * @param {Node} node - Target node.
+ * @param {Selection} selection - The parsed selection.
+ * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
+ */
+function nodeContainsSelection(node, selection) {
+  const nodeRange = node.ownerDocument.createRange(),
+    iLen = selection.rangeCount;
+  nodeRange.selectNodeContents(node);
+  for (let i = 0; i < iLen; i++) {
+    const selRange = selection.getRangeAt(i);
+    if (selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) > 0 ||
+        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) < 0) {
+      return false;
+    }
+  }
+  return true;
+}
+window.nodeContainsSelection = nodeContainsSelection; // [DEBUG/]
+
 function avoidSelect(props) {
   console.log('avoidSelect START'); // [DEBUG/]
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
