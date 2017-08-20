@@ -345,11 +345,11 @@ window.selContainsNode = selContainsNode; // [DEBUG/]
 function nodeContainsSel(node, selection) {
   const nodeRange = node.ownerDocument.createRange(),
     iLen = selection.rangeCount;
-  nodeRange.selectNodeContents(node);
+  nodeRange.selectNode(node);
   for (let i = 0; i < iLen; i++) {
     const selRange = selection.getRangeAt(i);
-    if (selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) > 0 ||
-        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) < 0) {
+    if (selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 ||
+        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
       return false;
     }
   }

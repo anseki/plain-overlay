@@ -429,18 +429,38 @@ function avoidFocus(props, element) {
 
 // Selection.containsNode polyfill for Trident
 function selContainsNode(selection, node, partialContainment) {
-  var targetRange = node.ownerDocument.createRange(),
+  var nodeRange = node.ownerDocument.createRange(),
       iLen = selection.rangeCount;
-  targetRange.selectNodeContents(node);
+  nodeRange.selectNodeContents(node);
   for (var i = 0; i < iLen; i++) {
-    var range = selection.getRangeAt(i);
-    if (partialContainment ? range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 && range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0 : range.compareBoundaryPoints(Range.START_TO_START, targetRange) < 0 && range.compareBoundaryPoints(Range.END_TO_END, targetRange) > 0) {
+    var selRange = selection.getRangeAt(i);
+    if (partialContainment ? selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 && selRange.compareBoundaryPoints(Range.END_TO_START, nodeRange) <= 0 : selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 && selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
       return true;
     }
   }
   return false;
 }
 window.selContainsNode = selContainsNode; // [DEBUG/]
+
+/**
+ * Indicates whether the selection is part of the node or not.
+ * @param {Node} node - Target node.
+ * @param {Selection} selection - The parsed selection.
+ * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
+ */
+function nodeContainsSel(node, selection) {
+  var nodeRange = node.ownerDocument.createRange(),
+      iLen = selection.rangeCount;
+  nodeRange.selectNode(node);
+  for (var i = 0; i < iLen; i++) {
+    var selRange = selection.getRangeAt(i);
+    if (selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 || selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
+      return false;
+    }
+  }
+  return true;
+}
+window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 
 function avoidSelect(props) {
   console.log('avoidSelect START'); // [DEBUG/]
