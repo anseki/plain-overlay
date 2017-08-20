@@ -465,9 +465,13 @@ window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 function avoidSelect(props) {
   console.log('avoidSelect START'); // [DEBUG/]
   var selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  if (selection.rangeCount && (props.isDoc || (selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true)))) {
-    // selection.removeAllRanges();
-    // props.document.body.focus();
+  if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
+    selection.removeAllRanges();
+    props.document.body.focus();
+    // Trident bug? It seems that `focus()` makes selection again.
+    if (selection.rangeCount > 0) {
+      selection.removeAllRanges();
+    }
     console.log('avoidSelect DONE'); // [DEBUG/]
     return true;
   }

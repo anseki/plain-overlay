@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <script src="/plain-overlay.js"></script>
+  <script>
+// Trident returns content of script element via selection.toString(),
+// therefore the script must be here.
+
+window.addEventListener('load', function() {
+
+  document.getElementById('btn1').addEventListener('click', function() {
+    var overlayElm = window.overlayElm, insProps = window.insProps;
+    if (overlayElm.state === PlainOverlay.STATE_HIDDEN ||
+        overlayElm.state === PlainOverlay.STATE_HIDING) {
+      overlayElm.show();
+      insProps[overlayElm._id].elmOverlay.style.width =
+        parseFloat(insProps[overlayElm._id].elmOverlay.style.width) / 2 + 'px';
+    } else {
+      overlayElm.hide();
+    }
+  }, false);
+
+  document.getElementById('btn2').addEventListener('click', function() {
+    var overlayDoc = window.overlayDoc, insProps = window.insProps;
+    if (overlayDoc.state === PlainOverlay.STATE_HIDDEN ||
+        overlayDoc.state === PlainOverlay.STATE_HIDING) {
+      overlayDoc.show();
+      insProps[overlayDoc._id].elmOverlay.style.width = '40vw';
+      insProps[overlayDoc._id].elmOverlay.style.overflow = 'hidden';
+    } else {
+      overlayDoc.hide();
+    }
+  }, false);
+
+}, false);
+
+  </script>
+</head>
+<body>
+
+  <button id="btn1">overlayElm.show/hide</button>
+  <button id="btn2">overlayDoc.show/hide</button>
+
+  <p id="p-before">ABC</p>
+
+  <div id="target1" style="border: 1px solid #008000; width: 200px; height: 200px; overflow: auto;">
+    <p id="p-target" style="font-size: 8em;">DEF</p>
+  </div>
+
+  <p id="p-after">GHI</p>
+
+  <p id="face1" style="width: 100px; background-color: #9cc9d7;">JKL</p>
+  <p id="face2" style="width: 100px; background-color: #9cc9d7;">MNO</p>
+
+</body>
+</html>

@@ -314,31 +314,62 @@ function avoidFocus(props, element) {
 }
 
 // Selection.containsNode polyfill for Trident
-function selectionContainsNode(props, selection) {
-  const targetRange = props.document.createRange(),
+function selContainsNode(selection, node, partialContainment) {
+  const nodeRange = node.ownerDocument.createRange(),
     iLen = selection.rangeCount;
-  targetRange.selectNodeContents(props.elmTargetBody);
+  nodeRange.selectNodeContents(node);
   for (let i = 0; i < iLen; i++) {
-    const range = selection.getRangeAt(i);
-    if (range.compareBoundaryPoints(Range.START_TO_END, targetRange) >= 0 &&
-        range.compareBoundaryPoints(Range.END_TO_START, targetRange) <= 0) {
+    const selRange = selection.getRangeAt(i);
+    if (partialContainment ?
+        selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 &&
+        selRange.compareBoundaryPoints(Range.END_TO_START, nodeRange) <= 0 :
+        selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 &&
+        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
       return true;
     }
   }
   return false;
 }
-window.selectionContainsNode = selectionContainsNode; // [DEBUG/]
+window.selContainsNode = selContainsNode; // [DEBUG/]
+
+/**
+ * Indicates whether the selection is part of the node or not.
+ * @param {Node} node - Target node.
+ * @param {Selection} selection - The parsed selection.
+ * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
+ */
+function nodeContainsSel(node, selection) {
+  const nodeRange = node.ownerDocument.createRange(),
+    iLen = selection.rangeCount;
+  nodeRange.selectNode(node);
+  for (let i = 0; i < iLen; i++) {
+    const selRange = selection.getRangeAt(i);
+    if (selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 ||
+        selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
+      return false;
+    }
+  }
+  return true;
+}
+window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 
 function avoidSelect(props) {
+  console.log('avoidSelect START'); // [DEBUG/]
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  if (selection.rangeCount && (props.isDoc ||
+  if (selection.rangeCount && (props.isDoc ?
+      !nodeContainsSel(props.elmOverlayBody, selection) :
       (selection.containsNode ?
-        selection.containsNode(props.elmTargetBody, true) : selectionContainsNode(props, selection))
+        selection.containsNode(props.elmTargetBody, true) :
+        selContainsNode(selection, props.elmTargetBody, true))
       )) {
     selection.removeAllRanges();
     props.document.body.focus();
+    // Trident bug? It seems that `focus()` makes selection again.
+    if (selection.rangeCount > 0) { selection.removeAllRanges(); }
+    console.log('avoidSelect DONE'); // [DEBUG/]
     return true;
   }
+  console.log('avoidSelect NO selection'); // [DEBUG/]
   return false;
 }
 
@@ -859,11 +890,11 @@ class PlainOverlay {
 
     (listener => { // simulation "text-select" event
       ['keyup', 'mouseup'].forEach(type => {
-        elmTargetBody.addEventListener(type, listener, true);
+        // To listen to keydown in the target and keyup in outside, it is window, not `elmTargetBody`.
+        props.window.addEventListener(type, listener, true);
       });
     })(event => {
       if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
-        console.log('avoidSelect'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
