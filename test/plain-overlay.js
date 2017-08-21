@@ -115,6 +115,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 // [/FACE]
+_mClassList2.default.ignoreNative = true;
 
 var APP_ID = 'plainoverlay',
     STYLE_ELEMENT_ID = APP_ID + '-style',
