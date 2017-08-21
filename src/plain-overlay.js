@@ -14,6 +14,7 @@ import CSS_TEXT from './default.scss';
 import FACE_DEFS from './face.html?tag=defs';
 import FACE_01 from './face.html?tag=face_01';
 // [/FACE]
+mClassList.ignoreNative = true;
 
 const
   APP_ID = 'plainoverlay',
