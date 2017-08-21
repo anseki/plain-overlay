@@ -267,6 +267,7 @@ function restoreScroll(props, element) {
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   }
 
+  console.log('restoreScroll START'); // [DEBUG/]
   if (element) {
     return props.savedElementsScroll.some(elementScroll => {
       if (elementScroll.element === element) {
@@ -274,11 +275,15 @@ function restoreScroll(props, element) {
         return true;
       }
       return false;
-    });
+    })
+    ? (console.log('restoreScroll DONE'), true) : // [DEBUG/]
+      (console.log('restoreScroll Not in target'), false) // [DEBUG/]
+    ;
   } else {
     props.savedElementsScroll.forEach(elementScroll => {
       scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
     });
+    console.log('restoreScroll DONE (All savedElementsScroll)'); // [DEBUG/]
     return true;
   }
 }
@@ -303,6 +308,7 @@ function restoreAccKeys(props) {
 window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
+  console.log('avoidFocus START'); // [DEBUG/]
   if (props.isDoc && element !== element.ownerDocument.body &&
         !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
       !props.isDoc && (element === props.elmTargetBody ||
@@ -312,8 +318,10 @@ function avoidFocus(props, element) {
     } else {
       element.ownerDocument.body.focus();
     }
+    console.log('avoidFocus DONE'); // [DEBUG/]
     return true;
   }
+  console.log('avoidFocus Not in target'); // [DEBUG/]
   return false;
 }
 
@@ -894,7 +902,6 @@ class PlainOverlay {
 
     elmTargetBody.addEventListener('focus', event => {
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
-        console.log('avoidFocus'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
