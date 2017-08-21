@@ -10,6 +10,7 @@ import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
 import CSS_TEXT from './default.scss';
+mClassList.ignoreNative = true;
 
 const
   APP_ID = 'plainoverlay',
