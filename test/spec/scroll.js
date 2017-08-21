@@ -22,9 +22,7 @@ describe('scroll', function() {
     SCROLL_FACE2_LEFT = 9,
     SCROLL_FACE2_TOP = 35,
     SCROLL_FACE2_LEFT_TRY = 11,
-    SCROLL_FACE2_TOP_TRY = 67,
-
-    IS_TRIDENT;
+    SCROLL_FACE2_TOP_TRY = 67;
 
   // scrollLeft/Top need shown display
   function setFaceScroll(overlay, scroll) {
@@ -70,7 +68,6 @@ describe('scroll', function() {
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
       insProps = window.insProps;
-      IS_TRIDENT = window.IS_TRIDENT;
       div = document.getElementById('target');
       text = document.getElementById('text');
       face1 = document.getElementById('face1');
@@ -119,10 +116,8 @@ describe('scroll', function() {
         expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT_TRY);
         expect(faceScroll.top).toBe(SCROLL_FACE1_TOP_TRY);
         faceScroll = getFaceScroll(overlayDoc);
-        // NOT CHANGED (because it is hidden)
-        expect(faceScroll.left).toBe(IS_TRIDENT ? SCROLL_FACE2_LEFT_TRY : SCROLL_FACE2_LEFT);
-        // NOT CHANGED (because it is hidden)
-        expect(faceScroll.top).toBe(IS_TRIDENT ? SCROLL_FACE2_TOP_TRY : SCROLL_FACE2_TOP);
+        expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT CHANGED (because it is hidden)
+        expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT CHANGED (because it is hidden)
 
         overlayElm.hide(true);
 
@@ -135,10 +130,8 @@ describe('scroll', function() {
           expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT_TRY);
           expect(faceScroll.top).toBe(SCROLL_FACE1_TOP_TRY);
           faceScroll = getFaceScroll(overlayDoc);
-          // NOT CHANGED (because it is hidden)
-          expect(faceScroll.left).toBe(IS_TRIDENT ? SCROLL_FACE2_LEFT_TRY : SCROLL_FACE2_LEFT);
-          // NOT CHANGED (because it is hidden)
-          expect(faceScroll.top).toBe(IS_TRIDENT ? SCROLL_FACE2_TOP_TRY : SCROLL_FACE2_TOP);
+          expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT CHANGED (because it is hidden)
+          expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT CHANGED (because it is hidden)
 
           done();
         }, 50);
