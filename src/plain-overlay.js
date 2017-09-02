@@ -713,7 +713,8 @@ function setOptions(props, newOptions) {
   const options = props.options;
 
   // face
-  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+  if (newOptions.hasOwnProperty('face') &&
+      (newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
     const elmOverlayBody = props.elmOverlayBody;
     // Clear
     while (elmOverlayBody.firstChild) { elmOverlayBody.removeChild(elmOverlayBody.firstChild); }
@@ -722,7 +723,7 @@ function setOptions(props, newOptions) {
     } else if (newOptions.face && newOptions.face.nodeType === Node.ELEMENT_NODE) { // Specific face
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
-    } else { // Builtin face
+    } else if (newOptions.face == null) { // Builtin face
       // [FACE]
       const elmDocument = props.document;
       if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) { // Add svg defs
@@ -830,7 +831,7 @@ class PlainOverlay {
     const props = {
       ins: this,
       options: { // Initial options (not default)
-        face: {}, // To update forcibly in setOptions.
+        face: false, // Initial state.
         duration: DURATION, // Initial state.
         blur: false // Initial state.
       },
@@ -849,9 +850,13 @@ class PlainOverlay {
         props.elmTarget = document.documentElement; // documentElement of current document
         options = target;
       }
-    } else {
-      if (!(props.elmTarget = getTarget(target))) { throw new Error('This target is not accepted.'); }
-      if (options && !isObject(options)) { throw new Error('Invalid options.'); }
+    } else if (!(props.elmTarget = getTarget(target))) {
+      throw new Error('This target is not accepted.');
+    }
+    if (!options) {
+      options = {};
+    } else if (!isObject(options)) {
+      throw new Error('Invalid options.');
     }
 
     props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
@@ -967,7 +972,11 @@ class PlainOverlay {
       .className = STYLE_CLASS_BODY;
 
     elmDocument.body.appendChild(elmOverlay);
-    setOptions(props, options || {});
+
+    // Default options
+    if (!options.hasOwnProperty('face')) { options.face = null; }
+
+    setOptions(props, options);
   }
 
   /**
