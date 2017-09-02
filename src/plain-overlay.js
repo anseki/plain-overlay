@@ -758,6 +758,8 @@ function setOptions(props, newOptions) {
   ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide', 'onPosition'].forEach(option => {
     if (typeof newOptions[option] === 'function') {
       options[option] = newOptions[option];
+    } else if (newOptions.hasOwnProperty(option) && newOptions[option] == null) {
+      options[option] = void 0;
     }
   });
 }
