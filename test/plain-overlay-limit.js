@@ -816,7 +816,7 @@ function _setOptions(props, newOptions) {
   var options = props.options;
 
   // face
-  if ((newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
+  if (newOptions.hasOwnProperty('face') && (newOptions.face == null ? void 0 : newOptions.face) !== options.face) {
     var elmOverlayBody = props.elmOverlayBody;
     // Clear
     while (elmOverlayBody.firstChild) {
@@ -829,7 +829,7 @@ function _setOptions(props, newOptions) {
       // Specific face
       options.face = newOptions.face;
       elmOverlayBody.appendChild(newOptions.face);
-    } else {
+    } else if (newOptions.face == null) {
       // Builtin face
       options.face = void 0;
     }
@@ -856,6 +856,8 @@ function _setOptions(props, newOptions) {
   ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide', 'onPosition'].forEach(function (option) {
     if (typeof newOptions[option] === 'function') {
       options[option] = newOptions[option];
+    } else if (newOptions.hasOwnProperty(option) && newOptions[option] == null) {
+      options[option] = void 0;
     }
   });
 }
@@ -934,7 +936,7 @@ var PlainOverlay = function () {
     var props = {
       ins: this,
       options: { // Initial options (not default)
-        face: {}, // To update forcibly in setOptions.
+        face: false, // Initial state.
         duration: DURATION, // Initial state.
         blur: false // Initial state.
       },
@@ -955,13 +957,13 @@ var PlainOverlay = function () {
         props.elmTarget = document.documentElement; // documentElement of current document
         options = target;
       }
-    } else {
-      if (!(props.elmTarget = getTarget(target))) {
-        throw new Error('This target is not accepted.');
-      }
-      if (options && !isObject(options)) {
-        throw new Error('Invalid options.');
-      }
+    } else if (!(props.elmTarget = getTarget(target))) {
+      throw new Error('This target is not accepted.');
+    }
+    if (!options) {
+      options = {};
+    } else if (!isObject(options)) {
+      throw new Error('Invalid options.');
     }
 
     props.isDoc = props.elmTarget.nodeName.toLowerCase() === 'html';
@@ -1078,7 +1080,13 @@ var PlainOverlay = function () {
     (props.elmOverlayBody = elmOverlay.appendChild(elmDocument.createElement('div'))).className = STYLE_CLASS_BODY;
 
     elmDocument.body.appendChild(elmOverlay);
-    _setOptions(props, options || {});
+
+    // Default options
+    if (!options.hasOwnProperty('face')) {
+      options.face = null;
+    }
+
+    _setOptions(props, options);
   }
 
   /**
