@@ -329,6 +329,21 @@ function selContainsNode(selection, node, partialContainment) {
   nodeRange.selectNodeContents(node);
   for (let i = 0; i < iLen; i++) {
     const selRange = selection.getRangeAt(i);
+    // Edge bug (Issue #7321753); getRangeAt returns empty (collapsed) range
+    // NOTE: It can not recover when the selection has multiple ranges.
+    if (!selRange.toString().length && selection.toString().length && iLen === 1) {
+      console.log('Edge bug (Issue #7321753)'); // [DEBUG/]
+      selRange.setStart(selection.anchorNode, selection.anchorOffset);
+      selRange.setEnd(selection.focusNode, selection.focusOffset);
+      // Edge doesn't throw when end is upper than start.
+      if (selRange.toString() !== selection.toString()) {
+        selRange.setStart(selection.focusNode, selection.focusOffset);
+        selRange.setEnd(selection.anchorNode, selection.anchorOffset);
+        if (selRange.toString() !== selection.toString()) {
+          throw new Error('Edge bug (Issue #7321753); Couldn\'t recover');
+        }
+      }
+    }
     if (partialContainment ?
         selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 &&
         selRange.compareBoundaryPoints(Range.END_TO_START, nodeRange) <= 0 :
