@@ -638,12 +638,13 @@ function show(props) {
   if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
   if (props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) { return; }
 
-  const elmOverlay = props.elmOverlay;
+  const elmOverlay = props.elmOverlay,
+    elmOverlayClassList = mClassList(elmOverlay);
   if (props.state === STATE_HIDDEN) {
     const targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
 
-    mClassList(elmOverlay).remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
+    elmOverlayClassList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (!props.isDoc) {
       const elmTargetBody = props.elmTargetBody;
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
@@ -690,7 +691,7 @@ function show(props) {
 
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
-  mClassList(elmOverlay).add(STYLE_CLASS_SHOW);
+  elmOverlayClassList.add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
 }
 
@@ -884,9 +885,10 @@ class PlainOverlay {
     }
 
     // elmOverlay
-    const elmOverlay = props.elmOverlay = elmDocument.createElement('div');
-    mClassList(elmOverlay).add(STYLE_CLASS, STYLE_CLASS_HIDE);
-    if (props.isDoc) { mClassList(elmOverlay).add(STYLE_CLASS_DOC); }
+    const elmOverlay = props.elmOverlay = elmDocument.createElement('div'),
+      elmOverlayClassList = mClassList(elmOverlay);
+    elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
+    if (props.isDoc) { elmOverlayClassList.add(STYLE_CLASS_DOC); }
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {

@@ -734,12 +734,13 @@ function _show(props) {
     return;
   }
 
-  var elmOverlay = props.elmOverlay;
+  var elmOverlay = props.elmOverlay,
+      elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
   if (props.state === STATE_HIDDEN) {
     var targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
 
-    (0, _mClassList2.default)(elmOverlay).remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
+    elmOverlayClassList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (!props.isDoc) {
       var elmTargetBody = props.elmTargetBody;
       if (props.window.getComputedStyle(elmTargetBody, '').display === 'inline') {
@@ -788,7 +789,7 @@ function _show(props) {
       props.options.onPosition.call(props.ins);
     }
   }
-  (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS_SHOW);
+  elmOverlayClassList.add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
 }
 
@@ -999,10 +1000,11 @@ var PlainOverlay = function () {
     }
 
     // elmOverlay
-    var elmOverlay = props.elmOverlay = elmDocument.createElement('div');
-    (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS, STYLE_CLASS_HIDE);
+    var elmOverlay = props.elmOverlay = elmDocument.createElement('div'),
+        elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
+    elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) {
-      (0, _mClassList2.default)(elmOverlay).add(STYLE_CLASS_DOC);
+      elmOverlayClassList.add(STYLE_CLASS_DOC);
     }
 
     (function (listener) {
@@ -1688,8 +1690,8 @@ function mClassList(element) {
   return !mClassList.ignoreNative && element.classList || function () {
     var list = (element.getAttribute('class') || '').trim().split(/\s+/).filter(function (token) {
       return !!token;
-    });
-    return {
+    }),
+        ins = {
       length: list.length,
       item: function item(i) {
         return list[i];
@@ -1699,19 +1701,24 @@ function mClassList(element) {
       },
       add: function add() {
         _add(list, element, Array.prototype.slice.call(arguments));
+        return mClassList.methodChain ? ins : void 0;
       },
       remove: function remove() {
         _remove(list, element, Array.prototype.slice.call(arguments));
+        return mClassList.methodChain ? ins : void 0;
       },
       toggle: function toggle(token, force) {
         return _toggle(list, element, token, force);
       },
       replace: function replace(token, newToken) {
-        return _replace(list, element, token, newToken);
+        _replace(list, element, token, newToken);
+        return mClassList.methodChain ? ins : void 0;
       }
     };
+    return ins;
   }();
 }
+mClassList.methodChain = true;
 
 exports.default = mClassList;
 module.exports = exports['default'];
