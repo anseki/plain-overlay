@@ -137,7 +137,7 @@ function restoreStyle(element, savedStyleProps, propNames) {
  * Get an element's bounding-box that contains coordinates relative to the element's document or window.
  * @param {Element} element - Target element.
  * @param {Window} [window] - Whether it's relative to the element's window, or document.
- * @returns {(BBox|null)} - A bounding-box or null when failed.
+ * @returns {(BBox|null)} A bounding-box or null when failed.
  */
 function getBBox(element, window) {
   const rect = element.getBoundingClientRect(),
@@ -364,7 +364,7 @@ window.selContainsNode = selContainsNode; // [DEBUG/]
  * Indicates whether the selection is part of the node or not.
  * @param {Node} node - Target node.
  * @param {Selection} selection - The parsed selection.
- * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
+ * @returns {boolean} `true` if all ranges of `selection` are part of `node`.
  */
 function nodeContainsSel(node, selection) {
   const nodeRange = node.ownerDocument.createRange(),
@@ -822,7 +822,7 @@ class PlainOverlay {
 
     /**
      * @param {Object} [target] - Element or something that is checked.
-     * @returns {(Element|null)} - Valid element or null.
+     * @returns {(Element|null)} Valid element or null.
      */
     function getTarget(target) {
       let validElement;
