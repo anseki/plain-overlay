@@ -702,7 +702,8 @@ function show(props) {
  */
 function hide(props, force) {
   if (props.state === STATE_HIDDEN) { return; }
-  if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
+  if (props.state !== STATE_HIDING &&
+    props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
 
   // blur
   if (props.filterElements) {

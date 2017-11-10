@@ -814,7 +814,7 @@ function _hide(props, force) {
   if (props.state === STATE_HIDDEN) {
     return;
   }
-  if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
+  if (props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     return;
   }
 
@@ -874,9 +874,8 @@ function _setOptions(props, newOptions) {
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
-    var elmOverlay = props.elmOverlay;
     options.duration = newOptions.duration;
-    elmOverlay.style[_cssprefix2.default.getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
+    props.elmOverlay.style[_cssprefix2.default.getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
   }
 
   // blur
@@ -1351,7 +1350,7 @@ getDeclaration = function () {
 /**
  * Normalize name.
  * @param {} propName - A name that is normalized.
- * @returns {string} A normalized name.
+ * @returns {string} - A normalized name.
  */
 normalizeName = function () {
   var rePrefixedName = new RegExp('^(?:' + PREFIXES.join('|') + ')(.)', 'i'),
@@ -1372,7 +1371,7 @@ normalizeName = function () {
 /**
  * Normalize value.
  * @param {} propValue - A value that is normalized.
- * @returns {string} A normalized value.
+ * @returns {string} - A normalized value.
  */
 normalizeValue = function () {
   var rePrefixedValue = new RegExp('^(?:' + VALUE_PREFIXES.join('|') + ')', 'i');
@@ -1386,7 +1385,7 @@ normalizeValue = function () {
  * Polyfill for `CSS.supports`.
  * @param {string} propName - A name.
  * @param {string} propValue - A value.
- * @returns {boolean} `true` if given pair is accepted.
+ * @returns {boolean} - `true` if given pair is accepted.
  */
 cssSupports = function () {
   // return window.CSS && window.CSS.supports || ((propName, propValue) => {
@@ -1596,7 +1595,7 @@ function indexOfTasks(listener) {
 var AnimEvent = {
   /**
    * @param {function} listener - An event listener.
-   * @returns {(function|null)} A wrapped event listener.
+   * @returns {(function|null)} - A wrapped event listener.
    */
   add: function add(listener) {
     var task = void 0;

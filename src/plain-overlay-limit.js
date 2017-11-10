@@ -702,7 +702,8 @@ function show(props) {
  */
 function hide(props, force) {
   if (props.state === STATE_HIDDEN) { return; }
-  if (props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
+  if (props.state !== STATE_HIDING &&
+    props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
 
   // blur
   if (props.filterElements) {
@@ -746,9 +747,8 @@ function setOptions(props, newOptions) {
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
-    const elmOverlay = props.elmOverlay;
     options.duration = newOptions.duration;
-    elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
+    props.elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
   }
 
