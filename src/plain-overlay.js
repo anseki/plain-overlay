@@ -754,9 +754,8 @@ function setOptions(props, newOptions) {
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
-    const elmOverlay = props.elmOverlay;
     options.duration = newOptions.duration;
-    elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
+    props.elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
   }
 
