@@ -233,7 +233,7 @@ function restoreStyle(element, savedStyleProps, propNames) {
  * Get an element's bounding-box that contains coordinates relative to the element's document or window.
  * @param {Element} element - Target element.
  * @param {Window} [window] - Whether it's relative to the element's window, or document.
- * @returns {(BBox|null)} - A bounding-box or null when failed.
+ * @returns {(BBox|null)} A bounding-box or null when failed.
  */
 function getBBox(element, window) {
   var rect = element.getBoundingClientRect(),
@@ -457,7 +457,7 @@ window.selContainsNode = selContainsNode; // [DEBUG/]
  * Indicates whether the selection is part of the node or not.
  * @param {Node} node - Target node.
  * @param {Selection} selection - The parsed selection.
- * @returns {boolean} - `true` if all ranges of `selection` are part of `node`.
+ * @returns {boolean} `true` if all ranges of `selection` are part of `node`.
  */
 function nodeContainsSel(node, selection) {
   var nodeRange = node.ownerDocument.createRange(),
@@ -925,7 +925,7 @@ var PlainOverlay = function () {
 
     /**
      * @param {Object} [target] - Element or something that is checked.
-     * @returns {(Element|null)} - Valid element or null.
+     * @returns {(Element|null)} Valid element or null.
      */
     function getTarget(target) {
       var validElement = void 0;
@@ -1328,7 +1328,7 @@ getDeclaration = function () {
 /**
  * Normalize name.
  * @param {} propName - A name that is normalized.
- * @returns {string} - A normalized name.
+ * @returns {string} A normalized name.
  */
 normalizeName = function () {
   var rePrefixedName = new RegExp('^(?:' + PREFIXES.join('|') + ')(.)', 'i'),
@@ -1349,7 +1349,7 @@ normalizeName = function () {
 /**
  * Normalize value.
  * @param {} propValue - A value that is normalized.
- * @returns {string} - A normalized value.
+ * @returns {string} A normalized value.
  */
 normalizeValue = function () {
   var rePrefixedValue = new RegExp('^(?:' + VALUE_PREFIXES.join('|') + ')', 'i');
@@ -1363,7 +1363,7 @@ normalizeValue = function () {
  * Polyfill for `CSS.supports`.
  * @param {string} propName - A name.
  * @param {string} propValue - A value.
- * @returns {boolean} - `true` if given pair is accepted.
+ * @returns {boolean} `true` if given pair is accepted.
  */
 cssSupports = function () {
   // return window.CSS && window.CSS.supports || ((propName, propValue) => {
@@ -1573,7 +1573,7 @@ function indexOfTasks(listener) {
 var AnimEvent = {
   /**
    * @param {function} listener - An event listener.
-   * @returns {(function|null)} - A wrapped event listener.
+   * @returns {(function|null)} A wrapped event listener.
    */
   add: function add(listener) {
     var task = void 0;
