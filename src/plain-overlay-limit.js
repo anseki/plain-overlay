@@ -543,6 +543,31 @@ function getTargetElements(props) {
 }
 
 function finishShowing(props) {
+  // blur
+  props.filterElements = null;
+  if (props.options.blur !== false) {
+    const propName = CSSPrefix.getName('filter'),
+      propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`);
+    if (propValue) { // undefined if no propName
+      // Array of {element: element, savedStyle: {}}
+      const filterElements = props.isDoc ?
+        Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
+            childNode.nodeType === Node.ELEMENT_NODE &&
+            childNode !== props.elmOverlay &&
+            !mClassList(childNode).contains(STYLE_CLASS) &&
+            childNode.id !== FACE_DEFS_ELEMENT_ID)
+          .map(element => ({element: element, savedStyle: {}})) :
+        [{element: props.elmTargetBody, savedStyle: {}}];
+
+      filterElements.forEach(filterElement => {
+        const style = {}; // new object for each element.
+        style[propName] = propValue;
+        setStyle(filterElement.element, style, filterElement.savedStyle);
+      });
+      props.filterElements = filterElements;
+    }
+  }
+
   props.state = STATE_SHOWN;
   if (props.options.onShow) { props.options.onShow.call(props.ins); }
 }
@@ -671,30 +696,6 @@ function show(props, force) {
     avoidSelect(props);
     elmOverlay.offsetWidth; /* force reflow */ // eslint-disable-line no-unused-expressions
 
-    // blur
-    props.filterElements = null;
-    if (props.options.blur !== false) {
-      const propName = CSSPrefix.getName('filter'),
-        propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`);
-      if (propValue) { // undefined if no propName
-        const filterElements = props.isDoc ?
-          Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
-              childNode.nodeType === Node.ELEMENT_NODE &&
-              childNode !== elmOverlay &&
-              !mClassList(childNode).contains(STYLE_CLASS) &&
-              childNode.id !== FACE_DEFS_ELEMENT_ID)
-            .map(element => ({element: element, savedStyle: {}})) :
-          [{element: props.elmTargetBody, savedStyle: {}}];
-
-        filterElements.forEach(filterElement => {
-          const style = {}; // new object for each element.
-          style[propName] = propValue;
-          setStyle(filterElement.element, style, filterElement.savedStyle);
-        });
-        props.filterElements = filterElements;
-      }
-    }
-
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
 
@@ -720,7 +721,7 @@ function hide(props, force) {
   }
 
   // blur
-  if (props.state !== STATE_HIDING && props.filterElements) {
+  if (props.filterElements) {
     props.filterElements.forEach(
       filterElement => { restoreStyle(filterElement.element, filterElement.savedStyle); });
     props.filterElements = null;
