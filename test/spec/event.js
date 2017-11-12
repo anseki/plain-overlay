@@ -99,7 +99,7 @@ describe('event', function() {
       arrLog = [];
       returnValue = false;
       showListener = function() { overlay.hide(); };
-      hideListener = function() {};
+      hideListener = null;
 
       setTimeout(function() { arrLog.push({type: 'time-0', state: overlay.state}); }, 100);
       setTimeout(function() { arrLog.push({type: 'time-1', state: overlay.state}); }, 300);
@@ -128,7 +128,7 @@ describe('event', function() {
         returnValue = false;
         overlay.hide();
       };
-      hideListener = function() {};
+      hideListener = null;
 
       setTimeout(function() { arrLog.push({type: 'time-0', state: overlay.state}); }, 100);
       setTimeout(function() { arrLog.push({type: 'time-1', state: overlay.state}); }, 300);
@@ -240,6 +240,120 @@ describe('event', function() {
       }, 320);
 
       overlay.show();
+    });
+  });
+
+  it('Sequence: show(force)', function(done) {
+    hideAndDo(function() {
+      arrLog = [];
+      returnValue = true;
+      showListener = hideListener = null;
+
+      setTimeout(function() { arrLog.push({type: 'time-0', state: overlay.state}); }, 50);
+      setTimeout(function() {
+        expect(arrLog.length).toBe(3);
+        expect(arrLog[0].type).toBe('onBeforeShow');
+        expect(arrLog[0].state).toBe(PlainOverlay.STATE_HIDDEN);
+        expect(arrLog[1].type).toBe('onShow');
+        expect(arrLog[1].state).toBe(PlainOverlay.STATE_SHOWN);
+        expect(arrLog[2].type).toBe('time-0');
+        expect(arrLog[2].state).toBe(PlainOverlay.STATE_SHOWN);
+
+        done();
+      }, 100); // < duration
+
+      overlay.show(true);
+    });
+  });
+
+  it('Sequence: hide(force)', function(done) {
+    hideAndDo(function() {
+      arrLog = [];
+      returnValue = true;
+      showListener = function() {
+        arrLog = [];
+        returnValue = true;
+        showListener = hideListener = null;
+
+        setTimeout(function() { arrLog.push({type: 'time-0', state: overlay.state}); }, 50);
+        setTimeout(function() {
+          expect(arrLog.length).toBe(3);
+          expect(arrLog[0].type).toBe('onBeforeHide');
+          expect(arrLog[0].state).toBe(PlainOverlay.STATE_SHOWN);
+          expect(arrLog[1].type).toBe('onHide');
+          expect(arrLog[1].state).toBe(PlainOverlay.STATE_HIDDEN);
+          expect(arrLog[2].type).toBe('time-0');
+          expect(arrLog[2].state).toBe(PlainOverlay.STATE_HIDDEN);
+
+          done();
+        }, 100); // < duration
+
+        overlay.hide(true);
+
+      };
+      hideListener = null;
+
+      overlay.show(true);
+    });
+  });
+
+  it('Sequence: show() -> show(force)', function(done) {
+    hideAndDo(function() {
+      arrLog = [];
+      returnValue = true;
+      showListener = hideListener = null;
+
+      setTimeout(function() {
+        arrLog.push({type: 'time-0', state: overlay.state});
+        overlay.show(true);
+      }, 50);
+      setTimeout(function() {
+        expect(arrLog.length).toBe(3);
+        expect(arrLog[0].type).toBe('onBeforeShow');
+        expect(arrLog[0].state).toBe(PlainOverlay.STATE_HIDDEN);
+        expect(arrLog[1].type).toBe('time-0');
+        expect(arrLog[1].state).toBe(PlainOverlay.STATE_SHOWING);
+        expect(arrLog[2].type).toBe('onShow');
+        expect(arrLog[2].state).toBe(PlainOverlay.STATE_SHOWN);
+
+        done();
+      }, 100); // < duration
+
+      overlay.show();
+    });
+  });
+
+  it('Sequence: hide() -> hide(force)', function(done) {
+    hideAndDo(function() {
+      arrLog = [];
+      returnValue = true;
+      showListener = function() {
+        arrLog = [];
+        returnValue = true;
+        showListener = hideListener = null;
+
+        setTimeout(function() {
+          arrLog.push({type: 'time-0', state: overlay.state});
+          overlay.hide(true);
+        }, 50);
+        setTimeout(function() {
+          expect(arrLog.length).toBe(3);
+          expect(arrLog[0].type).toBe('onBeforeHide');
+          expect(arrLog[0].state).toBe(PlainOverlay.STATE_SHOWN);
+          expect(arrLog[1].type).toBe('time-0');
+          expect(arrLog[1].state).toBe(PlainOverlay.STATE_HIDING);
+          expect(arrLog[2].type).toBe('onHide');
+          expect(arrLog[2].state).toBe(PlainOverlay.STATE_HIDDEN);
+
+          done();
+        }, 100); // < duration
+
+        overlay.hide();
+
+      };
+      hideListener = null;
+
+      overlay.show(true);
     });
   });
 
