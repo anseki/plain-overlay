@@ -38,14 +38,14 @@ Load PlainOverlay into your web page.
 This is simplest case:
 
 ```js
-PlainOverlay.show();
+PlainOverlay.show(); // Class method
 ```
 
 Now, new overlay is shown and all of the page are covered with it.  
 You can specify an element as the target that is covered.
 
 ```js
-PlainOverlay.show(element);
+PlainOverlay.show(element); // element is covered
 ```
 
 Use an instance method to hide the overlay.
@@ -91,10 +91,11 @@ See also: [`PlainOverlay.show`](#plainoverlayshow)
 ### `show`
 
 ```js
-self = overlay.show([options])
+self = overlay.show([force][, options])
 ```
 
 Show the overlay.  
+If `true` is specified for `force` argument, show it immediately without an effect. (As to the effect, see [`duration`](#options-duration) option.)  
 If `options` argument is specified, call [`setOptions`](#setoptions) method and show the overlay. It works the same as:
 
 ```js
