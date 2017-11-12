@@ -38,7 +38,7 @@ Load PlainOverlay into your web page.
 This is simplest case:
 
 ```js
-PlainOverlay.show(); // Class method
+PlainOverlay.show(); // Static method
 ```
 
 Now, new overlay is shown and all of the page are covered with it.  
