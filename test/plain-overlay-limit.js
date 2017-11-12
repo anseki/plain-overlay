@@ -111,6 +111,7 @@ var APP_ID = 'plainoverlay',
     STYLE_CLASS_DOC = APP_ID + '-doc',
     STYLE_CLASS_SHOW = APP_ID + '-show',
     STYLE_CLASS_HIDE = APP_ID + '-hide',
+    STYLE_CLASS_FORCE = APP_ID + '-force',
     STYLE_CLASS_BODY = APP_ID + '-body',
     FACE_DEFS_ELEMENT_ID = APP_ID + '-builtin-face-defs',
     STATE_HIDDEN = 0,
@@ -666,9 +667,10 @@ function finishHiding(props) {
 
 /**
  * @param {props} props - `props` of instance.
+ * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function _show(props) {
+function _show(props, force) {
 
   function getScroll(elements, fromDoc) {
 
@@ -727,10 +729,7 @@ function _show(props) {
     return savedElementsAccKeys;
   }
 
-  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) {
-    return;
-  }
-  if (props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
+  if (props.state === STATE_SHOWN || props.state === STATE_SHOWING && !force || props.state !== STATE_SHOWING && props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
     return;
   }
 
@@ -789,8 +788,13 @@ function _show(props) {
       props.options.onPosition.call(props.ins);
     }
   }
-  elmOverlayClassList.add(STYLE_CLASS_SHOW);
-  props.state = STATE_SHOWING;
+
+  elmOverlayClassList.add(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  if (force) {
+    finishShowing(props);
+  } else {
+    props.state = STATE_SHOWING;
+  }
 }
 
 /**
@@ -799,24 +803,20 @@ function _show(props) {
  * @returns {void}
  */
 function _hide(props, force) {
-  if (props.state === STATE_HIDDEN) {
-    return;
-  }
-  if (props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
+  if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     return;
   }
 
   // blur
-  if (props.filterElements) {
+  if (props.state !== STATE_HIDING && props.filterElements) {
     props.filterElements.forEach(function (filterElement) {
       restoreStyle(filterElement.element, filterElement.savedStyle);
     });
     props.filterElements = null;
   }
 
-  (0, _mClassList2.default)(props.elmOverlay).remove(STYLE_CLASS_SHOW);
+  (0, _mClassList2.default)(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
   if (force) {
-    props.state = STATE_HIDDEN; // To skip transitionend.
     finishHiding(props);
   } else {
     props.state = STATE_HIDING;
@@ -1122,15 +1122,21 @@ var PlainOverlay = function () {
 
     /**
      * Show the overlay.
+     * @param {boolean} [force] - Show it immediately without effect.
      * @param {Object} [options] - New options.
      * @returns {PlainOverlay} Current instance itself.
      */
 
   }, {
     key: 'show',
-    value: function show(options) {
+    value: function show(force, options) {
+      if (arguments.length < 2 && typeof force !== 'boolean') {
+        options = force;
+        force = false;
+      }
+
       this.setOptions(options);
-      _show(insProps[this._id]);
+      _show(insProps[this._id], force);
       return this;
     }
 
@@ -1726,7 +1732,7 @@ module.exports = exports['default'];
 /* 4 */
 /***/ (function(module, exports) {
 
-module.exports = ".plainoverlay{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0;position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-show{opacity:1}.plainoverlay-hide{display:none}";
+module.exports = ".plainoverlay{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000;-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0}.plainoverlay.plainoverlay-show{opacity:1}.plainoverlay.plainoverlay-force{-webkit-transition-property:none;-moz-transition-property:none;-o-transition-property:none;transition-property:none}.plainoverlay.plainoverlay-hide{display:none}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}";
 
 /***/ })
 /******/ ]);

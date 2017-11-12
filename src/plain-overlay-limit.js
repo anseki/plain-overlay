@@ -23,6 +23,7 @@ const
   STYLE_CLASS_DOC = `${APP_ID}-doc`,
   STYLE_CLASS_SHOW = `${APP_ID}-show`,
   STYLE_CLASS_HIDE = `${APP_ID}-hide`,
+  STYLE_CLASS_FORCE = `${APP_ID}-force`,
   STYLE_CLASS_BODY = `${APP_ID}-body`,
   FACE_DEFS_ELEMENT_ID = `${APP_ID}-builtin-face-defs`,
 
@@ -563,7 +564,7 @@ function finishHiding(props) {
   if (props.isDoc && props.activeElement) { props.activeElement.focus(); }
   props.activeElement = null;
 
-  setTimeout(function() {
+  setTimeout(() => {
     restoreScroll(props); // Since `focus()` might scroll, do this after `focus()`.
     props.savedElementsScroll = null;
 
@@ -573,9 +574,10 @@ function finishHiding(props) {
 
 /**
  * @param {props} props - `props` of instance.
+ * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function show(props) {
+function show(props, force) {
 
   function getScroll(elements, fromDoc) {
 
@@ -635,8 +637,12 @@ function show(props) {
     return savedElementsAccKeys;
   }
 
-  if (props.state === STATE_SHOWING || props.state === STATE_SHOWN) { return; }
-  if (props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) { return; }
+  if (props.state === STATE_SHOWN ||
+      props.state === STATE_SHOWING && !force ||
+      props.state !== STATE_SHOWING &&
+        props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
+    return;
+  }
 
   const elmOverlay = props.elmOverlay,
     elmOverlayClassList = mClassList(elmOverlay);
@@ -691,8 +697,13 @@ function show(props) {
 
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
-  elmOverlayClassList.add(STYLE_CLASS_SHOW);
-  props.state = STATE_SHOWING;
+
+  elmOverlayClassList.add(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  if (force) {
+    finishShowing(props);
+  } else {
+    props.state = STATE_SHOWING;
+  }
 }
 
 /**
@@ -701,20 +712,22 @@ function show(props) {
  * @returns {void}
  */
 function hide(props, force) {
-  if (props.state === STATE_HIDDEN) { return; }
-  if (props.state !== STATE_HIDING &&
-    props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) { return; }
+  if (props.state === STATE_HIDDEN ||
+      props.state === STATE_HIDING && !force ||
+      props.state !== STATE_HIDING &&
+        props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
+    return;
+  }
 
   // blur
-  if (props.filterElements) {
+  if (props.state !== STATE_HIDING && props.filterElements) {
     props.filterElements.forEach(
       filterElement => { restoreStyle(filterElement.element, filterElement.savedStyle); });
     props.filterElements = null;
   }
 
-  mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW);
+  mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
   if (force) {
-    props.state = STATE_HIDDEN; // To skip transitionend.
     finishHiding(props);
   } else {
     props.state = STATE_HIDING;
@@ -1003,12 +1016,18 @@ class PlainOverlay {
 
   /**
    * Show the overlay.
+   * @param {boolean} [force] - Show it immediately without effect.
    * @param {Object} [options] - New options.
    * @returns {PlainOverlay} Current instance itself.
    */
-  show(options) {
+  show(force, options) {
+    if (arguments.length < 2 && typeof force !== 'boolean') {
+      options = force;
+      force = false;
+    }
+
     this.setOptions(options);
-    show(insProps[this._id]);
+    show(insProps[this._id], force);
     return this;
   }
 
