@@ -9,6 +9,7 @@ $app_id: plainoverlay;
 $app-doc: #{$app_id}-doc;
 $app-show: #{$app_id}-show;
 $app-hide: #{$app_id}-hide;
+$app-force: #{$app_id}-force;
 $app-body: #{$app_id}-body;
 
 $app-face: #{$app_id}-builtin-face;
@@ -22,12 +23,6 @@ $target_margin: 200px;
 $face_01-duration: 1s;
 
 .#{$app_id} {
-  @extend %anim-init#{$media};
-  @include transition-property(opacity);
-  @include transition-duration($duration);
-  @include transition-timing-function(linear);
-  opacity: 0;
-
   position: absolute;
   left: 0;
   top: 0;
@@ -36,6 +31,24 @@ $face_01-duration: 1s;
   background-color: $overlay-bg;
   cursor: wait;
   z-index: 9000;
+
+  @extend %anim-init#{$media};
+  @include transition-property(opacity);
+  @include transition-duration($duration);
+  @include transition-timing-function(linear);
+  opacity: 0;
+
+  &.#{$app-show} {
+    opacity: 1;
+  }
+
+  &.#{$app-force} {
+    @include transition-property(none); // Disable animation
+  }
+
+  &.#{$app-hide} {
+    display: none;
+  }
 
   &.#{$app-doc} {
     position: fixed;
@@ -60,14 +73,6 @@ $face_01-duration: 1s;
   @include display-flex;
   @include justify-content(center);
   @include align-items(center);
-}
-
-.#{$app-show} {
-  opacity: 1;
-}
-
-.#{$app-hide} {
-  display: none;
 }
 
 /* [FACE] */
