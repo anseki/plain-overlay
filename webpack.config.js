@@ -28,11 +28,12 @@ const
 
   BUILD = process.env.NODE_ENV === 'production',
   LIMIT = process.env.EDITION === 'limit',
+  SYNC = process.env.SYNC === 'yes', // Enable "sync-mode support"
 
   SRC_PATH = path.resolve(__dirname, 'src'),
   ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
   BUILD_PATH = BUILD ? __dirname : path.resolve(__dirname, 'test'),
-  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${BUILD ? '.min' : ''}.js`;
+  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${SYNC ? '-sync' : ''}${BUILD ? '.min' : ''}.js`;
 
 module.exports = {
   entry: ENTRY_PATH,

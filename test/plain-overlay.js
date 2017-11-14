@@ -671,7 +671,11 @@ function finishShowing(props) {
   }
 }
 
-function finishHiding(props) {
+function finishHiding(props
+/* [DISABLE-SYNC/]
+, sync
+[DISABLE-SYNC/] */
+) {
   (0, _mClassList2.default)(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -685,19 +689,34 @@ function finishHiding(props) {
   // props.state must be STATE_HIDDEN for below
   props.state = STATE_HIDDEN;
 
-  if (props.isDoc && props.activeElement) {
+  if (
+  /* [DISABLE-SYNC/]
+  !sync &&
+  [DISABLE-SYNC/] */
+  props.isDoc && props.activeElement) {
     props.activeElement.focus();
   }
   props.activeElement = null;
 
-  setTimeout(function () {
-    restoreScroll(props); // Since `focus()` might scroll, do this after `focus()`.
+  // Since `focus()` might scroll, do this after `focus()` and reflow.
+  function restoreAndFinish() {
+    restoreScroll(props);
     props.savedElementsScroll = null;
 
     if (props.options.onHide) {
       props.options.onHide.call(props.ins);
     }
-  }, 0);
+  }
+
+  /* [DISABLE-SYNC/]
+  if (sync) {
+    restoreAndFinish();
+  } else {
+  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
+  setTimeout(restoreAndFinish, 0);
+  /* [DISABLE-SYNC/]
+  }
+  [DISABLE-SYNC/] */
 }
 
 /**
@@ -815,7 +834,11 @@ function _show(props, force) {
  * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function _hide(props, force) {
+function _hide(props, force
+/* [DISABLE-SYNC/]
+, sync
+[DISABLE-SYNC/] */
+) {
   if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     return;
   }
@@ -830,7 +853,11 @@ function _hide(props, force) {
 
   (0, _mClassList2.default)(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
   if (force) {
-    finishHiding(props);
+    finishHiding(props
+    /* [DISABLE-SYNC/]
+    , sync
+    [DISABLE-SYNC/] */
+    );
   } else {
     props.state = STATE_HIDING;
   }
@@ -1170,8 +1197,16 @@ var PlainOverlay = function () {
 
   }, {
     key: 'hide',
-    value: function hide(force) {
-      _hide(insProps[this._id], force);
+    value: function hide(force
+    /* [DISABLE-SYNC/]
+    , sync
+    [DISABLE-SYNC/] */
+    ) {
+      _hide(insProps[this._id], force
+      /* [DISABLE-SYNC/]
+      , sync
+      [DISABLE-SYNC/] */
+      );
       return this;
     }
   }, {

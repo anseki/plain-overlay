@@ -1,5 +1,5 @@
 /*
-  DON'T MANUALLY EDIT THIS FILE; run `npm run dev-limit` instead.
+  DON'T MANUALLY EDIT THIS FILE; run `npm run dev-limit` OR `npm run dev-sync` instead.
 */
 
 /*
@@ -572,7 +572,11 @@ function finishShowing(props) {
   if (props.options.onShow) { props.options.onShow.call(props.ins); }
 }
 
-function finishHiding(props) {
+function finishHiding(props
+    /* [DISABLE-SYNC/]
+    , sync
+    [DISABLE-SYNC/] */
+    ) {
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -586,15 +590,32 @@ function finishHiding(props) {
   // props.state must be STATE_HIDDEN for below
   props.state = STATE_HIDDEN;
 
-  if (props.isDoc && props.activeElement) { props.activeElement.focus(); }
+  if (
+      /* [DISABLE-SYNC/]
+      !sync &&
+      [DISABLE-SYNC/] */
+      props.isDoc && props.activeElement) {
+    props.activeElement.focus();
+  }
   props.activeElement = null;
 
-  setTimeout(() => {
-    restoreScroll(props); // Since `focus()` might scroll, do this after `focus()`.
+  // Since `focus()` might scroll, do this after `focus()` and reflow.
+  function restoreAndFinish() {
+    restoreScroll(props);
     props.savedElementsScroll = null;
 
     if (props.options.onHide) { props.options.onHide.call(props.ins); }
-  }, 0);
+  }
+
+  /* [DISABLE-SYNC/]
+  if (sync) {
+    restoreAndFinish();
+  } else {
+  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
+    setTimeout(restoreAndFinish, 0);
+  /* [DISABLE-SYNC/]
+  }
+  [DISABLE-SYNC/] */
 }
 
 /**
@@ -712,7 +733,11 @@ function show(props, force) {
  * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function hide(props, force) {
+function hide(props, force
+    /* [DISABLE-SYNC/]
+    , sync
+    [DISABLE-SYNC/] */
+    ) {
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
@@ -729,7 +754,11 @@ function hide(props, force) {
 
   mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
   if (force) {
-    finishHiding(props);
+    finishHiding(props
+      /* [DISABLE-SYNC/]
+      , sync
+      [DISABLE-SYNC/] */
+      );
   } else {
     props.state = STATE_HIDING;
   }
@@ -1037,8 +1066,16 @@ class PlainOverlay {
    * @param {boolean} [force] - Hide it immediately without effect.
    * @returns {PlainOverlay} Current instance itself.
    */
-  hide(force) {
-    hide(insProps[this._id], force);
+  hide(force
+      /* [DISABLE-SYNC/]
+      , sync
+      [DISABLE-SYNC/] */
+      ) {
+    hide(insProps[this._id], force
+      /* [DISABLE-SYNC/]
+      , sync
+      [DISABLE-SYNC/] */
+      );
     return this;
   }
 

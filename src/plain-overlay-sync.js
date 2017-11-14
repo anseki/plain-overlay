@@ -1,4 +1,8 @@
 /*
+  DON'T MANUALLY EDIT THIS FILE; run `npm run dev-limit` OR `npm run dev-sync` instead.
+*/
+
+/*
  * PlainOverlay
  * https://anseki.github.io/plain-overlay/
  *
@@ -573,9 +577,7 @@ function finishShowing(props) {
 }
 
 function finishHiding(props
-    /* [DISABLE-SYNC/]
     , sync
-    [DISABLE-SYNC/] */
     ) {
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
@@ -591,9 +593,7 @@ function finishHiding(props
   props.state = STATE_HIDDEN;
 
   if (
-      /* [DISABLE-SYNC/]
       !sync &&
-      [DISABLE-SYNC/] */
       props.isDoc && props.activeElement) {
     props.activeElement.focus();
   }
@@ -607,15 +607,11 @@ function finishHiding(props
     if (props.options.onHide) { props.options.onHide.call(props.ins); }
   }
 
-  /* [DISABLE-SYNC/]
   if (sync) {
     restoreAndFinish();
   } else {
-  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
     setTimeout(restoreAndFinish, 0);
-  /* [DISABLE-SYNC/]
   }
-  [DISABLE-SYNC/] */
 }
 
 /**
@@ -734,9 +730,7 @@ function show(props, force) {
  * @returns {void}
  */
 function hide(props, force
-    /* [DISABLE-SYNC/]
     , sync
-    [DISABLE-SYNC/] */
     ) {
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
@@ -755,9 +749,7 @@ function hide(props, force
   mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
   if (force) {
     finishHiding(props
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       );
   } else {
     props.state = STATE_HIDING;
@@ -1075,14 +1067,10 @@ class PlainOverlay {
    * @returns {PlainOverlay} Current instance itself.
    */
   hide(force
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       ) {
     hide(insProps[this._id], force
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       );
     return this;
   }

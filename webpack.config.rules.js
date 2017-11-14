@@ -7,6 +7,7 @@ const
   SRC_PATH = path.resolve(__dirname, 'src'),
   BUILD = process.env.NODE_ENV === 'production',
   LIMIT = process.env.EDITION === 'limit',
+  SYNC = process.env.SYNC === 'yes', // Enable "sync-mode support"
   SRC = process.env.SRC === 'yes',
   BABEL_RULE = {
     loader: 'babel-loader',
@@ -19,10 +20,10 @@ const
   LIMIT_TAGS = ['FACE'],
   BASE_NAME = 'plain-overlay',
   ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
-  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${BUILD ? '.min' : ''}.js`,
+  BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${SYNC ? '-sync' : ''}${BUILD ? '.min' : ''}.js`,
   preProc = require('pre-proc');
 
-if (!LIMIT && SRC) { throw new Error('This options break source file.'); }
+if (!LIMIT && !SYNC && SRC) { throw new Error('This options break source file.'); }
 
 module.exports = [
   {
@@ -33,14 +34,15 @@ module.exports = [
         loader: 'skeleton-loader',
         options: {
           procedure: function(content) {
-            if (LIMIT) {
-              content = preProc.removeTag(LIMIT_TAGS, content);
+            if (LIMIT || SYNC) {
+              if (LIMIT) { content = preProc.removeTag(LIMIT_TAGS, content); }
+              if (SYNC) { content = preProc.removeTag('DISABLE-SYNC', content); }
               if (!BUILD && SRC && this.resourcePath === ENTRY_PATH) {
-                // Save the source code of limited functions.
+                // Save the source code of limited functions (or enabled "sync-mode support").
                 const destPath = path.resolve(SRC_PATH, BUILD_FILE);
                 require('fs').writeFileSync(destPath,
                   '/*\n  DON\'T MANUALLY EDIT THIS FILE; run ' +
-                  '`npm run dev-limit`' + // NPM command
+                  '`npm run dev-limit` OR `npm run dev-sync`' + // NPM command
                   ` instead.\n*/\n\n${content}`);
                 console.log(`Output: ${destPath}`);
               }
