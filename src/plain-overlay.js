@@ -577,6 +577,7 @@ function finishHiding(props
     , sync
     [DISABLE-SYNC/] */
     ) {
+  // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -738,6 +739,7 @@ function hide(props, force
     , sync
     [DISABLE-SYNC/] */
     ) {
+  // sync-mode (both `force` and `sync` are `true`)
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
@@ -1079,6 +1081,7 @@ class PlainOverlay {
       , sync
       [DISABLE-SYNC/] */
       ) {
+    // sync-mode (both `force` and `sync` are `true`)
     hide(insProps[this._id], force
       /* [DISABLE-SYNC/]
       , sync
