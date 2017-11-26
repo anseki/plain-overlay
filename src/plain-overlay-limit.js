@@ -80,6 +80,15 @@ window.IS_BLINK = IS_BLINK;
 window.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
+// [DEBUG]
+const traceLog = [];
+const STATE_TEXT = {};
+STATE_TEXT[STATE_HIDDEN] = 'STATE_HIDDEN';
+STATE_TEXT[STATE_SHOWING] = 'STATE_SHOWING';
+STATE_TEXT[STATE_SHOWN] = 'STATE_SHOWN';
+STATE_TEXT[STATE_HIDING] = 'STATE_HIDING';
+// [/DEBUG]
+
 function forceReflow(target) {
   // Trident and Blink bug (reflow like `offsetWidth` can't update)
   setTimeout(() => {
@@ -543,6 +552,7 @@ function getTargetElements(props) {
 }
 
 function finishShowing(props) {
+  traceLog.push('<finishShowing>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   // blur
   props.filterElements = null;
   if (props.options.blur !== false) {
@@ -570,6 +580,7 @@ function finishShowing(props) {
 
   props.state = STATE_SHOWN;
   if (props.options.onShow) { props.options.onShow.call(props.ins); }
+  traceLog.push(`_id:${props._id}`, `state:${STATE_TEXT[props.state]}`, '</finishShowing>'); // [DEBUG/]
 }
 
 function finishHiding(props
@@ -577,6 +588,8 @@ function finishHiding(props
     , sync
     [DISABLE-SYNC/] */
     ) {
+  // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
+  traceLog.push('<finishHiding>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -616,6 +629,7 @@ function finishHiding(props
   /* [DISABLE-SYNC/]
   }
   [DISABLE-SYNC/] */
+  traceLog.push(`_id:${props._id}`, `state:${STATE_TEXT[props.state]}`, '</finishHiding>'); // [DEBUG/]
 }
 
 /**
@@ -624,6 +638,7 @@ function finishHiding(props
  * @returns {void}
  */
 function show(props, force) {
+  traceLog.push('<show>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
 
   function getScroll(elements, fromDoc) {
 
@@ -726,6 +741,7 @@ function show(props, force) {
   } else {
     props.state = STATE_SHOWING;
   }
+  traceLog.push(`_id:${props._id}`, `state:${STATE_TEXT[props.state]}`, '</show>'); // [DEBUG/]
 }
 
 /**
@@ -738,6 +754,8 @@ function hide(props, force
     , sync
     [DISABLE-SYNC/] */
     ) {
+  // sync-mode (both `force` and `sync` are `true`)
+  traceLog.push('<hide>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
@@ -762,6 +780,7 @@ function hide(props, force
   } else {
     props.state = STATE_HIDING;
   }
+  traceLog.push(`_id:${props._id}`, `state:${STATE_TEXT[props.state]}`, '</hide>'); // [DEBUG/]
 }
 
 /**
@@ -932,6 +951,7 @@ class PlainOverlay {
       elmOverlayClassList = mClassList(elmOverlay);
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlayClassList.add(STYLE_CLASS_DOC); }
+    elmOverlay.forceEventTarget = target; // [DEBUG/]
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
@@ -1071,6 +1091,7 @@ class PlainOverlay {
       , sync
       [DISABLE-SYNC/] */
       ) {
+    // sync-mode (both `force` and `sync` are `true`)
     hide(insProps[this._id], force
       /* [DISABLE-SYNC/]
       , sync
@@ -1139,5 +1160,97 @@ class PlainOverlay {
 }
 
 PlainOverlay.limit = true;
+
+// [DEBUG]
+/*
+  For test, fire `transitionend` event even if view is hidden.
+*/
+PlainOverlay.forceEvent = false;
+{
+  const FORCE_EVENT_TYPE = 'transitionend',
+    PROPERTY_NAME = 'opacity',
+    TRIGGER_CLASS = STYLE_CLASS_SHOW,
+    FORCE_CLASS = STYLE_CLASS_FORCE;
+
+  function getIdLog(element) {
+    return `target.id:${element.forceEventTarget && element.forceEventTarget.id || 'UNKNOWN'}`;
+  }
+
+  function fireEvent(element) {
+    traceLog.push('<fireEvent>', getIdLog(element));
+    console.warn(`[forceEvent] Fired: ${FORCE_EVENT_TYPE}`);
+    console.log('[forceEvent] element:');
+    console.log(element);
+    let event;
+    if (element.timer) { clearTimeout(element.timer); } // This may be needed.
+    element.timer = null;
+    try {
+      event = new TransitionEvent(FORCE_EVENT_TYPE, {propertyName: PROPERTY_NAME});
+    } catch (error) {
+      event = document.createEvent('TransitionEvent');
+      event.initTransitionEvent(FORCE_EVENT_TYPE, false, false, PROPERTY_NAME, 0);
+    }
+    element.dispatchEvent(event);
+    traceLog.push('</fireEvent>');
+  }
+
+  function initEvent(element, duration) {
+    traceLog.push('<initEvent>', getIdLog(element), `duration:${duration}`);
+    console.warn(`[forceEvent] Trigger class: ${TRIGGER_CLASS} / duration: ${duration}`);
+    console.log('[forceEvent] element:');
+    console.log(element);
+    if (element.timer) {
+      traceLog.push('clearPrevEvent');
+      console.warn('[forceEvent] clearPrevEvent');
+      clearTimeout(element.timer);
+    }
+    element.timer = setTimeout(() => { fireEvent(element); }, duration);
+    traceLog.push('</initEvent>');
+  }
+
+  mClassList.hookApply((list, element) => {
+    traceLog.push('<mClassList.hookApply>', `list:${list.join(',')}`, getIdLog(element));
+    if (!PlainOverlay.forceEvent) {
+      traceLog.push('PlainOverlay.forceEvent:false', 'cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    if (list.indexOf(FORCE_CLASS) !== -1) {
+      traceLog.push('FORCE_CLASS:true');
+      if (element.timer) {
+        traceLog.push('clearPrevEvent');
+        console.warn('[forceEvent] clearPrevEvent');
+        clearTimeout(element.timer);
+        element.timer = null;
+      }
+      traceLog.push('cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    const
+      elmList = (element.getAttribute('class') || '').trim().split(/\s+/).filter(token => !!token),
+      elementHasTrigger = elmList.indexOf(TRIGGER_CLASS) !== -1,
+      listHasTrigger = list.indexOf(TRIGGER_CLASS) !== -1;
+
+    if (elementHasTrigger === listHasTrigger) {
+      traceLog.push('TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    // Remove animation of all properties (Can't remove only `opacity` when it is `all`).
+    element.style[CSSPrefix.getName('transitionProperty')] = 'none';
+    const cmpStyle = element.ownerDocument.defaultView.getComputedStyle(element, '');
+    let duration = cmpStyle[CSSPrefix.getName('transitionDuration')];
+    duration = duration.replace(/^([\d\.]+)(m?s)$/, (s, num, ms) => num * (ms === 's' ? 1000 : 1)) * 1;
+    initEvent(element, duration);
+    traceLog.push('</mClassList.hookApply>');
+  });
+}
+// [/DEBUG]
+
+// [DEBUG]
+PlainOverlay.traceLog = traceLog;
+PlainOverlay.STATE_TEXT = STATE_TEXT;
+// [/DEBUG]
 
 export default PlainOverlay;

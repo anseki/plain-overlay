@@ -1,6 +1,6 @@
 {
   "env": {"browser": true, "jasmine": true},
-  "globals": {"loadPage": false},
+  "globals": {"loadPage": false, "mClassList": false},
   "rules": {
     "no-underscore-dangle": [2, {"allow": ["_id"]}]
   }

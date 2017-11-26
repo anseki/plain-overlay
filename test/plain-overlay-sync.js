@@ -187,6 +187,15 @@ window.IS_BLINK = IS_BLINK;
 window.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
+// [DEBUG]
+var traceLog = [];
+var STATE_TEXT = {};
+STATE_TEXT[STATE_HIDDEN] = 'STATE_HIDDEN';
+STATE_TEXT[STATE_SHOWING] = 'STATE_SHOWING';
+STATE_TEXT[STATE_SHOWN] = 'STATE_SHOWN';
+STATE_TEXT[STATE_HIDING] = 'STATE_HIDING';
+// [/DEBUG]
+
 function forceReflow(target) {
   // Trident and Blink bug (reflow like `offsetWidth` can't update)
   setTimeout(function () {
@@ -642,6 +651,7 @@ function getTargetElements(props) {
 }
 
 function finishShowing(props) {
+  traceLog.push('<finishShowing>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   // blur
   props.filterElements = null;
   if (props.options.blur !== false) {
@@ -669,9 +679,12 @@ function finishShowing(props) {
   if (props.options.onShow) {
     props.options.onShow.call(props.ins);
   }
+  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishShowing>'); // [DEBUG/]
 }
 
 function finishHiding(props, sync) {
+  // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
+  traceLog.push('<finishHiding>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   (0, _mClassList2.default)(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -705,6 +718,7 @@ function finishHiding(props, sync) {
   } else {
     setTimeout(restoreAndFinish, 0);
   }
+  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishHiding>'); // [DEBUG/]
 }
 
 /**
@@ -713,6 +727,7 @@ function finishHiding(props, sync) {
  * @returns {void}
  */
 function _show(props, force) {
+  traceLog.push('<show>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
 
   function getScroll(elements, fromDoc) {
 
@@ -815,6 +830,7 @@ function _show(props, force) {
   } else {
     props.state = STATE_SHOWING;
   }
+  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</show>'); // [DEBUG/]
 }
 
 /**
@@ -823,6 +839,8 @@ function _show(props, force) {
  * @returns {void}
  */
 function _hide(props, force, sync) {
+  // sync-mode (both `force` and `sync` are `true`)
+  traceLog.push('<hide>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     return;
   }
@@ -841,6 +859,7 @@ function _hide(props, force, sync) {
   } else {
     props.state = STATE_HIDING;
   }
+  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</hide>'); // [DEBUG/]
 }
 
 /**
@@ -1034,6 +1053,7 @@ var PlainOverlay = function () {
     if (props.isDoc) {
       elmOverlayClassList.add(STYLE_CLASS_DOC);
     }
+    elmOverlay.forceEventTarget = target; // [DEBUG/]
 
     (function (listener) {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(function (type) {
@@ -1178,6 +1198,7 @@ var PlainOverlay = function () {
   }, {
     key: 'hide',
     value: function hide(force, sync) {
+      // sync-mode (both `force` and `sync` are `true`)
       _hide(insProps[this._id], force, sync);
       return this;
     }
@@ -1312,6 +1333,107 @@ var PlainOverlay = function () {
 /* [FACE/]
 PlainOverlay.limit = true;
 [FACE/] */
+
+// [DEBUG]
+/*
+  For test, fire `transitionend` event even if view is hidden.
+*/
+
+
+PlainOverlay.forceEvent = false;
+{
+  var getIdLog = function getIdLog(element) {
+    return 'target.id:' + (element.forceEventTarget && element.forceEventTarget.id || 'UNKNOWN');
+  };
+
+  var fireEvent = function fireEvent(element) {
+    traceLog.push('<fireEvent>', getIdLog(element));
+    console.warn('[forceEvent] Fired: ' + FORCE_EVENT_TYPE);
+    console.log('[forceEvent] element:');
+    console.log(element);
+    var event = void 0;
+    if (element.timer) {
+      clearTimeout(element.timer);
+    } // This may be needed.
+    element.timer = null;
+    try {
+      event = new TransitionEvent(FORCE_EVENT_TYPE, { propertyName: PROPERTY_NAME });
+    } catch (error) {
+      event = document.createEvent('TransitionEvent');
+      event.initTransitionEvent(FORCE_EVENT_TYPE, false, false, PROPERTY_NAME, 0);
+    }
+    element.dispatchEvent(event);
+    traceLog.push('</fireEvent>');
+  };
+
+  var initEvent = function initEvent(element, duration) {
+    traceLog.push('<initEvent>', getIdLog(element), 'duration:' + duration);
+    console.warn('[forceEvent] Trigger class: ' + TRIGGER_CLASS + ' / duration: ' + duration);
+    console.log('[forceEvent] element:');
+    console.log(element);
+    if (element.timer) {
+      traceLog.push('clearPrevEvent');
+      console.warn('[forceEvent] clearPrevEvent');
+      clearTimeout(element.timer);
+    }
+    element.timer = setTimeout(function () {
+      fireEvent(element);
+    }, duration);
+    traceLog.push('</initEvent>');
+  };
+
+  var FORCE_EVENT_TYPE = 'transitionend',
+      PROPERTY_NAME = 'opacity',
+      TRIGGER_CLASS = STYLE_CLASS_SHOW,
+      FORCE_CLASS = STYLE_CLASS_FORCE;
+
+  _mClassList2.default.hookApply(function (list, element) {
+    traceLog.push('<mClassList.hookApply>', 'list:' + list.join(','), getIdLog(element));
+    if (!PlainOverlay.forceEvent) {
+      traceLog.push('PlainOverlay.forceEvent:false', 'cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    if (list.indexOf(FORCE_CLASS) !== -1) {
+      traceLog.push('FORCE_CLASS:true');
+      if (element.timer) {
+        traceLog.push('clearPrevEvent');
+        console.warn('[forceEvent] clearPrevEvent');
+        clearTimeout(element.timer);
+        element.timer = null;
+      }
+      traceLog.push('cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    var elmList = (element.getAttribute('class') || '').trim().split(/\s+/).filter(function (token) {
+      return !!token;
+    }),
+        elementHasTrigger = elmList.indexOf(TRIGGER_CLASS) !== -1,
+        listHasTrigger = list.indexOf(TRIGGER_CLASS) !== -1;
+
+    if (elementHasTrigger === listHasTrigger) {
+      traceLog.push('TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>');
+      return;
+    }
+
+    // Remove animation of all properties (Can't remove only `opacity` when it is `all`).
+    element.style[_cssprefix2.default.getName('transitionProperty')] = 'none';
+    var cmpStyle = element.ownerDocument.defaultView.getComputedStyle(element, '');
+    var duration = cmpStyle[_cssprefix2.default.getName('transitionDuration')];
+    duration = duration.replace(/^([\d\.]+)(m?s)$/, function (s, num, ms) {
+      return num * (ms === 's' ? 1000 : 1);
+    }) * 1;
+    initEvent(element, duration);
+    traceLog.push('</mClassList.hookApply>');
+  });
+}
+// [/DEBUG]
+
+// [DEBUG]
+PlainOverlay.traceLog = traceLog;
+PlainOverlay.STATE_TEXT = STATE_TEXT;
+// [/DEBUG]
 
 exports.default = PlainOverlay;
 module.exports = exports['default'];
@@ -1659,10 +1781,15 @@ Object.defineProperty(exports, "__esModule", {
  * Licensed under the MIT license.
  */
 
+var hookApply = void 0; // [DEBUG/]
+
 function normalize(token) {
   return (token + '').trim();
 } // Not `||`
 function applyList(list, element) {
+  if (hookApply) {
+    hookApply(list, element);
+  } // [DEBUG/]
   element.setAttribute('class', list.join(' '));
 }
 
@@ -1754,7 +1881,12 @@ function mClassList(element) {
     return ins;
   }();
 }
+
 mClassList.methodChain = true;
+
+mClassList.hookApply = function (fnc) {
+  hookApply = typeof fnc === 'function' ? fnc : null;
+}; // [DEBUG/]
 
 exports.default = mClassList;
 module.exports = exports['default'];
