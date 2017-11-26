@@ -689,6 +689,9 @@ function finishHiding(props
 ) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   traceLog.push('<finishHiding>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+  /* [DISABLE-SYNC/]
+  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
+  [DISABLE-SYNC/] */
   (0, _mClassList2.default)(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -740,6 +743,7 @@ function finishHiding(props
  */
 function _show(props, force) {
   traceLog.push('<show>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+  traceLog.push('force:' + !!force); // [DEBUG/]
 
   function getScroll(elements, fromDoc) {
 
@@ -836,7 +840,8 @@ function _show(props, force) {
     }
   }
 
-  elmOverlayClassList.add(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.add(STYLE_CLASS_SHOW);
   if (force) {
     finishShowing(props);
   } else {
@@ -857,6 +862,10 @@ function _hide(props, force
 ) {
   // sync-mode (both `force` and `sync` are `true`)
   traceLog.push('<hide>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+  traceLog.push('force:' + !!force); // [DEBUG/]
+  /* [DISABLE-SYNC/]
+  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
+  [DISABLE-SYNC/] */
   if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     return;
   }
@@ -869,7 +878,9 @@ function _hide(props, force
     props.filterElements = null;
   }
 
-  (0, _mClassList2.default)(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  var elmOverlayClassList = (0, _mClassList2.default)(props.elmOverlay);
+  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.remove(STYLE_CLASS_SHOW);
   if (force) {
     finishHiding(props
     /* [DISABLE-SYNC/]

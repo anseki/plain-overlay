@@ -592,6 +592,7 @@ function finishHiding(props
     ) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   traceLog.push('<finishHiding>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
+  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -635,6 +636,7 @@ function finishHiding(props
  */
 function show(props, force) {
   traceLog.push('<show>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
+  traceLog.push(`force:${!!force}`); // [DEBUG/]
 
   function getScroll(elements, fromDoc) {
 
@@ -731,7 +733,8 @@ function show(props, force) {
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
 
-  elmOverlayClassList.add(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.add(STYLE_CLASS_SHOW);
   if (force) {
     finishShowing(props);
   } else {
@@ -750,6 +753,8 @@ function hide(props, force
     ) {
   // sync-mode (both `force` and `sync` are `true`)
   traceLog.push('<hide>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
+  traceLog.push(`force:${!!force}`); // [DEBUG/]
+  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
@@ -764,7 +769,9 @@ function hide(props, force
     props.filterElements = null;
   }
 
-  mClassList(props.elmOverlay).remove(STYLE_CLASS_SHOW).toggle(STYLE_CLASS_FORCE, !!force);
+  const elmOverlayClassList = mClassList(props.elmOverlay);
+  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+  elmOverlayClassList.remove(STYLE_CLASS_SHOW);
   if (force) {
     finishHiding(props
       , sync

@@ -57,7 +57,7 @@ describe('forceEvent', function() {
       overlay1.onHide = function() {
         setTimeout(function() {
           expect(traceLog).toEqual([
-            '<show>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
+            '<show>', '_id:' + overlay1._id, 'state:STATE_HIDDEN', 'force:false',
 
             // remove(STYLE_CLASS_HIDE) - Canceled by `PlainOverlay.forceEvent:false`
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain',
@@ -74,7 +74,7 @@ describe('forceEvent', function() {
 
             // onShow -> hide()
 
-            '<hide>', '_id:' + overlay1._id, 'state:STATE_SHOWN',
+            '<hide>', '_id:' + overlay1._id, 'state:STATE_SHOWN', 'force:false',
 
             // remove(STYLE_CLASS_SHOW) - Canceled by `PlainOverlay.forceEvent:false`
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain',
@@ -108,7 +108,7 @@ describe('forceEvent', function() {
       overlay2.onHide = function() {
         setTimeout(function() {
           expect(traceLog).toEqual([
-            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
 
             // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -130,7 +130,7 @@ describe('forceEvent', function() {
 
             // onShow -> hide()
 
-            '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWN',
+            '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWN', 'force:false',
 
             // remove(STYLE_CLASS_SHOW)
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -168,7 +168,7 @@ describe('forceEvent', function() {
       overlay2.onHide = function() {
         setTimeout(function() {
           expect(traceLog).toEqual([
-            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
 
             // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -183,7 +183,7 @@ describe('forceEvent', function() {
 
             // hide()
 
-            '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
+            '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:false',
 
             // remove(STYLE_CLASS_SHOW)
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -224,22 +224,21 @@ describe('forceEvent', function() {
       overlay2.onShow = function() {
         setTimeout(function() {
           expect(traceLog).toEqual([
-            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:true',
 
             // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
             'TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>',
 
-            // add(STYLE_CLASS_SHOW)
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain2',
-            '<initEvent>', 'target.id:elm-plain2', 'duration:150', '</initEvent>',
-            '</mClassList.hookApply>',
-
             // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:elm-plain2',
+            'FORCE_CLASS:true',
+            'cancel', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-show',
             'target.id:elm-plain2',
             'FORCE_CLASS:true',
-            'clearPrevEvent', // event by add(STYLE_CLASS_SHOW)
             'cancel', '</mClassList.hookApply>',
 
             '<finishShowing>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
@@ -266,7 +265,7 @@ describe('forceEvent', function() {
       setTimeout(function() { overlay2.show(true); }, 80);
       setTimeout(function() {
         expect(traceLog).toEqual([
-          '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+          '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
 
           // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
           '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -281,10 +280,9 @@ describe('forceEvent', function() {
 
           // show(true)
 
-          '<show>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
+          '<show>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:true',
 
           // remove(STYLE_CLASS_HIDE) - Skip
-          // add(STYLE_CLASS_SHOW) - Skip
 
           // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
           '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
@@ -292,6 +290,8 @@ describe('forceEvent', function() {
           'FORCE_CLASS:true',
           'clearPrevEvent', // event by add(STYLE_CLASS_SHOW)
           'cancel', '</mClassList.hookApply>',
+
+          // add(STYLE_CLASS_SHOW) - Skip
 
           '<finishShowing>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
           '_id:' + overlay2._id, 'state:STATE_SHOWN', '</finishShowing>',
@@ -313,7 +313,7 @@ describe('forceEvent', function() {
       setTimeout(function() { overlay2.hide(true); }, 80);
       setTimeout(function() {
         expect(traceLog).toEqual([
-          '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+          '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
 
           // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
           '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
@@ -328,19 +328,18 @@ describe('forceEvent', function() {
 
           // hide(true)
 
-          '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
-
-          // remove(STYLE_CLASS_SHOW)
-          '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-          '<initEvent>', 'target.id:elm-plain2', 'duration:150',
-          'clearPrevEvent', // event by add(STYLE_CLASS_SHOW)
-          '</initEvent>',
-          '</mClassList.hookApply>',
+          '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:true',
 
           // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
+          '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+          'target.id:elm-plain2',
+          'FORCE_CLASS:true',
+          'clearPrevEvent', // event by add(STYLE_CLASS_SHOW)
+          'cancel', '</mClassList.hookApply>',
+
+          // remove(STYLE_CLASS_SHOW)
           '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:elm-plain2',
           'FORCE_CLASS:true',
-          'clearPrevEvent', // event by remove(STYLE_CLASS_SHOW)
           'cancel', '</mClassList.hookApply>',
 
           '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
