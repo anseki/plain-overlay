@@ -4,7 +4,7 @@ describe('scroll', function() {
 
   var window, document,
     PlainOverlay, insProps, pageDone,
-    overlayElm, overlayDoc,
+    IS_GECKO, overlayElm, overlayDoc,
     div, text, face1, face2,
 
     SCROLL_ELM_LEFT = 2,
@@ -68,12 +68,13 @@ describe('scroll', function() {
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
       insProps = window.insProps;
+      IS_GECKO = window.IS_GECKO;
       div = document.getElementById('target');
       text = document.getElementById('text');
       face1 = document.getElementById('face1');
       face2 = document.getElementById('face2');
-      overlayElm = new PlainOverlay(div, {face: face1});
-      overlayDoc = new PlainOverlay(window, {face: face2});
+      overlayElm = new PlainOverlay(div, {face: face1, duration: 10});
+      overlayDoc = new PlainOverlay(window, {face: face2, duration: 10});
       pageDone = done;
 
       beforeDone();
@@ -88,7 +89,7 @@ describe('scroll', function() {
     expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
   });
 
-  it('avoids scrolling DIV', function(done) {
+  it('avoids scrolling target element', function(done) {
     var faceScroll;
     initScroll();
     expect(div.scrollLeft).toBe(SCROLL_ELM_LEFT);
@@ -139,7 +140,7 @@ describe('scroll', function() {
     }, 50);
   });
 
-  it('avoids scrolling DOC', function(done) {
+  it('avoids scrolling document', function(done) {
     var faceScroll;
     initScroll();
     expect(div.scrollLeft).toBe(SCROLL_ELM_LEFT);
@@ -164,8 +165,13 @@ describe('scroll', function() {
         expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT CHANGED
         expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT CHANGED
         faceScroll = getFaceScroll(overlayElm);
-        expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT CHANGED
-        expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT CHANGED
+        if (IS_GECKO) { // Gecko bug, overlayElm.face also is reset to.
+          expect(faceScroll.left).toBe(0);
+          expect(faceScroll.top).toBe(0);
+        } else {
+          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT CHANGED
+          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT CHANGED
+        }
         faceScroll = getFaceScroll(overlayDoc);
         expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT_TRY);
         expect(faceScroll.top).toBe(SCROLL_FACE2_TOP_TRY);
@@ -178,8 +184,13 @@ describe('scroll', function() {
           expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT CHANGED
           expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT CHANGED
           faceScroll = getFaceScroll(overlayElm);
-          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT CHANGED
-          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT CHANGED
+          if (IS_GECKO) { // Gecko bug, overlayElm.face also is reset to.
+            expect(faceScroll.left).toBe(0);
+            expect(faceScroll.top).toBe(0);
+          } else {
+            expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT CHANGED
+            expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT CHANGED
+          }
           faceScroll = getFaceScroll(overlayDoc);
           expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT_TRY);
           expect(faceScroll.top).toBe(SCROLL_FACE2_TOP_TRY);
@@ -190,7 +201,7 @@ describe('scroll', function() {
     }, 50);
   });
 
-  it('updates scroll values DIV', function(done) {
+  it('updates scroll values target element', function(done) {
     var faceScroll;
     initScroll();
     expect(div.scrollLeft).toBe(SCROLL_ELM_LEFT);
@@ -219,8 +230,8 @@ describe('scroll', function() {
         expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT TRIED
         expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT TRIED
         faceScroll = getFaceScroll(overlayElm);
-        expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
-        expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+        expect(faceScroll.left).toBe(0); // Reset by moving node
+        expect(faceScroll.top).toBe(0); // Reset by moving node
         faceScroll = getFaceScroll(overlayDoc);
         expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
         expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
@@ -233,8 +244,8 @@ describe('scroll', function() {
           expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT TRIED
           expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT TRIED
           faceScroll = getFaceScroll(overlayElm);
-          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
-          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+          expect(faceScroll.left).toBe(0); // NOT TRIED
+          expect(faceScroll.top).toBe(0); // NOT TRIED
           faceScroll = getFaceScroll(overlayDoc);
           expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
           expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
@@ -245,7 +256,7 @@ describe('scroll', function() {
     }, 50);
   });
 
-  it('updates scroll values DOC', function(done) {
+  it('updates scroll values document', function(done) {
     var faceScroll;
     text.focus();
 
@@ -284,11 +295,21 @@ describe('scroll', function() {
         expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT_TRY);
         expect(window.pageYOffset).toBe(SCROLL_DOC_TOP_TRY);
         faceScroll = getFaceScroll(overlayElm);
-        expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
-        expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+        if (IS_GECKO) { // Gecko bug, overlayElm.face also is reset to.
+          expect(faceScroll.left).toBe(0);
+          expect(faceScroll.top).toBe(0);
+        } else {
+          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
+          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+        }
         faceScroll = getFaceScroll(overlayDoc);
-        expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
-        expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
+        if (IS_GECKO) { // Gecko bug, STRANGE!!
+          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT);
+          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP);
+        } else {
+          expect(faceScroll.left).toBe(0); // Reset by moving node
+          expect(faceScroll.top).toBe(0); // Reset by moving node
+        }
 
         overlayDoc.hide(true);
 
@@ -298,11 +319,21 @@ describe('scroll', function() {
           expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT_TRY);
           expect(window.pageYOffset).toBe(SCROLL_DOC_TOP_TRY);
           faceScroll = getFaceScroll(overlayElm);
-          expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
-          expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+          if (IS_GECKO) { // Gecko bug, overlayElm.face also is reset to.
+            expect(faceScroll.left).toBe(0);
+            expect(faceScroll.top).toBe(0);
+          } else {
+            expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT); // NOT TRIED
+            expect(faceScroll.top).toBe(SCROLL_FACE1_TOP); // NOT TRIED
+          }
           faceScroll = getFaceScroll(overlayDoc);
-          expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
-          expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
+          if (IS_GECKO) { // Gecko bug, STRANGE!!
+            expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT);
+            expect(faceScroll.top).toBe(SCROLL_FACE1_TOP);
+          } else {
+            expect(faceScroll.left).toBe(0); // NOT TRIED
+            expect(faceScroll.top).toBe(0); // NOT TRIED
+          }
           // focus
           expect(document.activeElement).toBe(text);
 

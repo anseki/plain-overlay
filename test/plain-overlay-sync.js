@@ -795,6 +795,7 @@ function _show(props, force) {
   var elmOverlay = props.elmOverlay,
       elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
   if (props.state === STATE_HIDDEN) {
+    props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     var targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
 
