@@ -694,7 +694,7 @@ function finishHiding(props, sync) {
   props.savedStyleTargetBody = {};
 
   restoreAccKeys(props);
-  props.savedElementsAccKeys = null;
+  props.savedElementsAccKeys = [];
 
   if (!sync && props.isDoc && props.activeElement) {
     // props.state must be STATE_HIDDEN for avoiding focus.

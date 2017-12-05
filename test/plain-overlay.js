@@ -700,7 +700,7 @@ function finishHiding(props
   props.savedStyleTargetBody = {};
 
   restoreAccKeys(props);
-  props.savedElementsAccKeys = null;
+  props.savedElementsAccKeys = [];
 
   if (
   /* [DISABLE-SYNC/]
