@@ -690,34 +690,47 @@ function finishHiding(props
   restoreAccKeys(props);
   props.savedElementsAccKeys = null;
 
-  // props.state must be STATE_HIDDEN for below
-  props.state = STATE_HIDDEN;
-
   if (
   /* [DISABLE-SYNC/]
   !sync &&
   [DISABLE-SYNC/] */
   props.isDoc && props.activeElement) {
+    // props.state must be STATE_HIDDEN for avoiding focus.
+    var stateSave = props.state;
+    props.state = STATE_HIDDEN;
+    // the event is fired after function exited in some browsers (e.g. Trident).
+    props.elmTargetBody.removeEventListener('focus', props.focusListener, true);
     props.activeElement.focus();
+    // Don't change props.state for calling `hide(force)` before `restoreAndFinish` (async-mode)
+    props.state = stateSave;
   }
   props.activeElement = null;
 
   // Since `focus()` might scroll, do this after `focus()` and reflow.
   function restoreAndFinish() {
+    traceLog.push('<finishHiding.restoreAndFinish>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+    props.timerRestoreAndFinish = null;
+    props.state = STATE_HIDDEN;
+    props.elmTargetBody.addEventListener('focus', props.focusListener, true);
     restoreScroll(props);
     props.savedElementsScroll = null;
 
     if (props.options.onHide) {
       props.options.onHide.call(props.ins);
     }
+    traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishHiding.restoreAndFinish>'); // [DEBUG/]
   }
 
+  if (props.timerRestoreAndFinish) {
+    clearTimeout(props.timerRestoreAndFinish);
+    props.timerRestoreAndFinish = null;
+  }
   /* [DISABLE-SYNC/]
   if (sync) {
     restoreAndFinish();
   } else {
   [DISABLE-SYNC/] */ // eslint-disable-next-line indent
-  setTimeout(restoreAndFinish, 0);
+  props.timerRestoreAndFinish = setTimeout(restoreAndFinish, 0);
   /* [DISABLE-SYNC/]
   }
   [DISABLE-SYNC/] */
@@ -791,6 +804,7 @@ function _show(props, force) {
   }
 
   if (props.state === STATE_SHOWN || props.state === STATE_SHOWING && !force || props.state !== STATE_SHOWING && props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
+    traceLog.push('CANCEL', '</show>'); // [DEBUG/]
     return;
   }
 
@@ -831,10 +845,9 @@ function _show(props, force) {
 
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.add(STYLE_CLASS_SHOW);
+  props.state = STATE_SHOWING;
   if (force) {
     finishShowing(props);
-  } else {
-    props.state = STATE_SHOWING;
   }
   traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</show>'); // [DEBUG/]
 }
@@ -856,6 +869,7 @@ function _hide(props, force
   traceLog.push(`sync:${!!sync}`); // [DEBUG/]
   [DISABLE-SYNC/] */
   if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
+    traceLog.push('CANCEL', '</hide>'); // [DEBUG/]
     return;
   }
 
@@ -870,14 +884,13 @@ function _hide(props, force
   var elmOverlayClassList = (0, _mClassList2.default)(props.elmOverlay);
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.remove(STYLE_CLASS_SHOW);
+  props.state = STATE_HIDING;
   if (force) {
     finishHiding(props
     /* [DISABLE-SYNC/]
     , sync
     [DISABLE-SYNC/] */
     );
-  } else {
-    props.state = STATE_HIDING;
   }
   traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</hide>'); // [DEBUG/]
 }
@@ -1089,12 +1102,15 @@ var PlainOverlay = function () {
       }
     }, true);
 
-    elmTargetBody.addEventListener('focus', function (event) {
+    // props.state can't control the listener
+    // because the event is fired after function exited in some browsers (e.g. Trident).
+    props.focusListener = function (event) {
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
         event.preventDefault();
         event.stopImmediatePropagation();
       }
-    }, true);
+    };
+    elmTargetBody.addEventListener('focus', props.focusListener, true);
 
     (function (listener) {
       // simulation "text-select" event

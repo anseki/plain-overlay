@@ -88,7 +88,10 @@ describe('forceEvent', function() {
             '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain',
             'PlainOverlay.forceEvent:false', 'cancel', '</mClassList.hookApply>',
 
-            '_id:' + overlay1._id, 'state:STATE_HIDDEN', '</finishHiding>'
+            '_id:' + overlay1._id, 'state:STATE_HIDING', '</finishHiding>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlay1._id, 'state:STATE_HIDING',
+            '_id:' + overlay1._id, 'state:STATE_HIDDEN', '</finishHiding.restoreAndFinish>'
           ]);
 
           done();
@@ -147,9 +150,12 @@ describe('forceEvent', function() {
             '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain2',
             'TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>',
 
-            '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding>',
+            '_id:' + overlay2._id, 'state:STATE_HIDING', '</finishHiding>',
 
-            '</fireEvent>'
+            '</fireEvent>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlay2._id, 'state:STATE_HIDING',
+            '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding.restoreAndFinish>'
           ]);
 
           done();
@@ -202,9 +208,12 @@ describe('forceEvent', function() {
             '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain2',
             'TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>',
 
-            '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding>',
+            '_id:' + overlay2._id, 'state:STATE_HIDING', '</finishHiding>',
 
-            '</fireEvent>'
+            '</fireEvent>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlay2._id, 'state:STATE_HIDING',
+            '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding.restoreAndFinish>'
           ]);
 
           done();
@@ -241,7 +250,7 @@ describe('forceEvent', function() {
             'FORCE_CLASS:true',
             'cancel', '</mClassList.hookApply>',
 
-            '<finishShowing>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            '<finishShowing>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
             '_id:' + overlay2._id, 'state:STATE_SHOWN', '</finishShowing>',
 
             '_id:' + overlay2._id, 'state:STATE_SHOWN', '</show>'
@@ -342,16 +351,19 @@ describe('forceEvent', function() {
           'FORCE_CLASS:true',
           'cancel', '</mClassList.hookApply>',
 
-          '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
+          '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_HIDING',
 
           // add(STYLE_CLASS_HIDE) - Canceled by `FORCE_CLASS`
           '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
           'target.id:elm-plain2',
           'FORCE_CLASS:true', 'cancel', '</mClassList.hookApply>',
 
-          '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding>',
+          '_id:' + overlay2._id, 'state:STATE_HIDING', '</finishHiding>',
 
-          '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</hide>'
+          '_id:' + overlay2._id, 'state:STATE_HIDING', '</hide>',
+
+          '<finishHiding.restoreAndFinish>', '_id:' + overlay2._id, 'state:STATE_HIDING',
+          '_id:' + overlay2._id, 'state:STATE_HIDDEN', '</finishHiding.restoreAndFinish>'
         ]);
 
         done();

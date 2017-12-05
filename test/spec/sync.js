@@ -137,9 +137,9 @@ describe('sync-mode', function() {
           expect(arrLog[4].state).toBe(PlainOverlay.STATE_SHOWN);
           // .hide() done
           expect(arrLog[5].type).toBe('time-2');
-          expect(arrLog[5].state).toBe(PlainOverlay.STATE_HIDDEN);
+          expect(arrLog[5].state).toBe(PlainOverlay.STATE_HIDING);
           expect(arrLog[6].type).toBe('time-3');
-          expect(arrLog[6].state).toBe(PlainOverlay.STATE_HIDDEN);
+          expect(arrLog[6].state).toBe(PlainOverlay.STATE_HIDING);
           expect(arrLog[7].type).toBe('onHide'); // This is called with async-mode.
           expect(arrLog[7].state).toBe(PlainOverlay.STATE_HIDDEN);
 
@@ -243,9 +243,9 @@ describe('sync-mode', function() {
           expect(arrLog[4].state).toBe(PlainOverlay.STATE_SHOWN);
           // .hide() done
           expect(arrLog[5].type).toBe('time-2');
-          expect(arrLog[5].state).toBe(PlainOverlay.STATE_HIDDEN);
+          expect(arrLog[5].state).toBe(PlainOverlay.STATE_HIDING);
           expect(arrLog[6].type).toBe('time-3');
-          expect(arrLog[6].state).toBe(PlainOverlay.STATE_HIDDEN);
+          expect(arrLog[6].state).toBe(PlainOverlay.STATE_HIDING);
           expect(arrLog[7].type).toBe('onHide'); // This is called with async-mode.
           expect(arrLog[7].state).toBe(PlainOverlay.STATE_HIDDEN);
 
