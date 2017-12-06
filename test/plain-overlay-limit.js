@@ -370,6 +370,7 @@ function getDocClientWH(props) {
 window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
 function restoreScroll(props, element) {
+  traceLog.push('<restoreScroll>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
 
   function scrollElement(element, isDoc, left, top) {
     try {
@@ -378,7 +379,6 @@ function restoreScroll(props, element) {
     } catch (error) {/* Something might have been changed, and that can be ignored. */}
   }
 
-  console.log('restoreScroll START'); // [DEBUG/]
   if (element) {
     return props.savedElementsScroll.some(function (elementScroll) {
       if (elementScroll.element === element) {
@@ -386,14 +386,14 @@ function restoreScroll(props, element) {
         return true;
       }
       return false;
-    }) ? (console.log('restoreScroll DONE'), true) : ( // [DEBUG/]
-    console.log('restoreScroll Not in target'), false) // [DEBUG/]
+    }) ? (traceLog.push('DONE:ELEMENT', '_id:' + props._id, '</restoreScroll>'), true) : ( // [DEBUG/]
+    traceLog.push('NotInTarget', '_id:' + props._id, '</restoreScroll>'), false) // [DEBUG/]
     ;
   } else {
     props.savedElementsScroll.forEach(function (elementScroll) {
       scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
     });
-    console.log('restoreScroll DONE (All savedElementsScroll)'); // [DEBUG/]
+    traceLog.push('DONE:ALL', '_id:' + props._id, '</restoreScroll>'); // [DEBUG/]
     return true;
   }
 }
@@ -418,7 +418,7 @@ function restoreAccKeys(props) {
 window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
-  console.log('avoidFocus START'); // [DEBUG/]
+  traceLog.push('<avoidFocus>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
     if (element.blur) {
       // Trident and Edge don't support SVG#blur
@@ -426,10 +426,10 @@ function avoidFocus(props, element) {
     } else {
       element.ownerDocument.body.focus();
     }
-    console.log('avoidFocus DONE'); // [DEBUG/]
+    traceLog.push('DONE', '_id:' + props._id, '</avoidFocus>'); // [DEBUG/]
     return true;
   }
-  console.log('avoidFocus Not in target'); // [DEBUG/]
+  traceLog.push('NotInTarget', '_id:' + props._id, '</avoidFocus>'); // [DEBUG/]
   return false;
 }
 
@@ -484,7 +484,7 @@ function nodeContainsSel(node, selection) {
 window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 
 function avoidSelect(props) {
-  console.log('avoidSelect START'); // [DEBUG/]
+  traceLog.push('<avoidSelect>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   var selection = ('getSelection' in window ? props.window : props.document).getSelection();
   if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
     selection.removeAllRanges();
@@ -493,10 +493,10 @@ function avoidSelect(props) {
     if (selection.rangeCount > 0) {
       selection.removeAllRanges();
     }
-    console.log('avoidSelect DONE'); // [DEBUG/]
+    traceLog.push('DONE', '_id:' + props._id, '</avoidSelect>'); // [DEBUG/]
     return true;
   }
-  console.log('avoidSelect NO selection'); // [DEBUG/]
+  traceLog.push('NoSelection', '_id:' + props._id, '</avoidSelect>'); // [DEBUG/]
   return false;
 }
 
@@ -664,10 +664,11 @@ function finishShowing(props) {
   }
 
   props.state = STATE_SHOWN;
+  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (props.options.onShow) {
     props.options.onShow.call(props.ins);
   }
-  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishShowing>'); // [DEBUG/]
+  traceLog.push('_id:' + props._id, '</finishShowing>'); // [DEBUG/]
 }
 
 function finishHiding(props
@@ -698,11 +699,14 @@ function finishHiding(props
     // props.state must be STATE_HIDDEN for avoiding focus.
     var stateSave = props.state;
     props.state = STATE_HIDDEN;
+    traceLog.push('[SAVE1]state:' + STATE_TEXT[props.state]); // [DEBUG/]
     // the event is fired after function exited in some browsers (e.g. Trident).
+    traceLog.push('focusListener:REMOVE'); // [DEBUG/]
     props.elmTargetBody.removeEventListener('focus', props.focusListener, true);
     props.activeElement.focus();
     // Don't change props.state for calling `hide(force)` before `restoreAndFinish` (async-mode)
     props.state = stateSave;
+    traceLog.push('[SAVE2]state:' + STATE_TEXT[props.state]); // [DEBUG/]
   }
   props.activeElement = null;
 
@@ -711,6 +715,8 @@ function finishHiding(props
     traceLog.push('<finishHiding.restoreAndFinish>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
     props.timerRestoreAndFinish = null;
     props.state = STATE_HIDDEN;
+    traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
+    traceLog.push('focusListener:ADD'); // [DEBUG/]
     props.elmTargetBody.addEventListener('focus', props.focusListener, true);
     restoreScroll(props);
     props.savedElementsScroll = null;
@@ -718,7 +724,7 @@ function finishHiding(props
     if (props.options.onHide) {
       props.options.onHide.call(props.ins);
     }
-    traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishHiding.restoreAndFinish>'); // [DEBUG/]
+    traceLog.push('_id:' + props._id, '</finishHiding.restoreAndFinish>'); // [DEBUG/]
   }
 
   if (props.timerRestoreAndFinish) {
@@ -734,7 +740,7 @@ function finishHiding(props
   /* [DISABLE-SYNC/]
   }
   [DISABLE-SYNC/] */
-  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</finishHiding>'); // [DEBUG/]
+  traceLog.push('_id:' + props._id, '</finishHiding>'); // [DEBUG/]
 }
 
 /**
@@ -846,10 +852,11 @@ function _show(props, force) {
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
+  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (force) {
     finishShowing(props);
   }
-  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</show>'); // [DEBUG/]
+  traceLog.push('_id:' + props._id, '</show>'); // [DEBUG/]
 }
 
 /**
@@ -885,6 +892,7 @@ function _hide(props, force
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.remove(STYLE_CLASS_SHOW);
   props.state = STATE_HIDING;
+  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (force) {
     finishHiding(props
     /* [DISABLE-SYNC/]
@@ -892,7 +900,7 @@ function _hide(props, force
     [DISABLE-SYNC/] */
     );
   }
-  traceLog.push('_id:' + props._id, 'state:' + STATE_TEXT[props.state], '</hide>'); // [DEBUG/]
+  traceLog.push('_id:' + props._id, '</hide>'); // [DEBUG/]
 }
 
 /**
@@ -1094,21 +1102,26 @@ var PlainOverlay = function () {
     });
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', function (event) {
+      traceLog.push('<scroll-event>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
       var target = event.target;
       if (props.state !== STATE_HIDDEN && restoreScroll(props, props.isDoc && (target === props.window || target === props.document || target === props.elmTargetBody) ? props.elmTarget : target)) {
-        console.log('avoidScroll'); // [DEBUG/]
+        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
+      traceLog.push('_id:' + props._id, '</scroll-event>'); // [DEBUG/]
     }, true);
 
     // props.state can't control the listener
-    // because the event is fired after function exited in some browsers (e.g. Trident).
+    // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = function (event) {
+      traceLog.push('<focusListener>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
+      traceLog.push('_id:' + props._id, '</focusListener>'); // [DEBUG/]
     };
     elmTargetBody.addEventListener('focus', props.focusListener, true);
 
@@ -1119,17 +1132,20 @@ var PlainOverlay = function () {
         props.window.addEventListener(type, listener, true);
       });
     })(function (event) {
+      traceLog.push('<text-select-event>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
       if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
+        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
+      traceLog.push('_id:' + props._id, '</text-select-event>'); // [DEBUG/]
     });
 
     // Gecko bug, multiple calling (parallel) by `requestAnimationFrame`.
     props.resizing = false;
     props.window.addEventListener('resize', _animEvent2.default.add(function () {
       if (props.resizing) {
-        console.log('`resize` event listener is already running.'); // [DEBUG/]
+        console.warn('`resize` event listener is already running.'); // [DEBUG/]
         return;
       }
       props.resizing = true;
@@ -1380,8 +1396,6 @@ PlainOverlay.forceEvent = false;
   var fireEvent = function fireEvent(element) {
     traceLog.push('<fireEvent>', getIdLog(element));
     console.warn('[forceEvent] Fired: ' + FORCE_EVENT_TYPE);
-    console.log('[forceEvent] element:');
-    console.log(element);
     var event = void 0;
     if (element.timer) {
       clearTimeout(element.timer);
@@ -1400,11 +1414,9 @@ PlainOverlay.forceEvent = false;
   var initEvent = function initEvent(element, duration) {
     traceLog.push('<initEvent>', getIdLog(element), 'duration:' + duration);
     console.warn('[forceEvent] Trigger class: ' + TRIGGER_CLASS + ' / duration: ' + duration);
-    console.log('[forceEvent] element:');
-    console.log(element);
     if (element.timer) {
-      traceLog.push('clearPrevEvent');
-      console.warn('[forceEvent] clearPrevEvent');
+      traceLog.push('ClearPrevEvent');
+      console.warn('[forceEvent] ClearPrevEvent');
       clearTimeout(element.timer);
     }
     element.timer = setTimeout(function () {
@@ -1421,19 +1433,19 @@ PlainOverlay.forceEvent = false;
   _mClassList2.default.hookApply(function (list, element) {
     traceLog.push('<mClassList.hookApply>', 'list:' + list.join(','), getIdLog(element));
     if (!PlainOverlay.forceEvent) {
-      traceLog.push('PlainOverlay.forceEvent:false', 'cancel', '</mClassList.hookApply>');
+      traceLog.push('PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>');
       return;
     }
 
     if (list.indexOf(FORCE_CLASS) !== -1) {
       traceLog.push('FORCE_CLASS:true');
       if (element.timer) {
-        traceLog.push('clearPrevEvent');
-        console.warn('[forceEvent] clearPrevEvent');
+        traceLog.push('ClearPrevEvent');
+        console.warn('[forceEvent] ClearPrevEvent');
         clearTimeout(element.timer);
         element.timer = null;
       }
-      traceLog.push('cancel', '</mClassList.hookApply>');
+      traceLog.push('CANCEL', '</mClassList.hookApply>');
       return;
     }
 
@@ -1444,7 +1456,7 @@ PlainOverlay.forceEvent = false;
         listHasTrigger = list.indexOf(TRIGGER_CLASS) !== -1;
 
     if (elementHasTrigger === listHasTrigger) {
-      traceLog.push('TriggerClassNotChanged', 'cancel', '</mClassList.hookApply>');
+      traceLog.push('TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>');
       return;
     }
 
