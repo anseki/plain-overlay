@@ -637,6 +637,7 @@ function finishHiding(props
   }
 
   if (props.timerRestoreAndFinish) {
+    traceLog.push('ClearPrevTimer'); // [DEBUG/]
     clearTimeout(props.timerRestoreAndFinish);
     props.timerRestoreAndFinish = null;
   }
