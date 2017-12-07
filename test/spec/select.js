@@ -3,7 +3,7 @@ describe('avoidSelect()', function() {
   'use strict';
 
   var window, document,
-    PlainOverlay, pageDone,
+    PlainOverlay, traceLog, pageDone,
     IS_TRIDENT, IS_EDGE,
     overlayElm, overlayDoc,
     pBefore, pTarget, pAfter, face1, face2;
@@ -82,7 +82,7 @@ describe('avoidSelect()', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      // insProps = window.insProps;
+      traceLog = PlainOverlay.traceLog;
       IS_TRIDENT = window.IS_TRIDENT;
       IS_EDGE = window.IS_EDGE;
 
@@ -122,11 +122,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('AB');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('AB');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -144,11 +155,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('BC');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('BC');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -166,11 +188,20 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('CD');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayElm._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -188,11 +219,20 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('DE');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayElm._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -210,11 +250,20 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('EF');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayElm._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -232,11 +281,20 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('FG');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayElm._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -254,11 +312,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('GH');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('GH');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -276,11 +345,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('HI');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('HI');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -302,6 +382,7 @@ describe('avoidSelect()', function() {
         expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
       }
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
@@ -311,6 +392,16 @@ describe('avoidSelect()', function() {
         } else {
           expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
         }
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -328,11 +419,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('JK');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('JK');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -350,11 +452,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('KL');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('KL');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -372,11 +485,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('AB');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -394,11 +519,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('BC');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -416,11 +553,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('CD');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -438,11 +587,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('DE');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -460,11 +621,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('EF');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -482,11 +655,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('FG');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -504,11 +689,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('GH');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -526,11 +723,23 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('HI');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -552,11 +761,23 @@ describe('avoidSelect()', function() {
         expect(selection.toString().replace(/\s/g, '')).toBe('IM');
       }
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(0);
         expect(selection.toString()).toBe('');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+          'AVOIDED',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -574,11 +795,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('MN');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('MN');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
@@ -596,11 +828,22 @@ describe('avoidSelect()', function() {
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('NO');
 
+      traceLog.length = 0;
       fireKeyup();
       setTimeout(function() {
         selection = ('getSelection' in window ? window : document).getSelection();
         expect(selection.rangeCount).toBe(1);
         expect(selection.toString().replace(/\s/g, '')).toBe('NO');
+
+        expect(traceLog).toEqual([
+          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+          '_id:' + overlayElm._id, '</text-select-event>',
+
+          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
+          '_id:' + overlayDoc._id, '</text-select-event>'
+        ]);
 
         done();
       }, 10);
