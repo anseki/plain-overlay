@@ -132,6 +132,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -165,6 +166,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -198,6 +200,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayElm._id, '</text-select-event>'
@@ -229,6 +232,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayElm._id, '</text-select-event>'
@@ -260,6 +264,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayElm._id, '</text-select-event>'
@@ -291,6 +296,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayElm._id, '</text-select-event>'
@@ -322,6 +328,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -355,6 +362,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -396,6 +404,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -429,6 +438,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#face1',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -462,6 +472,7 @@ describe('avoidSelect()', function() {
         expect(traceLog).toEqual([
           '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+          'element:P#face1',
           'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
           '_id:' + overlayElm._id, '</text-select-event>',
 
@@ -498,6 +509,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -532,6 +544,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -566,6 +579,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-before',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -600,6 +614,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -634,6 +649,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -668,6 +684,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-target',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -702,6 +719,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -736,6 +754,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -774,6 +793,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#p-after',
           'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
           'AVOIDED',
           '_id:' + overlayDoc._id, '</text-select-event>'
@@ -808,6 +828,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#face2',
           'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
           '_id:' + overlayDoc._id, '</text-select-event>'
         ]);
@@ -841,6 +862,7 @@ describe('avoidSelect()', function() {
 
           '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
           '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+          'element:P#face2',
           'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
           '_id:' + overlayDoc._id, '</text-select-event>'
         ]);

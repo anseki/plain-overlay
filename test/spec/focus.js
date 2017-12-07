@@ -87,6 +87,7 @@ describe('focus', function() {
               'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
               '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+              'element:BODY',
               'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
               // add(STYLE_CLASS_SHOW)
@@ -185,6 +186,7 @@ describe('focus', function() {
             'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:DIV#target',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -294,6 +296,7 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:DIV#target',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -398,6 +401,7 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:P',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -497,6 +501,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -614,6 +619,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:DIV#target',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -737,6 +743,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:DIV#target',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -859,6 +866,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:DIV#target',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)

@@ -319,8 +319,8 @@ function restoreAccKeys(props) {
 window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
-  traceLog.push('<avoidFocus>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   // [DEBUG]
+  traceLog.push('<avoidFocus>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
   traceLog.push(
     `element:${element === document ? 'document' : element.tagName || 'UNKNOWN'}` +
     `${element.id ? `#${element.id}` : ''}`);
@@ -399,6 +399,14 @@ window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 function avoidSelect(props) {
   traceLog.push('<avoidSelect>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
+  // [DEBUG]
+  let element = selection.rangeCount ? selection.getRangeAt(0).startContainer : null;
+  if (element && element.nodeType === Node.TEXT_NODE) { element = element.parentNode; }
+  traceLog.push(
+    `element:${!element ? 'NONE' : element === document ? 'document' :
+      element.tagName || 'UNKNOWN'}` +
+    `${element && element.id ? `#${element.id}` : ''}`);
+  // [/DEBUG]
   if (selection.rangeCount && (props.isDoc ?
       !nodeContainsSel(props.elmOverlayBody, selection) :
       (selection.containsNode ?
@@ -1007,8 +1015,8 @@ class PlainOverlay {
     });
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
-      traceLog.push('<scroll-event>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
       // [DEBUG]
+      traceLog.push('<scroll-event>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
       traceLog.push(
         `target:${event.target === document ? 'document' : event.target.tagName || 'UNKNOWN'}` +
         `${event.target.id ? `#${event.target.id}` : ''}`);
@@ -1029,8 +1037,8 @@ class PlainOverlay {
     // props.state can't control the listener
     // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = event => {
-      traceLog.push('<focusListener>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
       // [DEBUG]
+      traceLog.push('<focusListener>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
       traceLog.push(
         `target:${event.target === document ? 'document' : event.target.tagName || 'UNKNOWN'}` +
         `${event.target.id ? `#${event.target.id}` : ''}`);

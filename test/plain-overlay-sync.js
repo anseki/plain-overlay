@@ -430,8 +430,8 @@ function restoreAccKeys(props) {
 window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
-  traceLog.push('<avoidFocus>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   // [DEBUG]
+  traceLog.push('<avoidFocus>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
   traceLog.push('element:' + (element === document ? 'document' : element.tagName || 'UNKNOWN') + ('' + (element.id ? '#' + element.id : '')));
   // [/DEBUG]
   if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
@@ -501,6 +501,13 @@ window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 function avoidSelect(props) {
   traceLog.push('<avoidSelect>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   var selection = ('getSelection' in window ? props.window : props.document).getSelection();
+  // [DEBUG]
+  var element = selection.rangeCount ? selection.getRangeAt(0).startContainer : null;
+  if (element && element.nodeType === Node.TEXT_NODE) {
+    element = element.parentNode;
+  }
+  traceLog.push('element:' + (!element ? 'NONE' : element === document ? 'document' : element.tagName || 'UNKNOWN') + ('' + (element && element.id ? '#' + element.id : '')));
+  // [/DEBUG]
   if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
     selection.removeAllRanges();
     props.document.body.focus();
@@ -1103,8 +1110,8 @@ var PlainOverlay = function () {
     });
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', function (event) {
-      traceLog.push('<scroll-event>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
       // [DEBUG]
+      traceLog.push('<scroll-event>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
       traceLog.push('target:' + (event.target === document ? 'document' : event.target.tagName || 'UNKNOWN') + ('' + (event.target.id ? '#' + event.target.id : '')));
       // [/DEBUG]
       var target = event.target;
@@ -1119,8 +1126,8 @@ var PlainOverlay = function () {
     // props.state can't control the listener
     // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = function (event) {
-      traceLog.push('<focusListener>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
       // [DEBUG]
+      traceLog.push('<focusListener>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
       traceLog.push('target:' + (event.target === document ? 'document' : event.target.tagName || 'UNKNOWN') + ('' + (event.target.id ? '#' + event.target.id : '')));
       // [/DEBUG]
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
