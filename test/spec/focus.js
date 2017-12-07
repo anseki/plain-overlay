@@ -3,9 +3,9 @@ describe('focus', function() {
   'use strict';
 
   var window, document,
-    PlainOverlay, pageDone,
+    PlainOverlay, traceLog, pageDone,
     overlayElm, overlayDoc,
-    text1, text2, textFace1, textFace2;
+    textInDoc, textInTarget, textInFace1, textInFace2;
 
   function blurElement(element) {
     if (element.blur) {
@@ -27,13 +27,15 @@ describe('focus', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      text1 = document.getElementById('text1');
-      text2 = document.getElementById('text2');
-      textFace1 = document.getElementById('text-face1');
-      textFace2 = document.getElementById('text-face2');
+      traceLog = PlainOverlay.traceLog;
+      textInDoc = document.getElementById('textInDoc');
+      textInTarget = document.getElementById('textInTarget');
+      textInFace1 = document.getElementById('textInFace1');
+      textInFace2 = document.getElementById('textInFace2');
       overlayElm = new PlainOverlay(document.getElementById('target'),
-        {face: document.getElementById('face1')});
-      overlayDoc = new PlainOverlay(window, {face: document.getElementById('face2')});
+        {face: document.getElementById('face1'), duration: 20});
+      overlayDoc = new PlainOverlay(window,
+        {face: document.getElementById('face2'), duration: 20});
       pageDone = done;
 
       beforeDone();
@@ -49,28 +51,100 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: outside', function(done) {
-    text1.focus();
-    expect(document.activeElement).toBe(text1);
+    textInDoc.focus(); // focus: ON
+    expect(document.activeElement).toBe(textInDoc);
 
+    traceLog.length = 0;
     overlayElm.show();
 
     setTimeout(function() {
-      expect(document.activeElement).toBe(text1);
+      expect(document.activeElement).toBe(textInDoc); // Not changed
 
-      blurElement(text1);
+      blurElement(textInDoc); // focus: OFF
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(text1);
+        expect(document.activeElement).not.toBe(textInDoc);
 
-        text1.focus();
+        textInDoc.focus(); // focus: ON
 
         setTimeout(function() {
-          expect(document.activeElement).toBe(text1);
+          expect(document.activeElement).toBe(textInDoc);
 
           overlayElm.hide(true);
 
           setTimeout(function() {
-            expect(document.activeElement).toBe(text1);
+            expect(document.activeElement).toBe(textInDoc); // Not changed
+
+            expect(traceLog).toEqual([
+              '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
+
+              // remove(STYLE_CLASS_HIDE)
+              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
+              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+              '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+              'element:INPUT#textInDoc',
+              'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
+
+              '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+              'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+
+              // add(STYLE_CLASS_SHOW)
+              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
+              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+              'state:STATE_SHOWING',
+              '_id:' + overlayElm._id, '</show>',
+
+              // By 1st focus
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:document',
+              '_id:' + overlayDoc._id, '</scroll-event>',
+
+              '<finishShowing>', '_id:' + overlayElm._id, 'state:STATE_SHOWING',
+              'state:STATE_SHOWN',
+              '_id:' + overlayElm._id, '</finishShowing>',
+
+              // ========
+
+              '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:INPUT#textInDoc',
+              '_id:' + overlayDoc._id, '</focusListener>',
+
+              // ========
+
+              '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
+
+              // add(STYLE_CLASS_FORCE)
+              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+              'target.id:target',
+              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+              // remove(STYLE_CLASS_SHOW)
+              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+              'state:STATE_HIDING',
+
+              '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+
+              // add(STYLE_CLASS_HIDE)
+              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
+              'target.id:target',
+              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+              '_id:' + overlayElm._id, '</finishHiding>',
+
+              '_id:' + overlayElm._id, '</hide>',
+
+              '<finishHiding.restoreAndFinish>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+              'state:STATE_HIDDEN', 'focusListener:ADD',
+
+              '<restoreScroll>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+              'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
+
+              '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
+            ]);
 
             done();
           }, 50);
@@ -80,23 +154,106 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: inside', function(done) {
-    text2.focus();
-    expect(document.activeElement).toBe(text2);
+    textInTarget.focus(); // focus: ON
+    expect(document.activeElement).toBe(textInTarget);
 
+    traceLog.length = 0;
     overlayElm.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(text2); // BLURRED
+      expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
-      text2.focus();
+      textInTarget.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(text2); // BLURRED
+        expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
         overlayElm.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).not.toBe(text2); // NOT RESTORED
+          expect(document.activeElement).not.toBe(textInTarget); // NOT RESTORED
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:INPUT#textInTarget',
+            'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
+
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayElm._id, '</show>',
+
+            // By 1st focus
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:document',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            '<finishShowing>', '_id:' + overlayElm._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayElm._id, '</finishShowing>',
+
+            // ========
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:INPUT#textInTarget',
+            '_id:' + overlayDoc._id, '</focusListener>',
+
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'target:INPUT#textInTarget',
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'element:INPUT#textInTarget',
+            'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayElm._id, '</focusListener>',
+
+            // ========
+
+            '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '_id:' + overlayElm._id, '</finishHiding>',
+
+            '_id:' + overlayElm._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN', 'focusListener:ADD',
+
+            '<restoreScroll>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
+
+            '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -105,24 +262,103 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: face', function(done) {
-    textFace1.focus();
-    expect(document.activeElement).not.toBe(textFace1); // HIDDEN
+    textInFace1.focus(); // focus: ON
+    expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
+    traceLog.length = 0;
     overlayElm.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(textFace1);
+      expect(document.activeElement).not.toBe(textInFace1);
 
-      textFace1.focus();
+      textInFace1.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).toBe(textFace1);
+        expect(document.activeElement).toBe(textInFace1);
 
         overlayElm.hide(true);
 
         setTimeout(function() {
           fixActive();
-          expect(document.activeElement).not.toBe(textFace1);
+          expect(document.activeElement).not.toBe(textInFace1);
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
+
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayElm._id, '</show>',
+
+            '<finishShowing>', '_id:' + overlayElm._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayElm._id, '</finishShowing>',
+
+            // ========
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:INPUT#textInFace1',
+            '_id:' + overlayDoc._id, '</focusListener>',
+
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:document',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:DIV#face1',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            // ========
+
+            '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '_id:' + overlayElm._id, '</finishHiding>',
+
+            '_id:' + overlayElm._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN', 'focusListener:ADD',
+
+            '<restoreScroll>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
+
+            '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -131,23 +367,92 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: hidden', function(done) {
-    textFace2.focus();
-    expect(document.activeElement).not.toBe(textFace2); // HIDDEN
+    textInFace2.focus(); // focus: ON
+    expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
+    traceLog.length = 0;
     overlayElm.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(textFace2);
+      expect(document.activeElement).not.toBe(textInFace2);
 
-      textFace2.focus();
+      textInFace2.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(textFace2);
+        expect(document.activeElement).not.toBe(textInFace2); // Not changed
 
         overlayElm.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).not.toBe(textFace2);
+          expect(document.activeElement).not.toBe(textInFace2);
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
+
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayElm._id, '</show>',
+
+            '<finishShowing>', '_id:' + overlayElm._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayElm._id, '</finishShowing>',
+
+            // ========
+
+            // No event
+
+            // ========
+
+            '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
+            'target.id:target',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '_id:' + overlayElm._id, '</finishHiding>',
+
+            '_id:' + overlayElm._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN', 'focusListener:ADD',
+
+            '<restoreScroll>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
+
+            '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -156,23 +461,114 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 1', function(done) {
-    text1.focus();
-    expect(document.activeElement).toBe(text1);
+    textInDoc.focus(); // focus: ON
+    expect(document.activeElement).toBe(textInDoc);
 
+    traceLog.length = 0;
     overlayDoc.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(text1); // BLURRED
+      expect(document.activeElement).not.toBe(textInDoc); // BLURRED
 
-      text1.focus();
+      textInDoc.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(text1); // BLURRED
+        expect(document.activeElement).not.toBe(textInDoc); // BLURRED
 
         overlayDoc.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).toBe(text1); // RESTORED
+          expect(document.activeElement).toBe(textInDoc); // RESTORED
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // From disableDocBars
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:INPUT#textInDoc',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+
+            // selection may be created by focusing text-box
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayDoc._id, '</show>',
+
+            // By 1st focus
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'target:document',
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayDoc._id, '</finishShowing>',
+
+            // ========
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:INPUT#textInDoc',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:INPUT#textInDoc',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
+
+            // ========
+
+            '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '[SAVE1]state:STATE_HIDDEN',
+            'focusListener:REMOVE', // ==== REMOVED LISTENER START
+            // No event
+            '[SAVE2]state:STATE_HIDING',
+
+            '_id:' + overlayDoc._id, '</finishHiding>',
+
+            '_id:' + overlayDoc._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN',
+            'focusListener:ADD', // ==== REMOVED LISTENER END
+
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -181,23 +577,121 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 2', function(done) {
-    text2.focus();
-    expect(document.activeElement).toBe(text2);
+    textInTarget.focus(); // focus: ON
+    expect(document.activeElement).toBe(textInTarget);
 
+    traceLog.length = 0;
     overlayDoc.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(text2); // BLURRED
+      expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
-      text2.focus();
+      textInTarget.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(text2); // BLURRED
+        expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
         overlayDoc.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).toBe(text2);
+          expect(document.activeElement).toBe(textInTarget); // RESTORED
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // From disableDocBars
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:INPUT#textInTarget',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+
+            // selection may be created by focusing text-box
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayDoc._id, '</show>',
+
+            // By 1st focus
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'target:document',
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayDoc._id, '</finishShowing>',
+
+            // ========
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:INPUT#textInTarget',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:INPUT#textInTarget',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
+
+            // ========
+
+            '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '[SAVE1]state:STATE_HIDDEN',
+            'focusListener:REMOVE', // ==== REMOVED LISTENER START
+            // overlayElm gets the event
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'target:INPUT#textInTarget',
+            '_id:' + overlayElm._id, '</focusListener>',
+            '[SAVE2]state:STATE_HIDING',
+
+            '_id:' + overlayDoc._id, '</finishHiding>',
+
+            '_id:' + overlayDoc._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN',
+            'focusListener:ADD', // ==== REMOVED LISTENER END
+
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -206,23 +700,120 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: face', function(done) {
-    textFace2.focus();
-    expect(document.activeElement).not.toBe(textFace2); // HIDDEN
+    textInFace2.focus(); // focus: ON
+    expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
+    traceLog.length = 0;
     overlayDoc.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(textFace2);
+      expect(document.activeElement).not.toBe(textInFace2);
 
-      textFace2.focus();
+      textInFace2.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).toBe(textFace2);
+        expect(document.activeElement).toBe(textInFace2);
 
         overlayDoc.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).not.toBe(textFace2);
+          expect(document.activeElement).not.toBe(textInFace2);
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // From disableDocBars
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:INPUT#textInTarget', // by prev test
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+
+            // selection may be created by focusing text-box
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayDoc._id, '</show>',
+
+            '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayDoc._id, '</finishShowing>',
+
+            // ========
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:INPUT#textInFace2',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:INPUT#textInFace2',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>',
+
+            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:DIV#face2',
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+            '_id:' + overlayDoc._id, '</scroll-event>',
+
+            // ========
+
+            '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '[SAVE1]state:STATE_HIDDEN',
+            'focusListener:REMOVE', // ==== REMOVED LISTENER START
+
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'target:INPUT#textInTarget',
+            '_id:' + overlayElm._id, '</focusListener>',
+
+            '[SAVE2]state:STATE_HIDING',
+
+            '_id:' + overlayDoc._id, '</finishHiding>',
+
+            '_id:' + overlayDoc._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN',
+            'focusListener:ADD', // ==== REMOVED LISTENER END
+
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
@@ -231,23 +822,109 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: hidden', function(done) {
-    textFace1.focus();
-    expect(document.activeElement).not.toBe(textFace1); // HIDDEN
+    textInFace1.focus(); // focus: ON
+    expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
+    traceLog.length = 0;
     overlayDoc.show();
 
     setTimeout(function() {
-      expect(document.activeElement).not.toBe(textFace1);
+      expect(document.activeElement).not.toBe(textInFace1);
 
-      textFace1.focus();
+      textInFace1.focus(); // focus: ON
 
       setTimeout(function() {
-        expect(document.activeElement).not.toBe(textFace1);
+        expect(document.activeElement).not.toBe(textInFace1); // Not changed
 
         overlayDoc.hide(true);
 
         setTimeout(function() {
-          expect(document.activeElement).not.toBe(textFace1);
+          expect(document.activeElement).not.toBe(textInFace1);
+
+          expect(traceLog).toEqual([
+            '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
+
+            // remove(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // From disableDocBars
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'element:INPUT#textInTarget', // by prev test
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+
+            // selection may be created by focusing text-box
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+
+            // remove(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // add(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_SHOWING',
+            '_id:' + overlayDoc._id, '</show>',
+
+            '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+            'state:STATE_SHOWN',
+            '_id:' + overlayDoc._id, '</finishShowing>',
+
+            // ========
+
+            // No event
+
+            // ========
+
+            '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
+
+            // add(STYLE_CLASS_FORCE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            // remove(STYLE_CLASS_SHOW)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            'state:STATE_HIDING',
+
+            '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+
+            // add(STYLE_CLASS_HIDE)
+            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
+            'target.id:UNKNOWN',
+            'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
+
+            '[SAVE1]state:STATE_HIDDEN',
+            'focusListener:REMOVE', // ==== REMOVED LISTENER START
+
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            'target:INPUT#textInTarget',
+            '_id:' + overlayElm._id, '</focusListener>',
+
+            '[SAVE2]state:STATE_HIDING',
+
+            '_id:' + overlayDoc._id, '</finishHiding>',
+
+            '_id:' + overlayDoc._id, '</hide>',
+
+            '<finishHiding.restoreAndFinish>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+            'state:STATE_HIDDEN',
+            'focusListener:ADD', // ==== REMOVED LISTENER END
+
+            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
+
+            '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
+          ]);
 
           done();
         }, 50);
