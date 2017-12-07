@@ -431,6 +431,9 @@ window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
   traceLog.push('<avoidFocus>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+  // [DEBUG]
+  traceLog.push('element:' + (element === document ? 'document' : element.tagName || 'UNKNOWN') + ('' + (element.id ? '#' + element.id : '')));
+  // [/DEBUG]
   if (props.isDoc && element !== element.ownerDocument.body && !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) || !props.isDoc && (element === props.elmTargetBody || props.elmTargetBody.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY)) {
     if (element.blur) {
       // Trident and Edge don't support SVG#blur
@@ -1101,6 +1104,9 @@ var PlainOverlay = function () {
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', function (event) {
       traceLog.push('<scroll-event>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+      // [DEBUG]
+      traceLog.push('target:' + (event.target === document ? 'document' : event.target.tagName || 'UNKNOWN') + ('' + (event.target.id ? '#' + event.target.id : '')));
+      // [/DEBUG]
       var target = event.target;
       if (props.state !== STATE_HIDDEN && restoreScroll(props, props.isDoc && (target === props.window || target === props.document || target === props.elmTargetBody) ? props.elmTarget : target)) {
         traceLog.push('AVOIDED'); // [DEBUG/]
@@ -1114,6 +1120,9 @@ var PlainOverlay = function () {
     // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = function (event) {
       traceLog.push('<focusListener>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
+      // [DEBUG]
+      traceLog.push('target:' + (event.target === document ? 'document' : event.target.tagName || 'UNKNOWN') + ('' + (event.target.id ? '#' + event.target.id : '')));
+      // [/DEBUG]
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
         traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();

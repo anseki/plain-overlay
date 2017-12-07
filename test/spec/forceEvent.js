@@ -64,6 +64,7 @@ describe('forceEvent', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay1._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
@@ -132,6 +133,7 @@ describe('forceEvent', function() {
             'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
@@ -209,6 +211,7 @@ describe('forceEvent', function() {
             'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
@@ -281,6 +284,7 @@ describe('forceEvent', function() {
             'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
@@ -331,6 +335,7 @@ describe('forceEvent', function() {
           'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
           '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+          'element:BODY',
           'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
           '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
@@ -389,6 +394,7 @@ describe('forceEvent', function() {
           'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
           '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
+          'element:BODY',
           'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
           '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',

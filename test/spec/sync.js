@@ -110,6 +110,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -208,6 +209,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -268,6 +270,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(), show()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -285,6 +288,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -318,6 +322,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(), show(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -335,6 +340,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -376,6 +382,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(true), show()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -393,6 +400,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -424,6 +432,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(true), show(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -441,6 +450,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -472,6 +482,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(), hide()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -528,6 +539,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(), hide(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -592,6 +604,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true), hide()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -646,6 +659,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true), hide(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -773,6 +787,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -871,6 +886,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -977,6 +993,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -1033,6 +1050,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(), show()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -1050,6 +1068,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -1083,6 +1102,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(), show(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -1100,6 +1120,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -1141,6 +1162,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(true), show()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -1158,6 +1180,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -1189,6 +1212,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - show(true), show(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = hideListener = null;
         traceLog.length = 0;
 
@@ -1206,6 +1230,7 @@ describe('sync-mode', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
+            'element:BODY',
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
@@ -1237,6 +1262,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(), hide()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1296,6 +1322,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(), hide(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1363,6 +1390,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(), hide(true, true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1430,6 +1458,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true), hide()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1487,6 +1516,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true), hide(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1553,6 +1583,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true), hide(true, true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1620,6 +1651,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true, true), hide()', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1677,6 +1709,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true, true), hide(true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
@@ -1734,6 +1767,7 @@ describe('sync-mode', function() {
 
     it('controls repeated calling - hide(true, true), hide(true, true)', function(done) {
       hideAndDo(function() {
+        arrLog = [];
         showListener = function() {
           window.setTimeout(function() {
             traceLog.length = 0;
