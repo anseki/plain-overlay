@@ -3,7 +3,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   'use strict';
 
   var window, document, selContainsNode, nodeContainsSel, p1, span1, NODES = [], pageDone,
-    IS_TRIDENT, IS_GECKO;
+    IS_TRIDENT, IS_BLINK, IS_GECKO;
 
   function getPos(index) {
     var iList = 0;
@@ -84,6 +84,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       selContainsNode = window.selContainsNode;
       nodeContainsSel = window.nodeContainsSel;
       IS_TRIDENT = window.IS_TRIDENT;
+      IS_BLINK = window.IS_BLINK;
       IS_GECKO = window.IS_GECKO;
 
       p1 = document.getElementById('p1');
@@ -1193,6 +1194,213 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       // nodeContainsSel
       expect(nodeContainsSel(span1, selection)).toBe(false);
     }
+
+    done();
+  });
+
+  it('Select `` the right of `B`', function(done) {
+    var indexStart = 2, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToStart();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[0].node);
+    expect(selection.anchorOffset).toBe(2);
+    expect(selection.focusNode).toBe(NODES[0].node);
+    expect(selection.focusOffset).toBe(2);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(false);
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(false);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
+
+    done();
+  });
+
+  it('Select `` the right of `C`', function(done) {
+    var indexStart = 2, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToEnd();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[0].node);
+    expect(selection.anchorOffset).toBe(3);
+    expect(selection.focusNode).toBe(NODES[0].node);
+    expect(selection.focusOffset).toBe(3);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(false);
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(false);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
+
+    done();
+  });
+
+  it('Select `` the left of `D`', function(done) {
+    if (IS_TRIDENT) { done(); return; } // Trident changes points -> right of `C`
+
+    var indexStart = 3, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToStart();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[1].node);
+    expect(selection.anchorOffset).toBe(0);
+    expect(selection.focusNode).toBe(NODES[1].node);
+    expect(selection.focusOffset).toBe(0);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(IS_BLINK ? false : true); // Blink bug
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(true);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
+
+    done();
+  });
+
+  it('Select `` the right of `E`', function(done) {
+    var indexStart = 5, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToStart();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[1].node);
+    expect(selection.anchorOffset).toBe(2);
+    expect(selection.focusNode).toBe(NODES[1].node);
+    expect(selection.focusOffset).toBe(2);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(true);
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(true);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
+
+    done();
+  });
+
+  it('Select `` the right of `G`', function(done) {
+    var indexStart = 6, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToEnd();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[1].node);
+    expect(selection.anchorOffset).toBe(4);
+    expect(selection.focusNode).toBe(NODES[1].node);
+    expect(selection.focusOffset).toBe(4);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(true);
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(true);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(true);
+
+    done();
+  });
+
+  it('Select `` the left of `H`', function(done) {
+    if (IS_TRIDENT) { done(); return; } // Trident changes points -> right of `G`
+
+    var indexStart = 7, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToStart();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[2].node);
+    expect(selection.anchorOffset).toBe(0);
+    expect(selection.focusNode).toBe(NODES[2].node);
+    expect(selection.focusOffset).toBe(0);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(IS_BLINK ? true : false); // Blink bug
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(false);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
+
+    done();
+  });
+
+  it('Select `` the right of `H`', function(done) {
+    var indexStart = 7, indexEnd = indexStart, selection;
+
+    setSelection(indexStart, indexEnd);
+    // Check selection
+    selection = ('getSelection' in window ? window : document).getSelection();
+    selection.collapseToEnd();
+    expect(selection.rangeCount).toBe(1);
+    expect(selection.anchorNode).toBe(NODES[2].node);
+    expect(selection.anchorOffset).toBe(1);
+    expect(selection.focusNode).toBe(NODES[2].node);
+    expect(selection.focusOffset).toBe(1);
+    expect(selection.toString()).toBe('');
+    expect(selection.isCollapsed).toBe(true);
+
+    // containsNode
+    if (selection.containsNode) {
+      expect(selection.containsNode(span1, true)).toBe(false);
+      expect(selection.containsNode(span1, false)).toBe(false);
+    }
+    // selContainsNode
+    expect(selContainsNode(selection, span1, true)).toBe(false);
+    expect(selContainsNode(selection, span1, false)).toBe(false);
+    // nodeContainsSel
+    expect(nodeContainsSel(span1, selection)).toBe(false);
 
     done();
   });
