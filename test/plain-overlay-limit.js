@@ -910,7 +910,7 @@ function _hide(props, force
 
   // In Gecko, hidden element can be activeElement.
   var element = props.document.activeElement;
-  if (element !== element.ownerDocument.body && props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) {
+  if (element && element !== element.ownerDocument.body && props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) {
     if (element.blur) {
       // Trident and Edge don't support SVG#blur
       element.blur();
