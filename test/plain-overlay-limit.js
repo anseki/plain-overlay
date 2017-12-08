@@ -496,7 +496,8 @@ function avoidSelect(props) {
   }
   traceLog.push('element:' + (!element ? 'NONE' : element === document ? 'document' : element.tagName || 'UNKNOWN') + ('' + (element && element.id ? '#' + element.id : '')));
   // [/DEBUG]
-  if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
+  if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode && (!IS_BLINK || !selection.isCollapsed) ? // Blink bug, fails with empty string.
+  selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
     selection.removeAllRanges();
     props.document.body.focus();
     // Trident bug? It seems that `focus()` makes selection again.

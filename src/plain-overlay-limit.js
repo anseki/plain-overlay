@@ -409,7 +409,8 @@ function avoidSelect(props) {
   // [/DEBUG]
   if (selection.rangeCount && (props.isDoc ?
       !nodeContainsSel(props.elmOverlayBody, selection) :
-      (selection.containsNode ?
+      (selection.containsNode &&
+          (!IS_BLINK || !selection.isCollapsed) ?  // Blink bug, fails with empty string.
         selection.containsNode(props.elmTargetBody, true) :
         selContainsNode(selection, props.elmTargetBody, true))
       )) {
