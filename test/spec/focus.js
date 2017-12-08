@@ -5,7 +5,8 @@ describe('focus', function() {
   var window, document,
     PlainOverlay, traceLog, pageDone,
     overlayElm, overlayDoc,
-    textInDoc, textInTarget, textInFace1, textInFace2;
+    textInDoc, textInTarget, textInFace1, textInFace2,
+    IS_BLINK, IS_GECKO;
 
   function blurElement(element) {
     if (element.blur) {
@@ -15,11 +16,13 @@ describe('focus', function() {
     }
   }
 
-  // Gecko bug, the element is not blurred when it is hidden.
-  function fixActive() {
-    var element = document.activeElement;
-    element.blur();
-    element.focus();
+  function reset() {
+    var selection = ('getSelection' in window ? window : document).getSelection();
+    if (selection.rangeCount > 0) { selection.removeAllRanges(); }
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+    // Trident bug? It seems that `focus()` makes selection again.
+    if (selection.rangeCount > 0) { selection.removeAllRanges(); }
   }
 
   beforeAll(function(beforeDone) {
@@ -38,6 +41,9 @@ describe('focus', function() {
         {face: document.getElementById('face2'), duration: 20});
       pageDone = done;
 
+      IS_BLINK = window.IS_BLINK;
+      IS_GECKO = window.IS_GECKO;
+
       beforeDone();
     }, 'focus');
   });
@@ -51,9 +57,7 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: outside', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInDoc.focus(); // focus: ON
     expect(document.activeElement).toBe(textInDoc);
@@ -91,7 +95,7 @@ describe('focus', function() {
               'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
               '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-              'start:BODY(3) end:BODY(3) isCollapsed: true',
+              'start:BODY(3),end:BODY(3),isCollapsed:true',
               'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
               // add(STYLE_CLASS_SHOW)
@@ -159,9 +163,7 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: inside', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInTarget.focus(); // focus: ON
     expect(document.activeElement).toBe(textInTarget);
@@ -194,8 +196,8 @@ describe('focus', function() {
             'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
-            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
+            'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
             '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
@@ -272,9 +274,7 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: face', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInFace1.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
@@ -293,7 +293,6 @@ describe('focus', function() {
         overlayElm.hide(true);
 
         setTimeout(function() {
-          fixActive();
           expect(document.activeElement).not.toBe(textInFace1);
 
           expect(traceLog).toEqual([
@@ -308,7 +307,7 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
+            'NoRange',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -330,16 +329,27 @@ describe('focus', function() {
 
             '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             'target:INPUT#textInFace1',
-            '_id:' + overlayDoc._id, '</focusListener>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ].concat(
+            IS_GECKO ? [
+              // Gecko bug, the listener of the element is called first.
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:DIV#face1',
+              '_id:' + overlayDoc._id, '</scroll-event>',
 
-            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'target:document',
-            '_id:' + overlayDoc._id, '</scroll-event>',
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:document',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:document',
+              '_id:' + overlayDoc._id, '</scroll-event>',
 
-            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'target:DIV#face1',
-            '_id:' + overlayDoc._id, '</scroll-event>',
-
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:DIV#face1',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ]
+          ).concat([
             // ========
 
             '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
@@ -373,7 +383,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
 
             '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
@@ -382,9 +392,7 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: hidden', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInFace2.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
@@ -417,7 +425,8 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'start:P(0) end:P(0) isCollapsed: true',
+            // Blink bug, strange!
+            IS_BLINK ? 'start:P#pInFace1(0),end:P#pInFace1(0),isCollapsed:true' : 'NoRange',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -429,8 +438,15 @@ describe('focus', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             'state:STATE_SHOWING',
-            '_id:' + overlayElm._id, '</show>',
-
+            '_id:' + overlayElm._id, '</show>'
+          ].concat(
+            // Bug?
+            IS_GECKO ? [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+              'target:DIV#face1',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : []
+          ).concat([
             '<finishShowing>', '_id:' + overlayElm._id, 'state:STATE_SHOWING',
             'state:STATE_SHOWN',
             '_id:' + overlayElm._id, '</finishShowing>',
@@ -472,7 +488,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayElm._id, '</restoreScroll>',
 
             '_id:' + overlayElm._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
@@ -481,9 +497,7 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 1', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInDoc.focus(); // focus: ON
     expect(document.activeElement).toBe(textInDoc);
@@ -519,9 +533,8 @@ describe('focus', function() {
             'element:INPUT#textInDoc',
             'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
 
-            // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'start:BODY(3) end:BODY(3) isCollapsed: true',
+            'start:BODY(3),end:BODY(3),isCollapsed:true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -538,8 +551,17 @@ describe('focus', function() {
             '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
             'AVOIDED',
-            '_id:' + overlayDoc._id, '</scroll-event>',
-
+            '_id:' + overlayDoc._id, '</scroll-event>'
+          ].concat(
+            // Bug?
+            IS_GECKO ? [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'target:DIV#face2',
+              '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : []
+          ).concat([
             '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'state:STATE_SHOWN',
             '_id:' + overlayDoc._id, '</finishShowing>',
@@ -593,7 +615,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
@@ -602,9 +624,7 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 2', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInTarget.focus(); // focus: ON
     expect(document.activeElement).toBe(textInTarget);
@@ -641,9 +661,8 @@ describe('focus', function() {
             'element:INPUT#textInTarget',
             'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
 
-            // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
+            'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -664,8 +683,17 @@ describe('focus', function() {
             '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
             'AVOIDED',
-            '_id:' + overlayDoc._id, '</scroll-event>',
-
+            '_id:' + overlayDoc._id, '</scroll-event>'
+          ].concat(
+            // Bug?
+            IS_GECKO ? [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'target:DIV#face2',
+              '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : []
+          ).concat([
             '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'state:STATE_SHOWN',
             '_id:' + overlayDoc._id, '</finishShowing>',
@@ -721,7 +749,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
@@ -730,9 +758,7 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: face', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInFace2.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
@@ -766,13 +792,12 @@ describe('focus', function() {
             'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:INPUT#textInTarget', // by prev test
-            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
 
-            // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
-            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'NoRange',
+            'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
             '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
@@ -784,8 +809,17 @@ describe('focus', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             'state:STATE_SHOWING',
-            '_id:' + overlayDoc._id, '</show>',
-
+            '_id:' + overlayDoc._id, '</show>'
+          ].concat(
+            // Bug?
+            IS_GECKO ? [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'target:DIV#face2',
+              '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : []
+          ).concat([
             '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'state:STATE_SHOWN',
             '_id:' + overlayDoc._id, '</finishShowing>',
@@ -798,13 +832,16 @@ describe('focus', function() {
             'element:INPUT#textInFace2',
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>',
-
-            '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-            'target:DIV#face2',
-            '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-            'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
-            '_id:' + overlayDoc._id, '</scroll-event>',
-
+          ]).concat(
+            // Bug?
+            IS_GECKO ? [] : [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+              'target:DIV#face2',
+              '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+              'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ]
+          ).concat([
             // ========
 
             '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
@@ -829,11 +866,7 @@ describe('focus', function() {
 
             '[SAVE1]state:STATE_HIDDEN',
             'focusListener:REMOVE', // ==== REMOVED LISTENER START
-
-            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'target:INPUT#textInTarget',
-            '_id:' + overlayElm._id, '</focusListener>',
-
+            // No event
             '[SAVE2]state:STATE_HIDING',
 
             '_id:' + overlayDoc._id, '</finishHiding>',
@@ -848,7 +881,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
@@ -857,9 +890,7 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: hidden', function(done) {
-    // reset
-    if (document.activeElement) { blurElement(document.activeElement); }
-    document.body.focus();
+    reset();
 
     textInFace1.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
@@ -893,13 +924,13 @@ describe('focus', function() {
             'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:INPUT#textInTarget', // by prev test
-            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
 
-            // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'start:P(0) end:P(0) isCollapsed: true',
-            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            // Blink bug, strange!
+            IS_BLINK ? 'start:P#pInFace2(0),end:P#pInFace2(0),isCollapsed:true' : 'NoRange',
+            'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
             '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
@@ -911,8 +942,17 @@ describe('focus', function() {
             'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
             'state:STATE_SHOWING',
-            '_id:' + overlayDoc._id, '</show>',
-
+            '_id:' + overlayDoc._id, '</show>'
+          ].concat(
+            // Bug?
+            IS_GECKO ? [
+              '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'target:DIV#face2',
+              '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
+              'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+              '_id:' + overlayDoc._id, '</scroll-event>'
+            ] : []
+          ).concat([
             '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
             'state:STATE_SHOWN',
             '_id:' + overlayDoc._id, '</finishShowing>',
@@ -945,11 +985,7 @@ describe('focus', function() {
 
             '[SAVE1]state:STATE_HIDDEN',
             'focusListener:REMOVE', // ==== REMOVED LISTENER START
-
-            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'target:INPUT#textInTarget',
-            '_id:' + overlayElm._id, '</focusListener>',
-
+            // No event
             '[SAVE2]state:STATE_HIDING',
 
             '_id:' + overlayDoc._id, '</finishHiding>',
@@ -964,7 +1000,7 @@ describe('focus', function() {
             'DONE:ALL', '_id:' + overlayDoc._id, '</restoreScroll>',
 
             '_id:' + overlayDoc._id, '</finishHiding.restoreAndFinish>'
-          ]);
+          ]));
 
           done();
         }, 50);
