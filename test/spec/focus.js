@@ -51,6 +51,10 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: outside', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInDoc.focus(); // focus: ON
     expect(document.activeElement).toBe(textInDoc);
 
@@ -87,7 +91,7 @@ describe('focus', function() {
               'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
               '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-              'element:BODY',
+              'start:BODY(3) end:BODY(3) isCollapsed: true',
               'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
               // add(STYLE_CLASS_SHOW)
@@ -155,6 +159,10 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: inside', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInTarget.focus(); // focus: ON
     expect(document.activeElement).toBe(textInTarget);
 
@@ -186,7 +194,7 @@ describe('focus', function() {
             'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'element:DIV#target',
+            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -264,6 +272,10 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: face', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInFace1.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
@@ -296,7 +308,7 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'element:DIV#target',
+            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -370,6 +382,10 @@ describe('focus', function() {
   });
 
   it('Target: element, Focus: hidden', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInFace2.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
@@ -401,7 +417,7 @@ describe('focus', function() {
             'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-            'element:P',
+            'start:P(0) end:P(0) isCollapsed: true',
             'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -465,6 +481,10 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 1', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInDoc.focus(); // focus: ON
     expect(document.activeElement).toBe(textInDoc);
 
@@ -501,7 +521,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:BODY',
+            'start:BODY(3) end:BODY(3) isCollapsed: true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -582,6 +602,10 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: inside 2', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInTarget.focus(); // focus: ON
     expect(document.activeElement).toBe(textInTarget);
 
@@ -619,7 +643,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:DIV#target',
+            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -706,6 +730,10 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: face', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInFace2.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
@@ -743,7 +771,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:DIV#target',
+            'start:DIV#target(3) end:DIV#target(3) isCollapsed: true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -829,6 +857,10 @@ describe('focus', function() {
   });
 
   it('Target: document, Focus: hidden', function(done) {
+    // reset
+    if (document.activeElement) { blurElement(document.activeElement); }
+    document.body.focus();
+
     textInFace1.focus(); // focus: ON
     expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
@@ -866,7 +898,7 @@ describe('focus', function() {
 
             // selection may be created by focusing text-box
             '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-            'element:DIV#target',
+            'start:P(0) end:P(0) isCollapsed: true',
             'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)

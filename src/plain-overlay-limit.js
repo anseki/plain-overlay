@@ -400,12 +400,22 @@ function avoidSelect(props) {
   traceLog.push('<avoidSelect>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
   // [DEBUG]
-  let element = selection.rangeCount ? selection.getRangeAt(0).startContainer : null;
-  if (element && element.nodeType === Node.TEXT_NODE) { element = element.parentNode; }
-  traceLog.push(
-    `element:${!element ? 'NONE' : element === document ? 'document' :
-      element.tagName || 'UNKNOWN'}` +
-    `${element && element.id ? `#${element.id}` : ''}`);
+  if (selection.rangeCount) {
+    let start = selection.anchorNode, end = selection.focusNode;
+    if (start && start.nodeType === Node.TEXT_NODE) { start = start.parentNode; }
+    if (end && end.nodeType === Node.TEXT_NODE) { end = end.parentNode; }
+    traceLog.push(
+      `start:${!start ? 'NONE' : start === document ? 'document' : start.tagName || 'UNKNOWN'}` +
+      `${start && start.id ? `#${start.id}` : ''}` +
+      `(${selection.anchorOffset})` +
+      ` end:${!end ? 'NONE' : end === document ? 'document' : end.tagName || 'UNKNOWN'}` +
+      `${end && end.id ? `#${end.id}` : ''}` +
+      `(${selection.focusOffset})` +
+      ` isCollapsed: ${selection.isCollapsed}`
+    );
+  } else {
+    traceLog.push('NoRange');
+  }
   // [/DEBUG]
   if (selection.rangeCount && (props.isDoc ?
       !nodeContainsSel(props.elmOverlayBody, selection) :
