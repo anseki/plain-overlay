@@ -408,10 +408,10 @@ function avoidSelect(props) {
       `start:${!start ? 'NONE' : start === document ? 'document' : start.tagName || 'UNKNOWN'}` +
       `${start && start.id ? `#${start.id}` : ''}` +
       `(${selection.anchorOffset})` +
-      ` end:${!end ? 'NONE' : end === document ? 'document' : end.tagName || 'UNKNOWN'}` +
+      `,end:${!end ? 'NONE' : end === document ? 'document' : end.tagName || 'UNKNOWN'}` +
       `${end && end.id ? `#${end.id}` : ''}` +
       `(${selection.focusOffset})` +
-      ` isCollapsed: ${selection.isCollapsed}`
+      `,isCollapsed:${selection.isCollapsed}`
     );
   } else {
     traceLog.push('NoRange');
