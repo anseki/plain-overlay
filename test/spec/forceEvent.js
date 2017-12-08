@@ -68,7 +68,7 @@ describe('forceEvent', function() {
             'NotInTarget', '_id:' + overlay1._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay1._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW) - Canceled by `PlainOverlay.forceEvent:false`
@@ -138,7 +138,7 @@ describe('forceEvent', function() {
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -217,7 +217,7 @@ describe('forceEvent', function() {
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -291,7 +291,7 @@ describe('forceEvent', function() {
             'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
@@ -343,7 +343,7 @@ describe('forceEvent', function() {
           'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
           '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
-          'element:NONE',
+          'NoRange',
           'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
           // add(STYLE_CLASS_SHOW)
@@ -403,7 +403,7 @@ describe('forceEvent', function() {
           'NotInTarget', '_id:' + overlay2._id, '</avoidFocus>',
 
           '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
-          'element:NONE',
+          'NoRange',
           'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
           // add(STYLE_CLASS_SHOW)

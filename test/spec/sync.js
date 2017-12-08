@@ -114,7 +114,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -214,7 +214,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_FORCE)
@@ -294,7 +294,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -347,7 +347,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -408,7 +408,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -459,7 +459,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -797,7 +797,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -897,7 +897,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_FORCE)
@@ -1005,7 +1005,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -1081,7 +1081,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -1134,7 +1134,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // remove(STYLE_CLASS_FORCE)
@@ -1195,7 +1195,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
@@ -1246,7 +1246,7 @@ describe('sync-mode', function() {
             'NotInTarget', '_id:' + overlay._id, '</avoidFocus>',
 
             '<avoidSelect>', '_id:' + overlay._id, 'state:STATE_HIDDEN',
-            'element:NONE',
+            'NoRange',
             'NoSelection', '_id:' + overlay._id, '</avoidSelect>',
 
             // add(STYLE_CLASS_SHOW)
