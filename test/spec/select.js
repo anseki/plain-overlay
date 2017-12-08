@@ -59,7 +59,9 @@ describe('avoidSelect()', function() {
       range2.moveToElementText(endElement);
       range2.moveStart('character', endIndex + 1);
       range.setEndPoint('EndToStart', range2);
-      selection.removeAllRanges();
+      try {
+        selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
+      } catch (error) { /* ignore */ }
       range.select();
       selection = ('getSelection' in window ? window : document).getSelection(); // Get again
     }
@@ -111,276 +113,300 @@ describe('avoidSelect()', function() {
     expect(!!window.PlainOverlay.limit).toBe(!!self.top.LIMIT);
   });
 
-  it('Target: element, Selection: before 1', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
+  describe('Target: element', function() {
+    beforeAll(function(beforeDone) {
+      overlayElm.onShow = function() { beforeDone(); };
+      overlayDoc.hide(true);
+      overlayElm.show(true);
+    });
 
-    setTimeout(function() {
+    it('Selection: before 1', function(done) {
+      var selection;
       setSelection(pBefore, 0, pBefore, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('AB');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('AB');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('AB');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-before(0),end:P#p-before(2),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-before(0),end:P#p-before(2),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: before 2', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: before 2', function(done) {
+      var selection;
       setSelection(pBefore, 1, pBefore, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('BC');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('BC');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('BC');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-before(1),end:P#p-before(3),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-before(1),end:P#p-before(3),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: before - target', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: before - target', function(done) {
+      var selection;
       setSelection(pBefore, 2, pTarget, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('CD');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-before(2),end:P#p-target(1),isCollapsed:false',
-          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayElm._id, '</text-select-event>'
-        ]);
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-before(2),end:P#p-target(1),isCollapsed:false',
+            'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayElm._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: target 1', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: target 1', function(done) {
+      var selection;
       setSelection(pTarget, 0, pTarget, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('DE');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-target(0),end:P#p-target(2),isCollapsed:false',
-          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayElm._id, '</text-select-event>'
-        ]);
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-target(0),end:P#p-target(2),isCollapsed:false',
+            'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayElm._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:P#p-target',
+            '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayElm._id, '</focusListener>',
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:BODY',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: target 2', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: target 2', function(done) {
+      var selection;
       setSelection(pTarget, 1, pTarget, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('EF');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-target(1),end:P#p-target(3),isCollapsed:false',
-          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayElm._id, '</text-select-event>'
-        ]);
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-target(1),end:P#p-target(3),isCollapsed:false',
+            'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayElm._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:P#p-target',
+            '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayElm._id, '</focusListener>',
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:BODY',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: target - after', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: target - after', function(done) {
+      var selection;
       setSelection(pTarget, 2, pAfter, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('FG');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-target(2),end:P#p-after(1),isCollapsed:false',
-          'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayElm._id, '</text-select-event>'
-        ]);
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-target(2),end:P#p-after(1),isCollapsed:false',
+            'DONE', '_id:' + overlayElm._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayElm._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:P#p-target',
+            '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayElm._id, '</focusListener>',
+
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            'target:BODY',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: after 1', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: after 1', function(done) {
+      var selection;
       setSelection(pAfter, 0, pAfter, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('GH');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('GH');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('GH');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-after(0),end:P#p-after(2),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-after(0),end:P#p-after(2),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: after 2', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: after 2', function(done) {
+      var selection;
       setSelection(pAfter, 1, pAfter, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('HI');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('HI');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('HI');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-after(1),end:P#p-after(3),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-after(1),end:P#p-after(3),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: after - face', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: after - face', function(done) {
+      var selection;
       setSelection(pAfter, 2, face1, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
@@ -390,387 +416,474 @@ describe('avoidSelect()', function() {
         expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
       }
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        if (IS_TRIDENT || IS_EDGE) { // Contains hidden text (face1 was moved after `MNO`)
-          expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
-        } else {
-          expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
-        }
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          if (IS_TRIDENT || IS_EDGE) { // Contains hidden text (face1 was moved after `MNO`)
+            expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
+          } else {
+            expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
+          }
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#p-after(2),end:P#face1(1),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#p-after(2),end:P#face1(1),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: face 1', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: face 1', function(done) {
+      var selection;
       setSelection(face1, 0, face1, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('JK');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('JK');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('JK');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#face1(0),end:P#face1(2),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#face1(0),end:P#face1(2),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: element, Selection: face 2', function(done) {
-    var selection;
-    overlayDoc.hide();
-    overlayElm.show();
-
-    setTimeout(function() {
+    it('Selection: face 2', function(done) {
+      var selection;
       setSelection(face1, 1, face1, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('KL');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('KL');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('KL');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
-          'start:P#face1(1),end:P#face1(3),isCollapsed:false',
-          'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_SHOWN',
+            'start:P#face1(1),end:P#face1(3),isCollapsed:false',
+            'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
+    });
   });
 
-  it('Target: document, Selection: before 1', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
+  describe('Target: document', function() {
+    beforeAll(function(beforeDone) {
+      overlayDoc.onShow = function() { beforeDone(); };
+      overlayElm.onHide = function() { overlayDoc.show(true); };
+      overlayElm.hide(true);
+    });
 
-    setTimeout(function() {
+    it('Selection: before 1', function(done) {
+      var selection;
       setSelection(pBefore, 0, pBefore, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('AB');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-before(0),end:P#p-before(2),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-before(0),end:P#p-before(2),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-before',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-before',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: before 2', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: before 2', function(done) {
+      var selection;
       setSelection(pBefore, 1, pBefore, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('BC');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-before(1),end:P#p-before(3),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-before(1),end:P#p-before(3),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-before',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-before',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: before - target', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: before - target', function(done) {
+      var selection;
       setSelection(pBefore, 2, pTarget, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('CD');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-before(2),end:P#p-target(1),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-before(2),end:P#p-target(1),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-before',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-before',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: target 1', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: target 1', function(done) {
+      var selection;
       setSelection(pTarget, 0, pTarget, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('DE');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-target(0),end:P#p-target(2),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-target(0),end:P#p-target(2),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: target 2', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: target 2', function(done) {
+      var selection;
       setSelection(pTarget, 1, pTarget, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('EF');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-target(1),end:P#p-target(3),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-target(1),end:P#p-target(3),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: target - after', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: target - after', function(done) {
+      var selection;
       setSelection(pTarget, 2, pAfter, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('FG');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-target(2),end:P#p-after(1),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-target(2),end:P#p-after(1),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-target',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-target',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: after 1', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: after 1', function(done) {
+      var selection;
       setSelection(pAfter, 0, pAfter, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('GH');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-after(0),end:P#p-after(2),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-after(0),end:P#p-after(2),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-after',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-after',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: after 2', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: after 2', function(done) {
+      var selection;
       setSelection(pAfter, 1, pAfter, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('HI');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-after(1),end:P#p-after(3),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-after(1),end:P#p-after(3),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-after',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-after',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: after - face', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: after - face', function(done) {
+      var selection;
       setSelection(pAfter, 2, face2, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
@@ -780,96 +893,106 @@ describe('avoidSelect()', function() {
         expect(selection.toString().replace(/\s/g, '')).toBe('IM');
       }
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(0);
-        expect(selection.toString()).toBe('');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(0);
+          expect(selection.toString()).toBe('');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#p-after(2),end:P#face2(1),isCollapsed:false',
-          'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-          'AVOIDED',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#p-after(2),end:P#face2(1),isCollapsed:false',
+            'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
+            'AVOIDED',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ].concat(IS_TRIDENT ? [ // `focus` event is fired by `fireKeyup`?
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:P#p-after',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:P#p-after',
+            'DONE', '_id:' + overlayDoc._id, '</avoidFocus>', // BLURRED
+            'AVOIDED', '_id:' + overlayDoc._id, '</focusListener>',
 
-        done();
+            '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'target:BODY',
+            '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'element:BODY',
+            'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
+            '_id:' + overlayDoc._id, '</focusListener>'
+          ] : []));
+
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: face 1', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: face 1', function(done) {
+      var selection;
       setSelection(face2, 0, face2, 1);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('MN');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('MN');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('MN');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#face2(0),end:P#face2(2),isCollapsed:false',
-          'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#face2(0),end:P#face2(2),isCollapsed:false',
+            'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
-  it('Target: document, Selection: face 2', function(done) {
-    var selection;
-    overlayElm.hide();
-    overlayDoc.show();
-
-    setTimeout(function() {
+    it('Selection: face 2', function(done) {
+      var selection;
       setSelection(face2, 1, face2, 2);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
       expect(selection.toString().replace(/\s/g, '')).toBe('NO');
 
-      traceLog.length = 0;
-      fireKeyup();
-      setTimeout(function() {
-        selection = ('getSelection' in window ? window : document).getSelection();
-        expect(selection.rangeCount).toBe(1);
-        expect(selection.toString().replace(/\s/g, '')).toBe('NO');
+      setTimeout(function() { // To check after some events in Trident with setSelection
+        traceLog.length = 0;
+        fireKeyup();
+        setTimeout(function() {
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('NO');
 
-        expect(traceLog).toEqual([
-          '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
-          '_id:' + overlayElm._id, '</text-select-event>',
+          expect(traceLog).toEqual([
+            '<text-select-event>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
+            '_id:' + overlayElm._id, '</text-select-event>',
 
-          '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
-          'start:P#face2(1),end:P#face2(3),isCollapsed:false',
-          'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
-          '_id:' + overlayDoc._id, '</text-select-event>'
-        ]);
+            '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN',
+            'start:P#face2(1),end:P#face2(3),isCollapsed:false',
+            'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
+            '_id:' + overlayDoc._id, '</text-select-event>'
+          ]);
 
-        done();
+          done();
+        }, 10);
       }, 10);
-    }, 50);
-  });
+    });
 
+  });
 });

@@ -428,10 +428,16 @@ function avoidSelect(props) {
         selection.containsNode(props.elmTargetBody, true) :
         selContainsNode(selection, props.elmTargetBody, true))
       )) {
-    selection.removeAllRanges();
+    try {
+      selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
+    } catch (error) { /* ignore */ }
     props.document.body.focus();
     // Trident bug? It seems that `focus()` makes selection again.
-    if (selection.rangeCount > 0) { selection.removeAllRanges(); }
+    if (selection.rangeCount > 0) {
+      try {
+        selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
+      } catch (error) { /* ignore */ }
+    }
     traceLog.push('DONE', `_id:${props._id}`, '</avoidSelect>'); // [DEBUG/]
     return true;
   }
