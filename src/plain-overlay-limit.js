@@ -826,6 +826,17 @@ function hide(props, force
     props.filterElements = null;
   }
 
+  // In Gecko, hidden element can be activeElement.
+  const element = props.document.activeElement;
+  if (element !== element.ownerDocument.body &&
+        props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) {
+    if (element.blur) { // Trident and Edge don't support SVG#blur
+      element.blur();
+    } else {
+      element.ownerDocument.body.focus();
+    }
+  }
+
   const elmOverlayClassList = mClassList(props.elmOverlay);
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.remove(STYLE_CLASS_SHOW);
