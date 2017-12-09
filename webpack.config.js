@@ -30,8 +30,7 @@ const
   LIMIT = process.env.EDITION === 'limit',
   SYNC = process.env.SYNC === 'yes', // Enable "sync-mode support"
 
-  SRC_PATH = path.resolve(__dirname, 'src'),
-  ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
+  ENTRY_PATH = path.resolve(__dirname, 'src', `${BASE_NAME}.js`),
   BUILD_PATH = BUILD ? __dirname : path.resolve(__dirname, 'test'),
   BUILD_FILE = `${BASE_NAME}${LIMIT ? '-limit' : ''}${SYNC ? '-sync' : ''}${BUILD ? '.min' : ''}.js`;
 

@@ -1,5 +1,5 @@
 /*
-  DON'T MANUALLY EDIT THIS FILE; run `npm run dev-limit` OR `npm run dev-sync` instead.
+    DON'T MANUALLY EDIT THIS FILE
 */
 
 /*
@@ -39,9 +39,6 @@ const
   IS_TRIDENT = !!document.uniqueID,
   IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
     '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-  IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style, // [DEBUG/]
-  IS_BLINK = !!(window.chrome && window.chrome.webstore), // [DEBUG/]
-  IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
 
   isObject = (() => {
     const toString = {}.toString, fnToString = {}.hasOwnProperty.toString,
@@ -75,23 +72,7 @@ const
 
 let insId = 0;
 
-// [DEBUG]
-window.insProps = insProps;
-window.IS_TRIDENT = IS_TRIDENT;
-window.IS_EDGE = IS_EDGE;
-window.IS_WEBKIT = IS_WEBKIT;
-window.IS_BLINK = IS_BLINK;
-window.IS_GECKO = IS_GECKO;
-// [/DEBUG]
 
-// [DEBUG]
-const traceLog = [];
-const STATE_TEXT = {};
-STATE_TEXT[STATE_HIDDEN] = 'STATE_HIDDEN';
-STATE_TEXT[STATE_SHOWING] = 'STATE_SHOWING';
-STATE_TEXT[STATE_SHOWN] = 'STATE_SHOWN';
-STATE_TEXT[STATE_HIDING] = 'STATE_HIDING';
-// [/DEBUG]
 
 function forceReflow(target) {
   // Trident and Blink bug (reflow like `offsetWidth` can't update)
@@ -101,7 +82,6 @@ function forceReflow(target) {
     parent.insertBefore(parent.removeChild(target), next);
   }, 0);
 }
-window.forceReflow = forceReflow; // [DEBUG/]
 
 /**
  * Set style properties while saving current properties.
@@ -165,7 +145,6 @@ function getBBox(element, window) {
   }
   return bBox;
 }
-window.getBBox = getBBox; // [DEBUG/]
 
 function scrollLeft(element, isDoc, window, value) {
   if (isDoc) {
@@ -178,7 +157,6 @@ function scrollLeft(element, isDoc, window, value) {
     return target.scrollLeft;
   }
 }
-window.scrollLeft = scrollLeft; // [DEBUG/]
 
 function scrollTop(element, isDoc, window, value) {
   if (isDoc) {
@@ -191,7 +169,6 @@ function scrollTop(element, isDoc, window, value) {
     return target.scrollTop;
   }
 }
-window.scrollTop = scrollTop; // [DEBUG/]
 
 function resizeTarget(props, width, height) {
   const elmTargetBody = props.elmTargetBody;
@@ -236,22 +213,13 @@ function resizeTarget(props, width, height) {
   const fixStyle = {};
   rect = elmTargetBody.getBoundingClientRect();
   if (Math.abs(rect.width - width) >= TOLERANCE) {
-    // [DEBUG]
-    console.warn(`[resizeTarget] Incorrect width: ${rect.width}` +
-      ` (expected: ${width} passed: ${values.width})`);
-    // [/DEBUG]
     fixStyle.width = `${values.width - (rect.width - width)}px`;
   }
   if (rect.height !== height) {
-    // [DEBUG]
-    console.warn(`[resizeTarget] Incorrect height: ${rect.height}` +
-      ` (expected: ${height} passed: ${values.height})`);
-    // [/DEBUG]
     fixStyle.height = `${values.height - (rect.height - height)}px`;
   }
   setStyle(elmTargetBody, fixStyle, props.savedStyleTargetBody);
 }
-window.resizeTarget = resizeTarget; // [DEBUG/]
 
 // Trident and Edge bug, width and height are interchanged.
 function getDocClientWH(props) {
@@ -271,10 +239,8 @@ function getDocClientWH(props) {
     return {width: width, height: height};
   }
 }
-window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
 function restoreScroll(props, element) {
-  traceLog.push('<restoreScroll>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
 
   function scrollElement(element, isDoc, left, top) {
     try {
@@ -291,14 +257,11 @@ function restoreScroll(props, element) {
       }
       return false;
     })
-    ? (traceLog.push('DONE:ELEMENT', `_id:${props._id}`, '</restoreScroll>'), true) : // [DEBUG/]
-      (traceLog.push('NotInTarget', `_id:${props._id}`, '</restoreScroll>'), false) // [DEBUG/]
     ;
   } else {
     props.savedElementsScroll.forEach(elementScroll => {
       scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
     });
-    traceLog.push('DONE:ALL', `_id:${props._id}`, '</restoreScroll>'); // [DEBUG/]
     return true;
   }
 }
@@ -320,15 +283,8 @@ function restoreAccKeys(props) {
     } catch (error) { /* Something might have been changed, and that can be ignored. */ }
   });
 }
-window.restoreAccKeys = restoreAccKeys; // [DEBUG/]
 
 function avoidFocus(props, element) {
-  // [DEBUG]
-  traceLog.push('<avoidFocus>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
-  traceLog.push(
-    `element:${element === document ? 'document' : element.tagName || 'UNKNOWN'}` +
-    `${element.id ? `#${element.id}` : ''}`);
-  // [/DEBUG]
   if (props.isDoc && element !== element.ownerDocument.body &&
         !(props.elmOverlay.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_CONTAINED_BY) ||
       !props.isDoc && (element === props.elmTargetBody ||
@@ -338,10 +294,8 @@ function avoidFocus(props, element) {
     } else {
       element.ownerDocument.body.focus();
     }
-    traceLog.push('DONE', `_id:${props._id}`, '</avoidFocus>'); // [DEBUG/]
     return true;
   }
-  traceLog.push('NotInTarget', `_id:${props._id}`, '</avoidFocus>'); // [DEBUG/]
   return false;
 }
 
@@ -355,7 +309,6 @@ function selContainsNode(selection, node, partialContainment) {
     // Edge bug (Issue #7321753); getRangeAt returns empty (collapsed) range
     // NOTE: It can not recover when the selection has multiple ranges.
     if (!selRange.toString().length && selection.toString().length && iLen === 1) {
-      console.log('Edge bug (Issue #7321753)'); // [DEBUG/]
       selRange.setStart(selection.anchorNode, selection.anchorOffset);
       selRange.setEnd(selection.focusNode, selection.focusOffset);
       // Edge doesn't throw when end is upper than start.
@@ -377,7 +330,6 @@ function selContainsNode(selection, node, partialContainment) {
   }
   return false;
 }
-window.selContainsNode = selContainsNode; // [DEBUG/]
 
 /**
  * Indicates whether the selection is part of the node or not.
@@ -398,29 +350,9 @@ function nodeContainsSel(node, selection) {
   }
   return true;
 }
-window.nodeContainsSel = nodeContainsSel; // [DEBUG/]
 
 function avoidSelect(props) {
-  traceLog.push('<avoidSelect>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
-  // [DEBUG]
-  if (selection.rangeCount) {
-    let start = selection.anchorNode, end = selection.focusNode;
-    if (start && start.nodeType === Node.TEXT_NODE) { start = start.parentNode; }
-    if (end && end.nodeType === Node.TEXT_NODE) { end = end.parentNode; }
-    traceLog.push(
-      `start:${!start ? 'NONE' : start === document ? 'document' : start.tagName || 'UNKNOWN'}` +
-      `${start && start.id ? `#${start.id}` : ''}` +
-      `(${selection.anchorOffset})` +
-      `,end:${!end ? 'NONE' : end === document ? 'document' : end.tagName || 'UNKNOWN'}` +
-      `${end && end.id ? `#${end.id}` : ''}` +
-      `(${selection.focusOffset})` +
-      `,isCollapsed:${selection.isCollapsed}`
-    );
-  } else {
-    traceLog.push('NoRange');
-  }
-  // [/DEBUG]
   if (selection.rangeCount && (props.isDoc ?
       !nodeContainsSel(props.elmOverlayBody, selection) :
       (selection.containsNode &&
@@ -438,10 +370,8 @@ function avoidSelect(props) {
         selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
       } catch (error) { /* ignore */ }
     }
-    traceLog.push('DONE', `_id:${props._id}`, '</avoidSelect>'); // [DEBUG/]
     return true;
   }
-  traceLog.push('NoSelection', `_id:${props._id}`, '</avoidSelect>'); // [DEBUG/]
   return false;
 }
 
@@ -452,7 +382,6 @@ function barLeft(wMode, direction) {
       direction === 'rtl' && (wMode === 'horizontal-tb' || wMode === 'vertical-rl') ||
       direction === 'ltr' && wMode === 'vertical-rl');
 }
-window.barLeft = barLeft; // [DEBUG/]
 
 function barTop(wMode, direction) {
   const svgSpec = wMode === 'bt-rl' || wMode === 'bt-lr' || wMode === 'lr-bt' || wMode === 'rl-bt';
@@ -460,7 +389,6 @@ function barTop(wMode, direction) {
     IS_EDGE && (svgSpec ||
       direction === 'rtl' && (wMode === 'vertical-lr' || wMode === 'vertical-rl'));
 }
-window.barTop = barTop; // [DEBUG/]
 
 function disableDocBars(props) {
   const elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
@@ -506,7 +434,6 @@ function disableDocBars(props) {
     return false;
   }
 }
-window.disableDocBars = disableDocBars; // [DEBUG/]
 
 function position(props, targetBodyBBox) {
   const elmTargetBody = props.elmTargetBody,
@@ -562,7 +489,6 @@ function position(props, targetBodyBBox) {
   setStyle(elmOverlay, style);
   props.targetBodyBBox = targetBodyBBox;
 }
-window.position = position; // [DEBUG/]
 
 function getTargetElements(props) {
   const elmTargetBody = props.elmTargetBody,
@@ -586,7 +512,6 @@ function getTargetElements(props) {
 }
 
 function finishShowing(props) {
-  traceLog.push('<finishShowing>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   // blur
   props.filterElements = null;
   if (props.options.blur !== false) {
@@ -613,17 +538,17 @@ function finishShowing(props) {
   }
 
   props.state = STATE_SHOWN;
-  traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (props.options.onShow) { props.options.onShow.call(props.ins); }
-  traceLog.push(`_id:${props._id}`, '</finishShowing>'); // [DEBUG/]
 }
 
 function finishHiding(props
+    /* [DISABLE-SYNC/]
     , sync
+    [DISABLE-SYNC/] */
     ) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
-  traceLog.push('<finishHiding>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
-  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
+  /* [DISABLE-SYNC/]
+  [DISABLE-SYNC/] */
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -635,48 +560,45 @@ function finishHiding(props
   props.savedElementsAccKeys = [];
 
   if (
+      /* [DISABLE-SYNC/]
       !sync &&
+      [DISABLE-SYNC/] */
       props.isDoc && props.activeElement) {
     // props.state must be STATE_HIDDEN for avoiding focus.
     const stateSave = props.state;
     props.state = STATE_HIDDEN;
-    traceLog.push(`[SAVE1]state:${STATE_TEXT[props.state]}`); // [DEBUG/]
     // the event is fired after function exited in some browsers (e.g. Trident).
-    traceLog.push('focusListener:REMOVE'); // [DEBUG/]
     props.elmTargetBody.removeEventListener('focus', props.focusListener, true);
     props.activeElement.focus();
     // Don't change props.state for calling `hide(force)` before `restoreAndFinish` (async-mode)
     props.state = stateSave;
-    traceLog.push(`[SAVE2]state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   }
   props.activeElement = null;
 
   // Since `focus()` might scroll, do this after `focus()` and reflow.
   function restoreAndFinish() {
-    traceLog.push('<finishHiding.restoreAndFinish>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
     props.timerRestoreAndFinish = null;
     props.state = STATE_HIDDEN;
-    traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
-    traceLog.push('focusListener:ADD'); // [DEBUG/]
     props.elmTargetBody.addEventListener('focus', props.focusListener, true);
     restoreScroll(props);
     props.savedElementsScroll = null;
 
     if (props.options.onHide) { props.options.onHide.call(props.ins); }
-    traceLog.push(`_id:${props._id}`, '</finishHiding.restoreAndFinish>'); // [DEBUG/]
   }
 
   if (props.timerRestoreAndFinish) {
-    traceLog.push('ClearPrevTimer'); // [DEBUG/]
     clearTimeout(props.timerRestoreAndFinish);
     props.timerRestoreAndFinish = null;
   }
+  /* [DISABLE-SYNC/]
   if (sync) {
     restoreAndFinish();
   } else {
+  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
     props.timerRestoreAndFinish = setTimeout(restoreAndFinish, 0);
+  /* [DISABLE-SYNC/]
   }
-  traceLog.push(`_id:${props._id}`, '</finishHiding>'); // [DEBUG/]
+  [DISABLE-SYNC/] */
 }
 
 /**
@@ -685,8 +607,6 @@ function finishHiding(props
  * @returns {void}
  */
 function show(props, force) {
-  traceLog.push('<show>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
-  traceLog.push(`force:${!!force}`); // [DEBUG/]
 
   function getScroll(elements, fromDoc) {
 
@@ -750,7 +670,6 @@ function show(props, force) {
       props.state === STATE_SHOWING && !force ||
       props.state !== STATE_SHOWING &&
         props.options.onBeforeShow && props.options.onBeforeShow.call(props.ins) === false) {
-    traceLog.push('CANCEL', '</show>'); // [DEBUG/]
     return;
   }
 
@@ -759,7 +678,6 @@ function show(props, force) {
   if (props.state === STATE_HIDDEN) {
     props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     const targetElements = getTargetElements(props);
-    window.targetElements = targetElements; // [DEBUG/]
 
     elmOverlayClassList.remove(STYLE_CLASS_HIDE); // Before `getBoundingClientRect` (`position`).
     if (!props.isDoc) {
@@ -788,11 +706,9 @@ function show(props, force) {
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.add(STYLE_CLASS_SHOW);
   props.state = STATE_SHOWING;
-  traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (force) {
     finishShowing(props);
   }
-  traceLog.push(`_id:${props._id}`, '</show>'); // [DEBUG/]
 }
 
 /**
@@ -801,17 +717,17 @@ function show(props, force) {
  * @returns {void}
  */
 function hide(props, force
+    /* [DISABLE-SYNC/]
     , sync
+    [DISABLE-SYNC/] */
     ) {
   // sync-mode (both `force` and `sync` are `true`)
-  traceLog.push('<hide>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
-  traceLog.push(`force:${!!force}`); // [DEBUG/]
-  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
+  /* [DISABLE-SYNC/]
+  [DISABLE-SYNC/] */
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
         props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
-    traceLog.push('CANCEL', '</hide>'); // [DEBUG/]
     return;
   }
 
@@ -837,13 +753,13 @@ function hide(props, force
   elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
   elmOverlayClassList.remove(STYLE_CLASS_SHOW);
   props.state = STATE_HIDING;
-  traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (force) {
     finishHiding(props
+      /* [DISABLE-SYNC/]
       , sync
+      [DISABLE-SYNC/] */
       );
   }
-  traceLog.push(`_id:${props._id}`, '</hide>'); // [DEBUG/]
 }
 
 /**
@@ -1022,7 +938,6 @@ class PlainOverlay {
       elmOverlayClassList = mClassList(elmOverlay);
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlayClassList.add(STYLE_CLASS_DOC); }
-    elmOverlay.forceEventTarget = target; // [DEBUG/]
 
     (listener => {
       ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
@@ -1039,40 +954,24 @@ class PlainOverlay {
     });
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
-      // [DEBUG]
-      traceLog.push('<scroll-event>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
-      traceLog.push(
-        `target:${event.target === document ? 'document' : event.target.tagName || 'UNKNOWN'}` +
-        `${event.target.id ? `#${event.target.id}` : ''}`);
-      // [/DEBUG]
       const target = event.target;
       if (props.state !== STATE_HIDDEN &&
           restoreScroll(props,
             props.isDoc &&
                 (target === props.window || target === props.document || target === props.elmTargetBody) ?
               props.elmTarget : target)) {
-        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
-      traceLog.push(`_id:${props._id}`, '</scroll-event>'); // [DEBUG/]
     }, true);
 
     // props.state can't control the listener
     // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = event => {
-      // [DEBUG]
-      traceLog.push('<focusListener>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`);
-      traceLog.push(
-        `target:${event.target === document ? 'document' : event.target.tagName || 'UNKNOWN'}` +
-        `${event.target.id ? `#${event.target.id}` : ''}`);
-      // [/DEBUG]
       if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
-        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
-      traceLog.push(`_id:${props._id}`, '</focusListener>'); // [DEBUG/]
     };
     elmTargetBody.addEventListener('focus', props.focusListener, true);
 
@@ -1082,20 +981,16 @@ class PlainOverlay {
         props.window.addEventListener(type, listener, true);
       });
     })(event => {
-      traceLog.push('<text-select-event>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
       if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
-        traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
       }
-      traceLog.push(`_id:${props._id}`, '</text-select-event>'); // [DEBUG/]
     });
 
     // Gecko bug, multiple calling (parallel) by `requestAnimationFrame`.
     props.resizing = false;
     props.window.addEventListener('resize', AnimEvent.add(() => {
       if (props.resizing) {
-        console.warn('`resize` event listener is already running.'); // [DEBUG/]
         return;
       }
       props.resizing = true;
@@ -1103,12 +998,10 @@ class PlainOverlay {
         if (props.isDoc) {
           if (props.savedElementsScroll.length && props.savedElementsScroll[0].isDoc) {
             if (props.disabledDocBars) { // Restore DocBars
-              console.log('Restore DocBars'); // [DEBUG/]
               restoreStyle(props.elmTarget, props.savedStyleTarget, ['overflow']);
               restoreStyle(elmTargetBody, props.savedStyleTargetBody,
                 ['marginLeft', 'marginRight', 'marginTop', 'marginBottom', 'width', 'height']);
             }
-            console.log('disableDocBars'); // [DEBUG/]
             props.disabledDocBars = disableDocBars(props);
           }
         } else {
@@ -1116,7 +1009,6 @@ class PlainOverlay {
             lastBBox = props.targetBodyBBox;
           if (bBox.left !== lastBBox.left || bBox.top !== lastBBox.top ||
               bBox.width !== lastBBox.width || bBox.height !== lastBBox.height) {
-            console.log('Update position'); // [DEBUG/]
             position(props, bBox);
           }
         }
@@ -1179,11 +1071,15 @@ class PlainOverlay {
    * @returns {PlainOverlay} Current instance itself.
    */
   hide(force
+      /* [DISABLE-SYNC/]
       , sync
+      [DISABLE-SYNC/] */
       ) {
     // sync-mode (both `force` and `sync` are `true`)
     hide(insProps[this._id], force
+      /* [DISABLE-SYNC/]
       , sync
+      [DISABLE-SYNC/] */
       );
     return this;
   }
@@ -1251,92 +1147,6 @@ class PlainOverlay {
 PlainOverlay.limit = true;
 [FACE/] */
 
-// [DEBUG]
-/*
-  For test, fire `transitionend` event even if view is hidden.
-*/
-PlainOverlay.forceEvent = false;
-{
-  const FORCE_EVENT_TYPE = 'transitionend',
-    PROPERTY_NAME = 'opacity',
-    TRIGGER_CLASS = STYLE_CLASS_SHOW,
-    FORCE_CLASS = STYLE_CLASS_FORCE;
 
-  function getIdLog(element) {
-    return `target.id:${element.forceEventTarget && element.forceEventTarget.id || 'UNKNOWN'}`;
-  }
-
-  function fireEvent(element) {
-    traceLog.push('<fireEvent>', getIdLog(element));
-    console.warn(`[forceEvent] Fired: ${FORCE_EVENT_TYPE}`);
-    let event;
-    if (element.timer) { clearTimeout(element.timer); } // This may be needed.
-    element.timer = null;
-    try {
-      event = new TransitionEvent(FORCE_EVENT_TYPE, {propertyName: PROPERTY_NAME});
-    } catch (error) {
-      event = document.createEvent('TransitionEvent');
-      event.initTransitionEvent(FORCE_EVENT_TYPE, false, false, PROPERTY_NAME, 0);
-    }
-    element.dispatchEvent(event);
-    traceLog.push('</fireEvent>');
-  }
-
-  function initEvent(element, duration) {
-    traceLog.push('<initEvent>', getIdLog(element), `duration:${duration}`);
-    console.warn(`[forceEvent] Trigger class: ${TRIGGER_CLASS} / duration: ${duration}`);
-    if (element.timer) {
-      traceLog.push('ClearPrevEvent');
-      console.warn('[forceEvent] ClearPrevEvent');
-      clearTimeout(element.timer);
-    }
-    element.timer = setTimeout(() => { fireEvent(element); }, duration);
-    traceLog.push('</initEvent>');
-  }
-
-  mClassList.hookApply((list, element) => {
-    traceLog.push('<mClassList.hookApply>', `list:${list.join(',')}`, getIdLog(element));
-    if (!PlainOverlay.forceEvent) {
-      traceLog.push('PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    if (list.indexOf(FORCE_CLASS) !== -1) {
-      traceLog.push('FORCE_CLASS:true');
-      if (element.timer) {
-        traceLog.push('ClearPrevEvent');
-        console.warn('[forceEvent] ClearPrevEvent');
-        clearTimeout(element.timer);
-        element.timer = null;
-      }
-      traceLog.push('CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    const
-      elmList = (element.getAttribute('class') || '').trim().split(/\s+/).filter(token => !!token),
-      elementHasTrigger = elmList.indexOf(TRIGGER_CLASS) !== -1,
-      listHasTrigger = list.indexOf(TRIGGER_CLASS) !== -1;
-
-    if (elementHasTrigger === listHasTrigger) {
-      traceLog.push('TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    // Remove animation of all properties (Can't remove only `opacity` when it is `all`).
-    element.style[CSSPrefix.getName('transitionProperty')] = 'none';
-    const cmpStyle = element.ownerDocument.defaultView.getComputedStyle(element, '');
-    let duration = cmpStyle[CSSPrefix.getName('transitionDuration')];
-    duration = duration.replace(/^([\d\.]+)(m?s)$/, (s, num, ms) => num * (ms === 's' ? 1000 : 1)) * 1;
-    initEvent(element, duration);
-    traceLog.push('</mClassList.hookApply>');
-  });
-}
-// [/DEBUG]
-
-// [DEBUG]
-PlainOverlay.traceLog = traceLog;
-PlainOverlay.STATE_TEXT = STATE_TEXT;
-// [/DEBUG]
 
 export default PlainOverlay;
