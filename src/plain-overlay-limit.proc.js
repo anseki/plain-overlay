@@ -35,6 +35,7 @@ const
   IS_TRIDENT = !!document.uniqueID,
   IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
     '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
+  IS_BLINK = !!(window.chrome && window.chrome.webstore),
 
   isObject = (() => {
     const toString = {}.toString, fnToString = {}.hasOwnProperty.toString,

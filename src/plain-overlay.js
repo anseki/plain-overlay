@@ -36,7 +36,7 @@ const
   IS_EDGE = '-ms-scroll-limit' in document.documentElement.style &&
     '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
   IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style, // [DEBUG/]
-  IS_BLINK = !!(window.chrome && window.chrome.webstore), // [DEBUG/]
+  IS_BLINK = !!(window.chrome && window.chrome.webstore),
   IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
 
   isObject = (() => {

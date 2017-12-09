@@ -140,8 +140,7 @@ TOLERANCE = 0.5,
     IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
     // [DEBUG/]
 IS_BLINK = !!(window.chrome && window.chrome.webstore),
-    // [DEBUG/]
-IS_GECKO = 'MozAppearance' in document.documentElement.style,
+    IS_GECKO = 'MozAppearance' in document.documentElement.style,
     // [DEBUG/]
 
 isObject = function () {
