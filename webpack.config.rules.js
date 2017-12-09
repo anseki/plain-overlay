@@ -18,22 +18,26 @@ const
 
   LIMIT_TAGS = ['FACE'],
   BASE_NAME = 'plain-overlay',
-  ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`),
-  preProc = require('pre-proc');
+  ENTRY_PATH = path.resolve(SRC_PATH, `${BASE_NAME}.js`);
 
 module.exports = [
   {
     resource: {and: [SRC_PATH, /\.js$/]},
     use: [
       BABEL_RULE,
-      {
+      BUILD ? {
+        loader: 'pre-proc-loader',
+        options: {
+          removeTag: {tag: ['DEBUG'].concat(LIMIT ? LIMIT_TAGS : [], SYNC ? 'DISABLE-SYNC' : [])}
+        }
+      } : {
         loader: 'skeleton-loader',
         options: {
           procedure: function(content) {
+            const preProc = require('pre-proc');
             if (LIMIT) { content = preProc.removeTag(LIMIT_TAGS, content); }
             if (SYNC) { content = preProc.removeTag('DISABLE-SYNC', content); }
-
-            if (!BUILD && this.resourcePath === ENTRY_PATH) {
+            if (this.resourcePath === ENTRY_PATH) {
               // Save the source code after preProc has been applied.
               const destPath = path.resolve(SRC_PATH,
                 `${BASE_NAME}${LIMIT ? '-limit' : ''}${SYNC ? '-sync' : ''}.proc.js`);
@@ -42,8 +46,7 @@ module.exports = [
                 preProc.removeTag('DEBUG', content));
               console.log(`Output: ${destPath}`);
             }
-
-            return BUILD ? preProc.removeTag('DEBUG', content) : content;
+            return content;
           }
         }
       }
