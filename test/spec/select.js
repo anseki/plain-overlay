@@ -2,7 +2,7 @@
 describe('avoidSelect()', function() {
   'use strict';
 
-  var window, document,
+  var window, document, utils,
     PlainOverlay, traceLog, pageDone,
     IS_TRIDENT, IS_EDGE,
     overlayElm, overlayDoc,
@@ -83,6 +83,7 @@ describe('avoidSelect()', function() {
     loadPage('spec/select.html', function(pageWindow, pageDocument, pageBody, done) {
       window = pageWindow;
       document = pageDocument;
+      utils = window.utils;
       PlainOverlay = window.PlainOverlay;
       traceLog = PlainOverlay.traceLog;
       IS_TRIDENT = window.IS_TRIDENT;
@@ -115,9 +116,23 @@ describe('avoidSelect()', function() {
 
   describe('Target: element', function() {
     beforeAll(function(beforeDone) {
-      overlayElm.onShow = function() { beforeDone(); };
-      overlayDoc.hide(true);
-      overlayElm.show(true);
+      var cbChangeDone, timer1;
+      utils.makeState([overlayElm, overlayDoc],
+        [PlainOverlay.STATE_SHOWN, PlainOverlay.STATE_HIDDEN],
+        function() {
+          if (cbChangeDone) { return; }
+          overlayElm.hide(true);
+          overlayDoc.hide(true);
+          timer1 = setTimeout(function() {
+            overlayElm.show(true);
+          }, 10);
+          cbChangeDone = true;
+        },
+        function() {
+          clearTimeout(timer1);
+          beforeDone();
+        }
+      );
     });
 
     it('Selection: before 1', function(done) {
@@ -509,9 +524,23 @@ describe('avoidSelect()', function() {
 
   describe('Target: document', function() {
     beforeAll(function(beforeDone) {
-      overlayDoc.onShow = function() { beforeDone(); };
-      overlayElm.onHide = function() { overlayDoc.show(true); };
-      overlayElm.hide(true);
+      var cbChangeDone, timer1;
+      utils.makeState([overlayElm, overlayDoc],
+        [PlainOverlay.STATE_HIDDEN, PlainOverlay.STATE_SHOWN],
+        function() {
+          if (cbChangeDone) { return; }
+          overlayElm.hide(true);
+          overlayDoc.hide(true);
+          timer1 = setTimeout(function() {
+            overlayDoc.show(true);
+          }, 10);
+          cbChangeDone = true;
+        },
+        function() {
+          clearTimeout(timer1);
+          beforeDone();
+        }
+      );
     });
 
     it('Selection: before 1', function(done) {
