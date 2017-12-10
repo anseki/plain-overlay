@@ -12,6 +12,10 @@ describe('event', function() {
       document = pageDocument;
       utils = window.utils;
       PlainOverlay = window.PlainOverlay;
+
+      // Trident bug?, some events are not fired, strange...
+      if (window.IS_TRIDENT) { PlainOverlay.forceEvent = true; }
+
       overlay = new PlainOverlay(document.getElementById('elm-plain'), {
         onShow: function() {
           arrLog.push({type: 'onShow', state: this.state});
