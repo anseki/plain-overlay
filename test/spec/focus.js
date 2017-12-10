@@ -6,7 +6,7 @@ describe('focus', function() {
     PlainOverlay, traceLog, pageDone,
     overlayElm, overlayDoc,
     textInDoc, textInTarget, textInFace1, textInFace2,
-    IS_TRIDENT, IS_BLINK, IS_GECKO;
+    IS_TRIDENT, IS_EDGE, IS_BLINK, IS_GECKO;
 
   function blurElement(element) {
     if (element.blur) {
@@ -43,6 +43,7 @@ describe('focus', function() {
       pageDone = done;
 
       IS_TRIDENT = window.IS_TRIDENT;
+      IS_EDGE = window.IS_EDGE;
       IS_BLINK = window.IS_BLINK;
       IS_GECKO = window.IS_GECKO;
 
@@ -391,7 +392,10 @@ describe('focus', function() {
                   IS_TRIDENT ? [
                     '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                     'target:DIV#face1',
-                    '_id:' + overlayDoc._id, '</scroll-event>',
+                    '_id:' + overlayDoc._id, '</scroll-event>'
+                  ] : []
+                ).concat(
+                  IS_TRIDENT || IS_EDGE ? [
                     '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                     'target:document',
                     '_id:' + overlayDoc._id, '</scroll-event>'
@@ -622,7 +626,14 @@ describe('focus', function() {
 
                   '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'start:P#pInDoc1(0),end:P#pInDoc1(0),isCollapsed:true' :
-                    'start:BODY(3),end:BODY(3),isCollapsed:true',
+                    'start:BODY(3),end:BODY(3),isCollapsed:true'
+                ].concat(
+                  IS_EDGE ? [
+                    '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+                    'target:BODY',
+                    '_id:' + overlayDoc._id, '</focusListener>'
+                  ] : []
+                ).concat([
                   'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
                   // add(STYLE_CLASS_SHOW)
@@ -632,7 +643,7 @@ describe('focus', function() {
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
-                ].concat(
+                ]).concat(
                   // Bug?
                   IS_GECKO ? [
                     '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
@@ -778,6 +789,13 @@ describe('focus', function() {
                   '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'start:P#pInDoc1(0),end:P#pInDoc1(0),isCollapsed:true' :
                     'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
+                ].concat(
+                  IS_EDGE ? [
+                    '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+                    'target:BODY',
+                    '_id:' + overlayDoc._id, '</focusListener>'
+                  ] : []
+                ).concat([
                   'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
 
                   // remove(STYLE_CLASS_FORCE)
@@ -791,7 +809,7 @@ describe('focus', function() {
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
-                ].concat(
+                ]).concat(
                   // Bug?
                   IS_GECKO ? [
                     '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',

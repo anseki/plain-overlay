@@ -13,8 +13,8 @@ describe('event', function() {
       utils = window.utils;
       PlainOverlay = window.PlainOverlay;
 
-      // Trident bug?, some events are not fired, strange...
-      if (window.IS_TRIDENT) { PlainOverlay.forceEvent = true; }
+      // Trident and Edge bug?, some events are not fired, strange...
+      if (window.IS_TRIDENT || window.IS_EDGE) { PlainOverlay.forceEvent = true; }
 
       overlay = new PlainOverlay(document.getElementById('elm-plain'), {
         onShow: function() {

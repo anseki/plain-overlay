@@ -4,7 +4,7 @@ describe('scroll', function() {
 
   var window, document,
     PlainOverlay, insProps, pageDone,
-    IS_GECKO, overlayElm, overlayDoc,
+    IS_EDGE, IS_GECKO, overlayElm, overlayDoc,
     div, text, face1, face2,
 
     SCROLL_ELM_LEFT = 2,
@@ -68,6 +68,7 @@ describe('scroll', function() {
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
       insProps = window.insProps;
+      IS_EDGE = window.IS_EDGE;
       IS_GECKO = window.IS_GECKO;
       div = document.getElementById('target');
       text = document.getElementById('text');
@@ -230,8 +231,8 @@ describe('scroll', function() {
         expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT TRIED
         expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT TRIED
         faceScroll = getFaceScroll(overlayElm);
-        expect(faceScroll.left).toBe(0); // Reset by moving node
-        expect(faceScroll.top).toBe(0); // Reset by moving node
+        expect(faceScroll.left).toBe(IS_EDGE ? SCROLL_FACE1_LEFT : 0); // Reset by moving node
+        expect(faceScroll.top).toBe(IS_EDGE ? SCROLL_FACE1_TOP : 0); // Reset by moving node
         faceScroll = getFaceScroll(overlayDoc);
         expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
         expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
@@ -244,8 +245,8 @@ describe('scroll', function() {
           expect(window.pageXOffset).toBe(SCROLL_DOC_LEFT); // NOT TRIED
           expect(window.pageYOffset).toBe(SCROLL_DOC_TOP); // NOT TRIED
           faceScroll = getFaceScroll(overlayElm);
-          expect(faceScroll.left).toBe(0); // NOT TRIED
-          expect(faceScroll.top).toBe(0); // NOT TRIED
+          expect(faceScroll.left).toBe(IS_EDGE ? SCROLL_FACE1_LEFT : 0); // NOT TRIED
+          expect(faceScroll.top).toBe(IS_EDGE ? SCROLL_FACE1_TOP : 0); // NOT TRIED
           faceScroll = getFaceScroll(overlayDoc);
           expect(faceScroll.left).toBe(SCROLL_FACE2_LEFT); // NOT TRIED
           expect(faceScroll.top).toBe(SCROLL_FACE2_TOP); // NOT TRIED
@@ -307,8 +308,8 @@ describe('scroll', function() {
           expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT);
           expect(faceScroll.top).toBe(SCROLL_FACE1_TOP);
         } else {
-          expect(faceScroll.left).toBe(0); // Reset by moving node
-          expect(faceScroll.top).toBe(0); // Reset by moving node
+          expect(faceScroll.left).toBe(IS_EDGE ? SCROLL_FACE2_LEFT : 0); // Reset by moving node
+          expect(faceScroll.top).toBe(IS_EDGE ? SCROLL_FACE2_TOP : 0); // Reset by moving node
         }
 
         overlayDoc.hide(true);
@@ -331,8 +332,8 @@ describe('scroll', function() {
             expect(faceScroll.left).toBe(SCROLL_FACE1_LEFT);
             expect(faceScroll.top).toBe(SCROLL_FACE1_TOP);
           } else {
-            expect(faceScroll.left).toBe(0); // NOT TRIED
-            expect(faceScroll.top).toBe(0); // NOT TRIED
+            expect(faceScroll.left).toBe(IS_EDGE ? SCROLL_FACE2_LEFT : 0); // NOT TRIED
+            expect(faceScroll.top).toBe(IS_EDGE ? SCROLL_FACE2_TOP : 0); // NOT TRIED
           }
           // focus
           expect(document.activeElement).toBe(text);

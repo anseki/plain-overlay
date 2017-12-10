@@ -4,7 +4,7 @@ describe('avoidSelect()', function() {
 
   var window, document, utils,
     PlainOverlay, traceLog, pageDone,
-    IS_TRIDENT, IS_EDGE,
+    IS_TRIDENT,
     overlayElm, overlayDoc,
     pBefore, pTarget, pAfter, face1, face2;
 
@@ -87,7 +87,6 @@ describe('avoidSelect()', function() {
       PlainOverlay = window.PlainOverlay;
       traceLog = PlainOverlay.traceLog;
       IS_TRIDENT = window.IS_TRIDENT;
-      IS_EDGE = window.IS_EDGE;
 
       pBefore = document.getElementById('p-before');
       pTarget = document.getElementById('p-target');
@@ -425,7 +424,7 @@ describe('avoidSelect()', function() {
       setSelection(pAfter, 2, face1, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
-      if (IS_TRIDENT || IS_EDGE) { // Contains hidden text (face1 was moved after `MNO`)
+      if (IS_TRIDENT) { // Contains hidden text (face1 was moved after `MNO`)
         expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
       } else {
         expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
@@ -437,7 +436,7 @@ describe('avoidSelect()', function() {
         setTimeout(function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
-          if (IS_TRIDENT || IS_EDGE) { // Contains hidden text (face1 was moved after `MNO`)
+          if (IS_TRIDENT) { // Contains hidden text (face1 was moved after `MNO`)
             expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
           } else {
             expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
@@ -916,7 +915,7 @@ describe('avoidSelect()', function() {
       setSelection(pAfter, 2, face2, 0);
       selection = ('getSelection' in window ? window : document).getSelection();
       expect(selection.rangeCount).toBe(1);
-      if (IS_TRIDENT || IS_EDGE) { // Contains hidden text
+      if (IS_TRIDENT) { // Contains hidden text
         expect(selection.toString().replace(/\s/g, '')).toBe('IJKLM');
       } else {
         expect(selection.toString().replace(/\s/g, '')).toBe('IM');
