@@ -115,17 +115,16 @@ describe('avoidSelect()', function() {
 
   describe('Target: element', function() {
     beforeAll(function(beforeDone) {
-      var cbChangeDone, timer1;
+      var timer1;
       utils.makeState([overlayElm, overlayDoc],
         [PlainOverlay.STATE_SHOWN, PlainOverlay.STATE_HIDDEN],
         function() {
-          if (cbChangeDone) { return; }
           overlayElm.hide(true);
           overlayDoc.hide(true);
           timer1 = setTimeout(function() {
             overlayElm.show(true);
           }, 10);
-          cbChangeDone = true;
+          return true;
         },
         function() {
           clearTimeout(timer1);
@@ -523,17 +522,16 @@ describe('avoidSelect()', function() {
 
   describe('Target: document', function() {
     beforeAll(function(beforeDone) {
-      var cbChangeDone, timer1;
+      var timer1;
       utils.makeState([overlayElm, overlayDoc],
         [PlainOverlay.STATE_HIDDEN, PlainOverlay.STATE_SHOWN],
         function() {
-          if (cbChangeDone) { return; }
           overlayElm.hide(true);
           overlayDoc.hide(true);
           timer1 = setTimeout(function() {
             overlayDoc.show(true);
           }, 10);
-          cbChangeDone = true;
+          return true;
         },
         function() {
           clearTimeout(timer1);
