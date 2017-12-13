@@ -254,7 +254,7 @@ Event listeners:
 - `onBeforeHide` is called when the overlay is about to be hidden. If `false` is returned, the hiding is canceled.
 - `onHide` is called when a hiding effect of the overlay is finished.
 
-In the function, `this` refers to the current PlainOverlay instance.
+In the functions, `this` refers to the current PlainOverlay instance.
 
 For example:
 
