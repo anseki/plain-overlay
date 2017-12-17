@@ -203,6 +203,8 @@ A number determining how long (milliseconds) the effect (fade-in/out) animation 
 Applies a Gaussian blur to the `target` while the overlay is shown. Note that the current browser might not support it.  
 It is not applied if `false` is specified.
 
+For example:
+
 ```js
 overlay.blur = 3;
 ```
