@@ -13,6 +13,7 @@
 import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
+import TimedTransition from 'timed-transition';
 import CSS_TEXT from './default.scss';
 mClassList.ignoreNative = true;
 
@@ -60,6 +61,7 @@ const
    * @property {boolean} isDoc - `true` if target is document.
    * @property {Window} window - Window that conatins target element.
    * @property {HTMLDocument} document - Document that conatins target element.
+   * @property {TimedTransition} transition - TimedTransition instance.
    * @property {number} state - Current state.
    * @property {Object} options - Options.
    */
@@ -670,9 +672,9 @@ function show(props, force) {
     return;
   }
 
-  const elmOverlay = props.elmOverlay,
-    elmOverlayClassList = mClassList(elmOverlay);
   if (props.state === STATE_HIDDEN) {
+    const elmOverlay = props.elmOverlay,
+      elmOverlayClassList = mClassList(elmOverlay);
     props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     const targetElements = getTargetElements(props);
 
@@ -700,8 +702,7 @@ function show(props, force) {
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
 
-  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
-  elmOverlayClassList.add(STYLE_CLASS_SHOW);
+  props.transition.on(force);
   props.state = STATE_SHOWING;
   if (force) {
     finishShowing(props);
@@ -746,9 +747,7 @@ function hide(props, force
     }
   }
 
-  const elmOverlayClassList = mClassList(props.elmOverlay);
-  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
-  elmOverlayClassList.remove(STYLE_CLASS_SHOW);
+  props.transition.off(force);
   props.state = STATE_HIDING;
   if (force) {
     finishHiding(props
@@ -788,6 +787,7 @@ function setOptions(props, newOptions) {
     options.duration = newOptions.duration;
     props.elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
+    props.transition.duration = `${newOptions.duration}ms`;
   }
 
   // blur
@@ -928,11 +928,23 @@ class PlainOverlay {
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlayClassList.add(STYLE_CLASS_DOC); }
 
-    (listener => {
-      ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
-        elmOverlay.addEventListener(type, listener, true);
-      });
-    })(event => {
+    // TimedTransition
+    props.transition = new TimedTransition(elmOverlay, {
+      procToOn: force => {
+        const elmOverlayClassList = mClassList(elmOverlay);
+        elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+        elmOverlayClassList.add(STYLE_CLASS_SHOW);
+      },
+      procToOff: force => {
+        const elmOverlayClassList = mClassList(elmOverlay);
+        elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+        elmOverlayClassList.remove(STYLE_CLASS_SHOW);
+      },
+      // for setting before element online
+      property: 'opacity',
+      duration: `${DURATION}ms`
+    });
+    elmOverlay.addEventListener('timedTransitionEnd', event => {
       if (event.target === elmOverlay && event.propertyName === 'opacity') {
         if (props.state === STATE_SHOWING) {
           finishShowing(props);
@@ -940,7 +952,7 @@ class PlainOverlay {
           finishHiding(props);
         }
       }
-    });
+    }, true);
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
       const target = event.target;
@@ -1133,7 +1145,6 @@ class PlainOverlay {
 }
 
 PlainOverlay.limit = true;
-
 
 
 export default PlainOverlay;

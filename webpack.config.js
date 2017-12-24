@@ -22,7 +22,8 @@ const
     require('./webpack.config.rules.js').concat([ // Join `webpack.config.rules.js` files
       'cssprefix',
       'anim-event',
-      'm-class-list'
+      'm-class-list',
+      'timed-transition'
     ].reduce((rules, packageName) =>
       rules.concat(require(`./node_modules/${packageName}/webpack.config.rules.js`)), [])),
 

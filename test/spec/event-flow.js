@@ -1,5 +1,5 @@
 
-describe('forceEvent', function() {
+describe('event-flow', function() {
   'use strict';
 
   var window, document, utils,
@@ -41,16 +41,11 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = false;
         overlay1.onShow = function() { setTimeout(function() { overlay1.hide(); }, 0); };
         overlay1.onHide = function() {
           setTimeout(function() {
             expect(traceLog).toEqual([
               '<show>', '_id:' + overlay1._id, 'state:STATE_HIDDEN', 'force:false',
-
-              // remove(STYLE_CLASS_HIDE) - Canceled by `PlainOverlay.forceEvent:false`
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain',
-              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
               '<avoidFocus>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
               'element:BODY',
@@ -59,10 +54,6 @@ describe('forceEvent', function() {
               '<avoidSelect>', '_id:' + overlay1._id, 'state:STATE_HIDDEN',
               'NoRange',
               'NoSelection', '_id:' + overlay1._id, '</avoidSelect>',
-
-              // add(STYLE_CLASS_SHOW) - Canceled by `PlainOverlay.forceEvent:false`
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain',
-              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
               'state:STATE_SHOWING',
               '_id:' + overlay1._id, '</show>',
@@ -75,18 +66,10 @@ describe('forceEvent', function() {
 
               '<hide>', '_id:' + overlay1._id, 'state:STATE_SHOWN', 'force:false',
 
-              // remove(STYLE_CLASS_SHOW) - Canceled by `PlainOverlay.forceEvent:false`
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain',
-              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
               'state:STATE_HIDING',
               '_id:' + overlay1._id, '</hide>',
 
               '<finishHiding>', '_id:' + overlay1._id, 'state:STATE_HIDING',
-
-              // add(STYLE_CLASS_HIDE) - Canceled by `PlainOverlay.forceEvent:false`
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain',
-              'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
               '_id:' + overlay1._id, '</finishHiding>',
 
@@ -120,16 +103,11 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = true;
         overlay2.onShow = function() { setTimeout(function() { overlay2.hide(); }, 0); };
         overlay2.onHide = function() {
           setTimeout(function() {
             expect(traceLog).toEqual([
               '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
-
-              // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-              'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
               '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
               'element:BODY',
@@ -139,45 +117,22 @@ describe('forceEvent', function() {
               'NoRange',
               'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
-              // add(STYLE_CLASS_SHOW)
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain2',
-              '<initEvent>', 'target.id:elm-plain2', 'duration:80', '</initEvent>',
-              '</mClassList.hookApply>',
-
               'state:STATE_SHOWING',
               '_id:' + overlay2._id, '</show>',
-
-              '<fireEvent>', 'target.id:elm-plain2',
 
               '<finishShowing>', '_id:' + overlay2._id, 'state:STATE_SHOWING',
               'state:STATE_SHOWN',
               '_id:' + overlay2._id, '</finishShowing>',
 
-              '</fireEvent>',
-
               // onShow -> hide()
 
               '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWN', 'force:false',
 
-              // remove(STYLE_CLASS_SHOW)
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-              '<initEvent>', 'target.id:elm-plain2', 'duration:80', '</initEvent>',
-              '</mClassList.hookApply>',
-
               'state:STATE_HIDING',
               '_id:' + overlay2._id, '</hide>',
 
-              '<fireEvent>', 'target.id:elm-plain2',
-
               '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_HIDING',
-
-              // add(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain2',
-              'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
-
               '_id:' + overlay2._id, '</finishHiding>',
-
-              '</fireEvent>',
 
               '<finishHiding.restoreAndFinish>', '_id:' + overlay2._id, 'state:STATE_HIDING',
               'state:STATE_HIDDEN', 'focusListener:ADD',
@@ -209,15 +164,10 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = true;
         overlay2.onHide = function() {
           setTimeout(function() {
             expect(traceLog).toEqual([
               '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
-
-              // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-              'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
               '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
               'element:BODY',
@@ -227,11 +177,6 @@ describe('forceEvent', function() {
               'NoRange',
               'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
-              // add(STYLE_CLASS_SHOW)
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain2',
-              '<initEvent>', 'target.id:elm-plain2', 'duration:80', '</initEvent>',
-              '</mClassList.hookApply>',
-
               'state:STATE_SHOWING',
               '_id:' + overlay2._id, '</show>',
 
@@ -239,27 +184,11 @@ describe('forceEvent', function() {
 
               '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:false',
 
-              // remove(STYLE_CLASS_SHOW)
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-              '<initEvent>', 'target.id:elm-plain2', 'duration:80',
-              'ClearPrevEvent', // event by add(STYLE_CLASS_SHOW)
-              '</initEvent>',
-              '</mClassList.hookApply>',
-
               'state:STATE_HIDING',
               '_id:' + overlay2._id, '</hide>',
 
-              '<fireEvent>', 'target.id:elm-plain2',
-
               '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_HIDING',
-
-              // add(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-hide', 'target.id:elm-plain2',
-              'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
-
               '_id:' + overlay2._id, '</finishHiding>',
-
-              '</fireEvent>',
 
               '<finishHiding.restoreAndFinish>', '_id:' + overlay2._id, 'state:STATE_HIDING',
               'state:STATE_HIDDEN', 'focusListener:ADD',
@@ -292,15 +221,10 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = true;
         overlay2.onShow = function() {
           setTimeout(function() {
             expect(traceLog).toEqual([
               '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:true',
-
-              // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-              '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-              'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
               '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
               'element:BODY',
@@ -309,17 +233,6 @@ describe('forceEvent', function() {
               '<avoidSelect>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
               'NoRange',
               'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
-
-              // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:elm-plain2',
-              'FORCE_CLASS:true',
-              'CANCEL', '</mClassList.hookApply>',
-
-              // add(STYLE_CLASS_SHOW)
-              '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-show',
-              'target.id:elm-plain2',
-              'FORCE_CLASS:true',
-              'CANCEL', '</mClassList.hookApply>',
 
               'state:STATE_SHOWING',
 
@@ -351,17 +264,12 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = true;
         traceLog.length = 0;
         overlay2.show();
         setTimeout(function() { overlay2.show(true); }, 40);
         setTimeout(function() {
           expect(traceLog).toEqual([
             '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
-
-            // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-            '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-            'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
             'element:BODY',
@@ -371,11 +279,6 @@ describe('forceEvent', function() {
             'NoRange',
             'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
-            // add(STYLE_CLASS_SHOW)
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain2',
-            '<initEvent>', 'target.id:elm-plain2', 'duration:80', '</initEvent>',
-            '</mClassList.hookApply>',
-
             'state:STATE_SHOWING',
             '_id:' + overlay2._id, '</show>',
 
@@ -384,13 +287,6 @@ describe('forceEvent', function() {
             '<show>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:true',
 
             // remove(STYLE_CLASS_HIDE) - Skip
-
-            // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-            'target.id:elm-plain2',
-            'FORCE_CLASS:true',
-            'ClearPrevEvent', // event by add(STYLE_CLASS_SHOW)
-            'CANCEL', '</mClassList.hookApply>',
 
             // add(STYLE_CLASS_SHOW) - Skip
 
@@ -420,17 +316,12 @@ describe('forceEvent', function() {
         window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
         window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
-        PlainOverlay.forceEvent = true;
         traceLog.length = 0;
         overlay2.show();
         setTimeout(function() { overlay2.hide(true); }, 40);
         setTimeout(function() {
           expect(traceLog).toEqual([
             '<show>', '_id:' + overlay2._id, 'state:STATE_HIDDEN', 'force:false',
-
-            // remove(STYLE_CLASS_HIDE) - Canceled by `TriggerClassNotChanged`
-            '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:elm-plain2',
-            'TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>',
 
             '<avoidFocus>', '_id:' + overlay2._id, 'state:STATE_HIDDEN',
             'element:BODY',
@@ -440,11 +331,6 @@ describe('forceEvent', function() {
             'NoRange',
             'NoSelection', '_id:' + overlay2._id, '</avoidSelect>',
 
-            // add(STYLE_CLASS_SHOW)
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:elm-plain2',
-            '<initEvent>', 'target.id:elm-plain2', 'duration:80', '</initEvent>',
-            '</mClassList.hookApply>',
-
             'state:STATE_SHOWING',
             '_id:' + overlay2._id, '</show>',
 
@@ -452,26 +338,9 @@ describe('forceEvent', function() {
 
             '<hide>', '_id:' + overlay2._id, 'state:STATE_SHOWING', 'force:true',
 
-            // add(STYLE_CLASS_FORCE) - Canceled by `FORCE_CLASS`
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-            'target.id:elm-plain2',
-            'FORCE_CLASS:true',
-            'ClearPrevEvent', // event by add(STYLE_CLASS_SHOW)
-            'CANCEL', '</mClassList.hookApply>',
-
-            // remove(STYLE_CLASS_SHOW)
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:elm-plain2',
-            'FORCE_CLASS:true',
-            'CANCEL', '</mClassList.hookApply>',
-
             'state:STATE_HIDING',
 
             '<finishHiding>', '_id:' + overlay2._id, 'state:STATE_HIDING',
-
-            // add(STYLE_CLASS_HIDE) - Canceled by `FORCE_CLASS`
-            '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
-            'target.id:elm-plain2',
-            'FORCE_CLASS:true', 'CANCEL', '</mClassList.hookApply>',
 
             '_id:' + overlay2._id, '</finishHiding>',
 

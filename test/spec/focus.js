@@ -101,10 +101,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   'element:INPUT#textInDoc',
                   'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
@@ -112,10 +108,6 @@ describe('focus', function() {
                   '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'NoRange' : 'start:BODY(3),end:BODY(3),isCollapsed:true',
                   'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayElm._id, '</show>',
@@ -140,23 +132,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '_id:' + overlayElm._id, '</finishHiding>',
 
@@ -219,10 +197,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   'element:INPUT#textInTarget',
                   'DONE', '_id:' + overlayElm._id, '</avoidFocus>', // BLURRED
@@ -232,14 +206,6 @@ describe('focus', function() {
                     'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
                   IS_TRIDENT ? 'NoSelection' : 'DONE',
                   '_id:' + overlayElm._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayElm._id, '</show>'
@@ -277,23 +243,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '_id:' + overlayElm._id, '</finishHiding>',
 
@@ -356,10 +308,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   'element:BODY',
                   'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
@@ -367,14 +315,6 @@ describe('focus', function() {
                   '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   'NoRange',
                   'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayElm._id, '</show>',
@@ -405,23 +345,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '_id:' + overlayElm._id, '</finishHiding>',
 
@@ -490,10 +416,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   '<avoidFocus>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   'element:BODY',
                   'NotInTarget', '_id:' + overlayElm._id, '</avoidFocus>',
@@ -502,14 +424,6 @@ describe('focus', function() {
                   // Blink bug, strange!
                   IS_BLINK ? 'start:P#pInFace1(0),end:P#pInFace1(0),isCollapsed:true' : 'NoRange',
                   'NoSelection', '_id:' + overlayElm._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayElm._id, '</show>'
@@ -533,23 +447,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayElm._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-show,plainoverlay-force',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force', 'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-force,plainoverlay-hide',
-                  'target.id:target',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '_id:' + overlayElm._id, '</finishHiding>',
 
@@ -612,10 +512,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   // From disableDocBars
                   '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
@@ -635,11 +531,6 @@ describe('focus', function() {
                   ] : []
                 ).concat([
                   'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
@@ -687,24 +578,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '[SAVE1]state:STATE_HIDDEN',
                   'focusListener:REMOVE', // ==== REMOVED LISTENER START
@@ -773,11 +649,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   // From disableDocBars
                   '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
@@ -797,15 +668,6 @@ describe('focus', function() {
                   ] : []
                 ).concat([
                   'DONE', '_id:' + overlayDoc._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
@@ -853,23 +715,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '[SAVE1]state:STATE_HIDDEN',
                   'focusListener:REMOVE', // ==== REMOVED LISTENER START
@@ -955,11 +803,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   // From disableDocBars
                   '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
@@ -971,15 +814,6 @@ describe('focus', function() {
                   '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   'NoRange',
                   'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
@@ -1018,23 +852,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '[SAVE1]state:STATE_HIDDEN',
                   'focusListener:REMOVE', // ==== REMOVED LISTENER START
@@ -1044,6 +864,13 @@ describe('focus', function() {
                   '_id:' + overlayDoc._id, '</finishHiding>',
 
                   '_id:' + overlayDoc._id, '</hide>',
+
+                  // Firefox need it?
+                  // '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+                  // 'target:DIV#face2',
+                  // '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
+                  // 'NotInTarget', '_id:' + overlayDoc._id, '</restoreScroll>',
+                  // '_id:' + overlayDoc._id, '</scroll-event>',
 
                   '<finishHiding.restoreAndFinish>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
                   'state:STATE_HIDDEN',
@@ -1103,11 +930,6 @@ describe('focus', function() {
                 expect(traceLog).toEqual([
                   '<show>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN', 'force:false',
 
-                  // remove(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   // From disableDocBars
                   '<restoreScroll>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   'DONE:ELEMENT', '_id:' + overlayDoc._id, '</restoreScroll>',
@@ -1120,15 +942,6 @@ describe('focus', function() {
                   // Blink bug, strange!
                   IS_BLINK ? 'start:P#pInFace2(0),end:P#pInFace2(0),isCollapsed:true' : 'NoRange',
                   'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
-
-                  // remove(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // add(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   'state:STATE_SHOWING',
                   '_id:' + overlayDoc._id, '</show>'
@@ -1154,23 +967,9 @@ describe('focus', function() {
 
                   '<hide>', '_id:' + overlayDoc._id, 'state:STATE_SHOWN', 'force:true',
 
-                  // add(STYLE_CLASS_FORCE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-show,plainoverlay-force',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
-                  // remove(STYLE_CLASS_SHOW)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force', 'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
-
                   'state:STATE_HIDING',
 
                   '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
-
-                  // add(STYLE_CLASS_HIDE)
-                  '<mClassList.hookApply>', 'list:plainoverlay,plainoverlay-doc,plainoverlay-force,plainoverlay-hide',
-                  'target.id:UNKNOWN',
-                  'PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>',
 
                   '[SAVE1]state:STATE_HIDDEN',
                   'focusListener:REMOVE', // ==== REMOVED LISTENER START

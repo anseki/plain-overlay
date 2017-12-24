@@ -13,9 +13,6 @@ describe('event', function() {
       utils = window.utils;
       PlainOverlay = window.PlainOverlay;
 
-      // Trident and Edge bug?, some events are not fired, strange...
-      if (window.IS_TRIDENT || window.IS_EDGE) { PlainOverlay.forceEvent = true; }
-
       overlay = new PlainOverlay(document.getElementById('elm-plain'), {
         onShow: function() {
           arrLog.push({type: 'onShow', state: this.state});
@@ -56,7 +53,9 @@ describe('event', function() {
       function() {
         arrLog = [];
         returnValue = true;
-        showListener = function() { overlay.hide(); };
+        showListener = function() {
+          setTimeout(function() { overlay.hide(); }, 0);
+        };
         hideListener = function() {
           expect(arrLog.length).toBe(6);
           expect(arrLog[0].type).toBe('onBeforeShow');
@@ -90,7 +89,9 @@ describe('event', function() {
       function() {
         arrLog = [];
         returnValue = false;
-        showListener = function() { overlay.hide(); };
+        showListener = function() {
+          setTimeout(function() { overlay.hide(); }, 0);
+        };
         hideListener = null;
 
         setTimeout(function() { arrLog.push({type: 'time-0', state: overlay.state}); }, 40);
@@ -122,7 +123,7 @@ describe('event', function() {
         returnValue = true;
         showListener = function() {
           returnValue = false;
-          overlay.hide();
+          setTimeout(function() { overlay.hide(); }, 0);
         };
         hideListener = null;
 
@@ -157,7 +158,9 @@ describe('event', function() {
       function() {
         arrLog = [];
         returnValue = true;
-        showListener = function() { overlay.hide(); };
+        showListener = function() {
+          setTimeout(function() { overlay.hide(); }, 0);
+        };
         hideListener = function() {
           expect(arrLog.length).toBe(8);
           expect(arrLog[0].type).toBe('onBeforeShow');
@@ -206,7 +209,9 @@ describe('event', function() {
       function() {
         arrLog = [];
         returnValue = true;
-        showListener = function() { overlay.hide(); };
+        showListener = function() {
+          setTimeout(function() { overlay.hide(); }, 0);
+        };
         hideListener = function() {
           expect(arrLog.length).toBe(8);
           expect(arrLog[0].type).toBe('onBeforeShow');

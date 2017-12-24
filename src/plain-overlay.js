@@ -9,6 +9,7 @@
 import CSSPrefix from 'cssprefix';
 import AnimEvent from 'anim-event';
 import mClassList from 'm-class-list';
+import TimedTransition from 'timed-transition';
 import CSS_TEXT from './default.scss';
 // [FACE]
 import FACE_DEFS from './face.html?tag=defs';
@@ -62,6 +63,7 @@ const
    * @property {boolean} isDoc - `true` if target is document.
    * @property {Window} window - Window that conatins target element.
    * @property {HTMLDocument} document - Document that conatins target element.
+   * @property {TimedTransition} transition - TimedTransition instance.
    * @property {number} state - Current state.
    * @property {Object} options - Options.
    */
@@ -78,6 +80,7 @@ window.IS_EDGE = IS_EDGE;
 window.IS_WEBKIT = IS_WEBKIT;
 window.IS_BLINK = IS_BLINK;
 window.IS_GECKO = IS_GECKO;
+window.TimedTransition = TimedTransition;
 // [/DEBUG]
 
 // [DEBUG]
@@ -760,9 +763,9 @@ function show(props, force) {
     return;
   }
 
-  const elmOverlay = props.elmOverlay,
-    elmOverlayClassList = mClassList(elmOverlay);
   if (props.state === STATE_HIDDEN) {
+    const elmOverlay = props.elmOverlay,
+      elmOverlayClassList = mClassList(elmOverlay);
     props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     const targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
@@ -791,8 +794,7 @@ function show(props, force) {
     if (props.options.onPosition) { props.options.onPosition.call(props.ins); }
   }
 
-  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
-  elmOverlayClassList.add(STYLE_CLASS_SHOW);
+  props.transition.on(force);
   props.state = STATE_SHOWING;
   traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (force) {
@@ -843,9 +845,7 @@ function hide(props, force
     }
   }
 
-  const elmOverlayClassList = mClassList(props.elmOverlay);
-  elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
-  elmOverlayClassList.remove(STYLE_CLASS_SHOW);
+  props.transition.off(force);
   props.state = STATE_HIDING;
   traceLog.push(`state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   if (force) {
@@ -895,6 +895,7 @@ function setOptions(props, newOptions) {
     options.duration = newOptions.duration;
     props.elmOverlay.style[CSSPrefix.getName('transitionDuration')] =
       newOptions.duration === DURATION ? '' : `${newOptions.duration}ms`;
+    props.transition.duration = `${newOptions.duration}ms`;
   }
 
   // blur
@@ -1034,13 +1035,24 @@ class PlainOverlay {
       elmOverlayClassList = mClassList(elmOverlay);
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) { elmOverlayClassList.add(STYLE_CLASS_DOC); }
-    elmOverlay.forceEventTarget = target; // [DEBUG/]
 
-    (listener => {
-      ['transitionend', 'webkitTransitionEnd', 'oTransitionEnd', 'otransitionend'].forEach(type => {
-        elmOverlay.addEventListener(type, listener, true);
-      });
-    })(event => {
+    // TimedTransition
+    props.transition = new TimedTransition(elmOverlay, {
+      procToOn: force => {
+        const elmOverlayClassList = mClassList(elmOverlay);
+        elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+        elmOverlayClassList.add(STYLE_CLASS_SHOW);
+      },
+      procToOff: force => {
+        const elmOverlayClassList = mClassList(elmOverlay);
+        elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
+        elmOverlayClassList.remove(STYLE_CLASS_SHOW);
+      },
+      // for setting before element online
+      property: 'opacity',
+      duration: `${DURATION}ms`
+    });
+    elmOverlay.addEventListener('timedTransitionEnd', event => {
       if (event.target === elmOverlay && event.propertyName === 'opacity') {
         if (props.state === STATE_SHOWING) {
           finishShowing(props);
@@ -1048,7 +1060,7 @@ class PlainOverlay {
           finishHiding(props);
         }
       }
-    });
+    }, true);
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
       // [DEBUG]
@@ -1266,89 +1278,6 @@ class PlainOverlay {
 /* [FACE/]
 PlainOverlay.limit = true;
 [FACE/] */
-
-// [DEBUG]
-/*
-  For test, fire `transitionend` event even if view is hidden.
-*/
-PlainOverlay.forceEvent = false;
-{
-  const FORCE_EVENT_TYPE = 'transitionend',
-    PROPERTY_NAME = 'opacity',
-    TRIGGER_CLASS = STYLE_CLASS_SHOW,
-    FORCE_CLASS = STYLE_CLASS_FORCE;
-
-  function getIdLog(element) {
-    return `target.id:${element.forceEventTarget && element.forceEventTarget.id || 'UNKNOWN'}`;
-  }
-
-  function fireEvent(element) {
-    traceLog.push('<fireEvent>', getIdLog(element));
-    console.warn(`[forceEvent] Fired: ${FORCE_EVENT_TYPE}`);
-    let event;
-    if (element.timer) { clearTimeout(element.timer); } // This may be needed.
-    element.timer = null;
-    try {
-      event = new TransitionEvent(FORCE_EVENT_TYPE, {propertyName: PROPERTY_NAME});
-    } catch (error) {
-      event = document.createEvent('TransitionEvent');
-      event.initTransitionEvent(FORCE_EVENT_TYPE, false, false, PROPERTY_NAME, 0);
-    }
-    element.dispatchEvent(event);
-    traceLog.push('</fireEvent>');
-  }
-
-  function initEvent(element, duration) {
-    traceLog.push('<initEvent>', getIdLog(element), `duration:${duration}`);
-    console.warn(`[forceEvent] Trigger class: ${TRIGGER_CLASS} / duration: ${duration}`);
-    if (element.timer) {
-      traceLog.push('ClearPrevEvent');
-      console.warn('[forceEvent] ClearPrevEvent');
-      clearTimeout(element.timer);
-    }
-    element.timer = setTimeout(() => { fireEvent(element); }, duration);
-    traceLog.push('</initEvent>');
-  }
-
-  mClassList.hookApply((list, element) => {
-    traceLog.push('<mClassList.hookApply>', `list:${list.join(',')}`, getIdLog(element));
-    if (!PlainOverlay.forceEvent) {
-      traceLog.push('PlainOverlay.forceEvent:false', 'CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    if (list.indexOf(FORCE_CLASS) !== -1) {
-      traceLog.push('FORCE_CLASS:true');
-      if (element.timer) {
-        traceLog.push('ClearPrevEvent');
-        console.warn('[forceEvent] ClearPrevEvent');
-        clearTimeout(element.timer);
-        element.timer = null;
-      }
-      traceLog.push('CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    const
-      elmList = (element.getAttribute('class') || '').trim().split(/\s+/).filter(token => !!token),
-      elementHasTrigger = elmList.indexOf(TRIGGER_CLASS) !== -1,
-      listHasTrigger = list.indexOf(TRIGGER_CLASS) !== -1;
-
-    if (elementHasTrigger === listHasTrigger) {
-      traceLog.push('TriggerClassNotChanged', 'CANCEL', '</mClassList.hookApply>');
-      return;
-    }
-
-    // Remove animation of all properties (Can't remove only `opacity` when it is `all`).
-    element.style[CSSPrefix.getName('transitionProperty')] = 'none';
-    const cmpStyle = element.ownerDocument.defaultView.getComputedStyle(element, '');
-    let duration = cmpStyle[CSSPrefix.getName('transitionDuration')];
-    duration = duration.replace(/^([\d\.]+)(m?s)$/, (s, num, ms) => num * (ms === 's' ? 1000 : 1)) * 1;
-    initEvent(element, duration);
-    traceLog.push('</mClassList.hookApply>');
-  });
-}
-// [/DEBUG]
 
 // [DEBUG]
 PlainOverlay.traceLog = traceLog;
