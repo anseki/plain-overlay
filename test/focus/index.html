@@ -78,7 +78,7 @@
       if (overlay1.state === PlainOverlay.STATE_HIDDEN ||
           overlay1.state === PlainOverlay.STATE_HIDING) {
         overlay1.show();
-        insProps[overlay1._id].elmOverlay.style.width = '16px';
+        PlainOverlay.insProps[overlay1._id].elmOverlay.style.width = '16px';
       } else {
         overlay1.hide();
       }
@@ -90,7 +90,7 @@
       if (overlay2.state === PlainOverlay.STATE_HIDDEN ||
           overlay2.state === PlainOverlay.STATE_HIDING) {
         overlay2.show();
-        insProps[overlay2._id].elmOverlay.style.width = '16px';
+        PlainOverlay.insProps[overlay2._id].elmOverlay.style.width = '16px';
       } else {
         overlay2.hide();
       }
@@ -102,8 +102,8 @@
       if (overlay3.state === PlainOverlay.STATE_HIDDEN ||
           overlay3.state === PlainOverlay.STATE_HIDING) {
         overlay3.show();
-        insProps[overlay3._id].elmOverlayBody.style.width = '16px';
-        insProps[overlay3._id].elmOverlay.style.paddingRight = '0';
+        PlainOverlay.insProps[overlay3._id].elmOverlayBody.style.width = '16px';
+        PlainOverlay.insProps[overlay3._id].elmOverlay.style.paddingRight = '0';
       } else {
         overlay3.hide();
       }

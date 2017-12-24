@@ -86,7 +86,7 @@ describe('avoidSelect()', function() {
       utils = window.utils;
       PlainOverlay = window.PlainOverlay;
       traceLog = PlainOverlay.traceLog;
-      IS_TRIDENT = window.IS_TRIDENT;
+      IS_TRIDENT = PlainOverlay.IS_TRIDENT;
 
       pBefore = document.getElementById('p-before');
       pTarget = document.getElementById('p-target');

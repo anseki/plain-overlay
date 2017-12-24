@@ -76,7 +76,6 @@ const
 let insId = 0;
 
 
-
 function forceReflow(target) {
   // Trident and Blink bug (reflow like `offsetWidth` can't update)
   setTimeout(() => {

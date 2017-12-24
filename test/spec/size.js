@@ -13,7 +13,7 @@ describe('resizeTarget()', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
+      insProps = PlainOverlay.insProps;
       resizeTarget = window.resizeTarget;
       pageDone = done;
 

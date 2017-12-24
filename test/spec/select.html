@@ -11,7 +11,7 @@
 window.addEventListener('load', function() {
 
   document.getElementById('btn1').addEventListener('click', function() {
-    var overlayElm = window.overlayElm, insProps = window.insProps;
+    var overlayElm = window.overlayElm, insProps = PlainOverlay.insProps;
     if (overlayElm.state === PlainOverlay.STATE_HIDDEN ||
         overlayElm.state === PlainOverlay.STATE_HIDING) {
       overlayElm.show();
@@ -23,7 +23,7 @@ window.addEventListener('load', function() {
   }, false);
 
   document.getElementById('btn2').addEventListener('click', function() {
-    var overlayDoc = window.overlayDoc, insProps = window.insProps;
+    var overlayDoc = window.overlayDoc, insProps = PlainOverlay.insProps;
     if (overlayDoc.state === PlainOverlay.STATE_HIDDEN ||
         overlayDoc.state === PlainOverlay.STATE_HIDING) {
       overlayDoc.show();

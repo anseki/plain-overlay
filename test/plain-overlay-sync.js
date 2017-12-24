@@ -373,16 +373,6 @@ insProps = {};
 var insId = 0;
 
 // [DEBUG]
-window.insProps = insProps;
-window.IS_TRIDENT = IS_TRIDENT;
-window.IS_EDGE = IS_EDGE;
-window.IS_WEBKIT = IS_WEBKIT;
-window.IS_BLINK = IS_BLINK;
-window.IS_GECKO = IS_GECKO;
-window.TimedTransition = _timedTransition2.default;
-// [/DEBUG]
-
-// [DEBUG]
 var traceLog = [];
 var STATE_TEXT = {};
 STATE_TEXT[STATE_HIDDEN] = 'STATE_HIDDEN';
@@ -1622,8 +1612,14 @@ PlainOverlay.limit = true;
 // [DEBUG]
 
 
+PlainOverlay.insProps = insProps;
 PlainOverlay.traceLog = traceLog;
 PlainOverlay.STATE_TEXT = STATE_TEXT;
+PlainOverlay.IS_TRIDENT = IS_TRIDENT;
+PlainOverlay.IS_EDGE = IS_EDGE;
+PlainOverlay.IS_WEBKIT = IS_WEBKIT;
+PlainOverlay.IS_BLINK = IS_BLINK;
+PlainOverlay.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
 exports.default = PlainOverlay;

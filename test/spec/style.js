@@ -13,7 +13,7 @@ describe('style', function() {
       frmWindow = document.getElementById('iframe1').contentWindow;
       frmDocument = frmWindow.document;
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
+      insProps = PlainOverlay.insProps;
       pageDone = done;
 
       beforeDone();

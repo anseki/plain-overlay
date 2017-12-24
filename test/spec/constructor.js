@@ -18,7 +18,7 @@ describe('constructor', function() {
       frmDocElement = frmDocument.documentElement;
       frmElement = frmDocument.getElementById('elm-plain');
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
+      insProps = PlainOverlay.insProps;
       pageDone = done;
 
       beforeDone();

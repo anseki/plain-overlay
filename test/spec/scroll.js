@@ -67,9 +67,9 @@ describe('scroll', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
-      IS_EDGE = window.IS_EDGE;
-      IS_GECKO = window.IS_GECKO;
+      insProps = PlainOverlay.insProps;
+      IS_EDGE = PlainOverlay.IS_EDGE;
+      IS_GECKO = PlainOverlay.IS_GECKO;
       div = document.getElementById('target');
       text = document.getElementById('text');
       face1 = document.getElementById('face1');

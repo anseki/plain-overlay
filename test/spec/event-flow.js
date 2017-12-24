@@ -38,8 +38,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         overlay1.onShow = function() { setTimeout(function() { overlay1.hide(); }, 0); };
         overlay1.onHide = function() {
@@ -100,8 +100,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         overlay2.onShow = function() { setTimeout(function() { overlay2.hide(); }, 0); };
         overlay2.onHide = function() {
@@ -161,8 +161,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         overlay2.onHide = function() {
           setTimeout(function() {
@@ -218,8 +218,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         overlay2.onShow = function() {
           setTimeout(function() {
@@ -261,8 +261,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         traceLog.length = 0;
         overlay2.show();
@@ -313,8 +313,8 @@ describe('event-flow', function() {
       PlainOverlay.STATE_HIDDEN,
       function(overlay) { overlay.hide(true); },
       function() {
-        window.mClassList(window.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
-        window.mClassList(window.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay1._id].elmOverlay).remove('plainoverlay-force');
+        window.mClassList(PlainOverlay.insProps[overlay2._id].elmOverlay).remove('plainoverlay-force');
 
         traceLog.length = 0;
         overlay2.show();

@@ -42,10 +42,10 @@ describe('focus', function() {
         {face: document.getElementById('face2'), duration: 20});
       pageDone = done;
 
-      IS_TRIDENT = window.IS_TRIDENT;
-      IS_EDGE = window.IS_EDGE;
-      IS_BLINK = window.IS_BLINK;
-      IS_GECKO = window.IS_GECKO;
+      IS_TRIDENT = PlainOverlay.IS_TRIDENT;
+      IS_EDGE = PlainOverlay.IS_EDGE;
+      IS_BLINK = PlainOverlay.IS_BLINK;
+      IS_GECKO = PlainOverlay.IS_GECKO;
 
       beforeDone();
     }, 'focus');

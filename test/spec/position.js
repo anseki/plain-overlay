@@ -21,7 +21,7 @@ describe('position()', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
+      insProps = PlainOverlay.insProps;
       getBBox = window.getBBox;
       iframe0102Window = pageDocument.getElementById('case-01-02').contentWindow;
       iframe0304Window = pageDocument.getElementById('case-03-04').contentWindow;

@@ -79,7 +79,7 @@ function show1() {
   if (overlay1.state === PlainOverlay.STATE_HIDDEN ||
       overlay1.state === PlainOverlay.STATE_HIDING) {
     overlay1.show();
-    insProps[overlay1._id].elmOverlay.style.width = '16px';
+    PlainOverlay.insProps[overlay1._id].elmOverlay.style.width = '16px';
   } else {
     overlay1.hide();
   }
@@ -89,9 +89,9 @@ function show2(params) {
   if (overlay2.state === PlainOverlay.STATE_HIDDEN ||
       overlay2.state === PlainOverlay.STATE_HIDING) {
     overlay2.show();
-    insProps[overlay2._id].elmOverlayBody.style.width = '16px';
-    insProps[overlay2._id].elmOverlay.style.paddingRight = '0';
-    insProps[overlay2._id].elmTarget.style.overflow = '';
+    PlainOverlay.insProps[overlay2._id].elmOverlayBody.style.width = '16px';
+    PlainOverlay.insProps[overlay2._id].elmOverlay.style.paddingRight = '0';
+    PlainOverlay.insProps[overlay2._id].elmTarget.style.overflow = '';
   } else {
     overlay2.hide();
   }

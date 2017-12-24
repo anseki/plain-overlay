@@ -83,9 +83,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       document = pageDocument;
       selContainsNode = window.selContainsNode;
       nodeContainsSel = window.nodeContainsSel;
-      IS_TRIDENT = window.IS_TRIDENT;
-      IS_BLINK = window.IS_BLINK;
-      IS_GECKO = window.IS_GECKO;
+      IS_TRIDENT = window.PlainOverlay.IS_TRIDENT;
+      IS_BLINK = window.PlainOverlay.IS_BLINK;
+      IS_GECKO = window.PlainOverlay.IS_GECKO;
 
       p1 = document.getElementById('p1');
       span1 = document.getElementById('span1');

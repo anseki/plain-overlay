@@ -79,10 +79,10 @@ describe('disableDocBars()', function() {
       window = pageWindow;
       document = pageDocument;
       PlainOverlay = window.PlainOverlay;
-      insProps = window.insProps;
-      IS_TRIDENT = window.IS_TRIDENT;
-      IS_GECKO = window.IS_GECKO;
-      IS_EDGE = window.IS_EDGE;
+      insProps = PlainOverlay.insProps;
+      IS_TRIDENT = PlainOverlay.IS_TRIDENT;
+      IS_GECKO = PlainOverlay.IS_GECKO;
+      IS_EDGE = PlainOverlay.IS_EDGE;
       table = document.getElementById('targets');
 
       if (IS_TRIDENT) { pageDocument.documentElement.classList.add('is-trident'); }

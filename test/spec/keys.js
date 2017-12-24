@@ -59,7 +59,7 @@ describe('disableAccKeys()', function() {
 
     overlay.show();
     expect(matchArray(window.targetElements, elements)).toBe(true);
-    saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
+    saveElement1 = target.removeChild(PlainOverlay.insProps[overlay._id].elmOverlay);
     if (!self.top.LIMIT) {
       saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
     }
@@ -72,7 +72,7 @@ describe('disableAccKeys()', function() {
     }
 
     overlay.hide(true);
-    saveElement1 = target.removeChild(window.insProps[overlay._id].elmOverlay);
+    saveElement1 = target.removeChild(PlainOverlay.insProps[overlay._id].elmOverlay);
     if (!self.top.LIMIT) {
       saveElement2 = target.removeChild(document.getElementById('plainoverlay-builtin-face-defs'));
     }
