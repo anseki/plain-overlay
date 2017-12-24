@@ -357,6 +357,14 @@ describe('focus', function() {
                     '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                     'target:BODY',
                     '_id:' + overlayDoc._id, '</focusListener>'
+                  ] :
+                  IS_GECKO ? [
+                    '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+                    'target:DIV#face1',
+                    '_id:' + overlayDoc._id, '</scroll-event>',
+                    '<scroll-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
+                    'target:document',
+                    '_id:' + overlayDoc._id, '</scroll-event>'
                   ] : []
                 ).concat([
                   '<finishHiding.restoreAndFinish>', '_id:' + overlayElm._id, 'state:STATE_HIDING',
