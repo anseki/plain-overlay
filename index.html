@@ -390,6 +390,8 @@ window.addEventListener('load', function() {
 <p><em>Type:</em> number or boolean<br><em>Default:</em> <code>false</code></p>
 
 <p>Applies a Gaussian blur to the <code>target</code> while the overlay is shown. Note that the current browser might not support it.<br>It is not applied if <code>false</code> is specified.</p>
+
+<p>For example:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="nx">overlay</span><span class="p">.</span><span class="nx">blur</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
 </code></pre></div>
 <h3 id="options-style"><code>style</code></h3>
@@ -450,7 +452,7 @@ window.addEventListener('load', function() {
 <li><code>onHide</code> is called when a hiding effect of the overlay is finished.</li>
 </ul>
 
-<p>In the function, <code>this</code> refers to the current PlainOverlay instance.</p>
+<p>In the functions, <code>this</code> refers to the current PlainOverlay instance.</p>
 
 <p>For example:</p>
 <div class="highlight"><pre><code class="language-js" data-lang="js"><span class="kd">var</span> <span class="nx">overlay</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">PlainOverlay</span><span class="p">({</span>
