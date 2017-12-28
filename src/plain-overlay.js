@@ -983,7 +983,8 @@ class PlainOverlay {
       },
       state: STATE_HIDDEN,
       savedStyleTarget: {},
-      savedStyleTargetBody: {}
+      savedStyleTargetBody: {},
+      blockingDisabled: false
     };
 
     Object.defineProperty(this, '_id', {value: ++insId});
@@ -1060,7 +1061,7 @@ class PlainOverlay {
         `${event.target.id ? `#${event.target.id}` : ''}`);
       // [/DEBUG]
       const target = event.target;
-      if (props.state !== STATE_HIDDEN &&
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled &&
           restoreScroll(props,
             props.isDoc &&
                 (target === props.window || target === props.document || target === props.elmTargetBody) ?
@@ -1081,7 +1082,8 @@ class PlainOverlay {
         `target:${event.target === document ? 'document' : event.target.tagName || 'UNKNOWN'}` +
         `${event.target.id ? `#${event.target.id}` : ''}`);
       // [/DEBUG]
-      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled &&
+          avoidFocus(props, event.target)) {
         traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -1097,7 +1099,7 @@ class PlainOverlay {
       });
     })(event => {
       traceLog.push('<text-select-event>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
-      if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled && avoidSelect(props)) {
         traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -1229,6 +1231,11 @@ class PlainOverlay {
 
   get style() {
     return insProps[this._id].elmOverlay.style;
+  }
+
+  get blockingDisabled() { return insProps[this._id].blockingDisabled; }
+  set blockingDisabled(value) {
+    if (typeof value === 'boolean') { insProps[this._id].blockingDisabled = value; }
   }
 
   get face() { return insProps[this._id].options.face; }

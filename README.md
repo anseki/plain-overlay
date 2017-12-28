@@ -327,6 +327,14 @@ For example:
 overlay.style.backgroundImage = 'url(bg.png)';
 ```
 
+### `blockingDisabled`
+
+*Type:* boolean  
+*Default:* `false`
+
+By default, user operation such as scrolling, focusing and selecting text is blocked.  
+If you want, set `true` for this property to disable this behavior.
+
 ### `face`
 
 Get or set [`face`](#options-face) option.

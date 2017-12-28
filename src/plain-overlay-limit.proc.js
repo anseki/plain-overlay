@@ -884,7 +884,8 @@ class PlainOverlay {
       },
       state: STATE_HIDDEN,
       savedStyleTarget: {},
-      savedStyleTargetBody: {}
+      savedStyleTargetBody: {},
+      blockingDisabled: false
     };
 
     Object.defineProperty(this, '_id', {value: ++insId});
@@ -955,7 +956,7 @@ class PlainOverlay {
 
     (props.isDoc ? props.window : elmTargetBody).addEventListener('scroll', event => {
       const target = event.target;
-      if (props.state !== STATE_HIDDEN &&
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled &&
           restoreScroll(props,
             props.isDoc &&
                 (target === props.window || target === props.document || target === props.elmTargetBody) ?
@@ -968,7 +969,8 @@ class PlainOverlay {
     // props.state can't control the listener
     // because the event is fired after flow function exited in some browsers (e.g. Trident).
     props.focusListener = event => {
-      if (props.state !== STATE_HIDDEN && avoidFocus(props, event.target)) {
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled &&
+          avoidFocus(props, event.target)) {
         event.preventDefault();
         event.stopImmediatePropagation();
       }
@@ -981,7 +983,7 @@ class PlainOverlay {
         props.window.addEventListener(type, listener, true);
       });
     })(event => {
-      if (props.state !== STATE_HIDDEN && avoidSelect(props)) {
+      if (props.state !== STATE_HIDDEN && !props.blockingDisabled && avoidSelect(props)) {
         event.preventDefault();
         event.stopImmediatePropagation();
       }
@@ -1107,6 +1109,11 @@ class PlainOverlay {
 
   get style() {
     return insProps[this._id].elmOverlay.style;
+  }
+
+  get blockingDisabled() { return insProps[this._id].blockingDisabled; }
+  set blockingDisabled(value) {
+    if (typeof value === 'boolean') { insProps[this._id].blockingDisabled = value; }
   }
 
   get face() { return insProps[this._id].options.face; }
