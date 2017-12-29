@@ -376,6 +376,10 @@ This static method is a shorthand for:
 (new PlainOverlay(target, options)).show()
 ```
 
+## See Also
+
+- [PlainModal](https://anseki.github.io/plain-modal/) : The simple library for fully customizable modal window in a web page.
+
 ---
 
 Thanks for images: [arian.suresh](https://www.flickr.com/photos/137304541@N04/), [jxnblk/loading](https://github.com/jxnblk/loading/), [The Pattern Library](http://thepatternlibrary.com/), [tobiasahlin/SpinKit](https://github.com/tobiasahlin/SpinKit)
