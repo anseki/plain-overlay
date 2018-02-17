@@ -17,6 +17,7 @@
     "window"
   ],
   "main": "plain-overlay.min.js",
+  "module": "./src/plain-overlay.js",
   "jsnext:main": "./src/plain-overlay.js",
   "devDependencies": {
     "anim-event": "^1.0.11",
