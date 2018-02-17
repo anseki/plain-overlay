@@ -37,7 +37,7 @@
     "babel-preset-es2015": "^6.24.1",
     "compass-mixins": "^0.12.10",
     "cross-env": "^5.1.3",
-    "cssprefix": "^2.0.10",
+    "cssprefix": "^2.0.11",
     "htmlclean": "^3.0.6",
     "htmlclean-loader": "^1.0.9",
     "jasmine-core": "^2.99.1",
@@ -50,8 +50,8 @@
     "sass-loader": "^6.0.6",
     "skeleton-loader": "^1.1.5",
     "stats-filelist": "^1.0.1",
-    "test-page-loader": "^1.0.6",
-    "timed-transition": "^1.1.1",
+    "test-page-loader": "^1.0.7",
+    "timed-transition": "^1.1.2",
     "webpack": "^3.11.0"
   },
   "scripts": {
