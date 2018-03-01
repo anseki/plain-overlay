@@ -66,14 +66,13 @@ var PlainOverlay =
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/*================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================*/
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 /*
  * CSSPrefix
  * https://github.com/anseki/cssprefix
@@ -165,16 +164,10 @@ cssSupports = function () {
     propNames = {},
     propValues = {}; // Cache
 
-// [DEBUG]
-window.normalizeName = normalizeName;
-window.normalizeValue = normalizeValue;
-window.cssSupports = cssSupports;
-// [/DEBUG]
 
 function getName(propName) {
   propName = normalizeName(propName);
   if (propName && propNames[propName] == null) {
-    window.getNameDone = 'get'; // [DEBUG/]
     var declaration = getDeclaration();
 
     if (declaration[propName] != null) {
@@ -208,7 +201,6 @@ function getValue(propName, propValue) {
   propValues[propName] = propValues[propName] || {};
   (Array.isArray(propValue) ? propValue : [propValue]).some(function (propValue) {
     propValue = normalizeValue(propValue);
-    (window.getValueDone = window.getValueDone || []).push(propValue); // [DEBUG/]
 
     if (propValues[propName][propValue] != null) {
       // Cache
@@ -219,7 +211,6 @@ function getValue(propName, propValue) {
         return false; // Continue to next value
       }
     }
-    window.getValueDone.push('get'); // [DEBUG/]
 
     if (cssSupports(propName, propValue)) {
       // Original
@@ -251,65 +242,46 @@ var CSSPrefix = {
   getValue: getValue
 };
 
-exports.default = CSSPrefix;
-module.exports = exports['default'];
+/* harmony default export */ __webpack_exports__["a"] = (CSSPrefix);
 
 /***/ }),
 /* 1 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_cssprefix__ = __webpack_require__(0);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_anim_event__ = __webpack_require__(2);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_m_class_list__ = __webpack_require__(3);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_timed_transition__ = __webpack_require__(4);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss__ = __webpack_require__(5);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__default_scss__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__ = __webpack_require__(6);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__ = __webpack_require__(7);
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__);
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+ * PlainOverlay
+ * https://anseki.github.io/plain-overlay/
+ *
+ * Copyright (c) 2018 anseki
+ * Licensed under the MIT license.
+ */
 
 
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * PlainOverlay
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * https://anseki.github.io/plain-overlay/
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Copyright (c) 2018 anseki
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Licensed under the MIT license.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
+
+
 
 // [FACE]
 
 
-var _cssprefix = __webpack_require__(0);
-
-var _cssprefix2 = _interopRequireDefault(_cssprefix);
-
-var _animEvent = __webpack_require__(2);
-
-var _animEvent2 = _interopRequireDefault(_animEvent);
-
-var _mClassList = __webpack_require__(3);
-
-var _mClassList2 = _interopRequireDefault(_mClassList);
-
-var _timedTransition = __webpack_require__(4);
-
-var _timedTransition2 = _interopRequireDefault(_timedTransition);
-
-var _default = __webpack_require__(5);
-
-var _default2 = _interopRequireDefault(_default);
-
-var _face = __webpack_require__(6);
-
-var _face2 = _interopRequireDefault(_face);
-
-var _face3 = __webpack_require__(7);
-
-var _face4 = _interopRequireDefault(_face3);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
 // [/FACE]
-_mClassList2.default.ignoreNative = true;
+__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */].ignoreNative = true;
 
 var APP_ID = 'plainoverlay',
     STYLE_ELEMENT_ID = APP_ID + '-style',
@@ -819,7 +791,7 @@ function _position(props, targetBodyBBox) {
 
   // border-radius
   [{ prop: 'TopLeft', hBorder: 'left', vBorder: 'top' }, { prop: 'TopRight', hBorder: 'right', vBorder: 'top' }, { prop: 'BottomRight', hBorder: 'right', vBorder: 'bottom' }, { prop: 'BottomLeft', hBorder: 'left', vBorder: 'bottom' }].forEach(function (corner) {
-    var prop = _cssprefix2.default.getName('border' + corner.prop + 'Radius'),
+    var prop = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('border' + corner.prop + 'Radius'),
         values = targetBodyCmpStyle[prop].split(' ');
     var h = values[0],
         v = values[1] || values[0],
@@ -847,7 +819,7 @@ function getTargetElements(props) {
   if (props.isDoc) {
     targetElements.push(elmTargetBody);
     Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
-      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !(0, _mClassList2.default)(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
+      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
         targetElements.push(childNode);
         Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
       }
@@ -863,13 +835,13 @@ function finishShowing(props) {
   // blur
   props.filterElements = null;
   if (props.options.blur !== false) {
-    var propName = _cssprefix2.default.getName('filter'),
-        propValue = _cssprefix2.default.getValue('filter', 'blur(' + props.options.blur + 'px)');
+    var propName = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('filter'),
+        propValue = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getValue('filter', 'blur(' + props.options.blur + 'px)');
     if (propValue) {
       // undefined if no propName
       // Array of {element: element, savedStyle: {}}
       var filterElements = props.isDoc ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(function (childNode) {
-        return childNode.nodeType === Node.ELEMENT_NODE && childNode !== props.elmOverlay && !(0, _mClassList2.default)(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID;
+        return childNode.nodeType === Node.ELEMENT_NODE && childNode !== props.elmOverlay && !Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID;
       }).map(function (element) {
         return { element: element, savedStyle: {} };
       }) : [{ element: props.elmTargetBody, savedStyle: {} }];
@@ -895,7 +867,7 @@ function finishHiding(props, sync) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   traceLog.push('<finishHiding>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   traceLog.push('sync:' + !!sync); // [DEBUG/]
-  (0, _mClassList2.default)(props.elmOverlay).add(STYLE_CLASS_HIDE);
+  Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
   restoreStyle(props.elmTargetBody, props.savedStyleTargetBody);
@@ -1023,7 +995,7 @@ function _show(props, force) {
 
   if (props.state === STATE_HIDDEN) {
     var elmOverlay = props.elmOverlay,
-        elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
+        elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
     props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     var targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
@@ -1136,19 +1108,19 @@ function _setOptions(props, newOptions) {
       var elmDocument = props.document;
       if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) {
         // Add svg defs
-        var defsSvg = new props.window.DOMParser().parseFromString(_face2.default, 'image/svg+xml');
+        var defsSvg = new props.window.DOMParser().parseFromString(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default.a, 'image/svg+xml');
         elmDocument.body.appendChild(defsSvg.documentElement);
       }
       // [/FACE]
       options.face = void 0;
-      elmOverlayBody.innerHTML = _face4.default; // [FACE/]
+      elmOverlayBody.innerHTML = __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default.a; // [FACE/]
     }
   }
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
     options.duration = newOptions.duration;
-    props.elmOverlay.style[_cssprefix2.default.getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
+    props.elmOverlay.style[__WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
     props.transition.duration = newOptions.duration + 'ms';
   }
 
@@ -1288,7 +1260,7 @@ var PlainOverlay = function () {
           sheet = head.insertBefore(elmDocument.createElement('style'), head.firstChild);
       sheet.type = 'text/css';
       sheet.id = STYLE_ELEMENT_ID;
-      sheet.textContent = _default2.default;
+      sheet.textContent = __WEBPACK_IMPORTED_MODULE_4__default_scss___default.a;
       if (IS_TRIDENT || IS_EDGE) {
         forceReflow(sheet);
       } // Trident bug
@@ -1296,21 +1268,21 @@ var PlainOverlay = function () {
 
     // elmOverlay
     var elmOverlay = props.elmOverlay = elmDocument.createElement('div'),
-        elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
+        elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) {
       elmOverlayClassList.add(STYLE_CLASS_DOC);
     }
 
     // TimedTransition
-    props.transition = new _timedTransition2.default(elmOverlay, {
+    props.transition = new __WEBPACK_IMPORTED_MODULE_3_timed_transition__["a" /* default */](elmOverlay, {
       procToOn: function procToOn(force) {
-        var elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
+        var elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
         elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
         elmOverlayClassList.add(STYLE_CLASS_SHOW);
       },
       procToOff: function procToOff(force) {
-        var elmOverlayClassList = (0, _mClassList2.default)(elmOverlay);
+        var elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
         elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
         elmOverlayClassList.remove(STYLE_CLASS_SHOW);
       },
@@ -1376,7 +1348,7 @@ var PlainOverlay = function () {
 
     // Gecko bug, multiple calling (parallel) by `requestAnimationFrame`.
     props.resizing = false;
-    props.window.addEventListener('resize', _animEvent2.default.add(function () {
+    props.window.addEventListener('resize', __WEBPACK_IMPORTED_MODULE_1_anim_event__["a" /* default */].add(function () {
       if (props.resizing) {
         console.warn('`resize` event listener is already running.'); // [DEBUG/]
         return;
@@ -1633,19 +1605,17 @@ PlainOverlay.IS_BLINK = IS_BLINK;
 PlainOverlay.IS_GECKO = IS_GECKO;
 // [/DEBUG]
 
-exports.default = PlainOverlay;
-module.exports = exports['default'];
+/* harmony default export */ __webpack_exports__["default"] = (PlainOverlay);
 
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/*================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================*/
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 /*
  * AnimEvent
  * https://github.com/anseki/anim-event
@@ -1676,24 +1646,6 @@ var requestAnim = window.requestAnimationFrame || window.mozRequestAnimationFram
 },
     requestID = void 0,
     lastFrameTime = Date.now();
-
-// [DEBUG]
-var requestAnimSave = requestAnim,
-    cancelAnimSave = cancelAnim;
-window.AnimEventByTimer = function (byTimer) {
-  if (byTimer) {
-    requestAnim = function requestAnim(callback) {
-      return setTimeout(callback, MSPF);
-    };
-    cancelAnim = function cancelAnim(requestID) {
-      return clearTimeout(requestID);
-    };
-  } else {
-    requestAnim = requestAnimSave;
-    cancelAnim = cancelAnimSave;
-  }
-};
-// [/DEBUG]
 
 function step() {
   var called = void 0,
@@ -1768,19 +1720,17 @@ var AnimEvent = {
   }
 };
 
-exports.default = AnimEvent;
-module.exports = exports["default"];
+/* harmony default export */ __webpack_exports__["a"] = (AnimEvent);
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/*================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================*/
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
 /*
  * mClassList
  * https://github.com/anseki/m-class-list
@@ -1887,35 +1837,31 @@ function mClassList(element) {
 
 mClassList.methodChain = true;
 
-exports.default = mClassList;
-module.exports = exports['default'];
+/* harmony default export */ __webpack_exports__["a"] = (mClassList);
 
 /***/ }),
 /* 4 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_cssprefix__ = __webpack_require__(0);
+/*================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================*/
 
-
-Object.defineProperty(exports, "__esModule", {
-  value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }(); /*
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * TimedTransition
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * https://github.com/anseki/timed-transition
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      *
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Copyright (c) 2018 anseki
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      * Licensed under the MIT license.
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      */
-
-var _cssprefix = __webpack_require__(0);
-
-var _cssprefix2 = _interopRequireDefault(_cssprefix);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+ * TimedTransition
+ * https://github.com/anseki/timed-transition
+ *
+ * Copyright (c) 2018 anseki
+ * Licensed under the MIT license.
+ */
+
+
 
 var STATE_STOPPED = 0,
     STATE_DELAYING = 1,
@@ -1963,28 +1909,12 @@ insProps = {};
 
 var insId = 0;
 
-// [DEBUG]
-var traceLog = [];
-var STATE_TEXT = {};
-STATE_TEXT[STATE_STOPPED] = 'STATE_STOPPED';
-STATE_TEXT[STATE_DELAYING] = 'STATE_DELAYING';
-STATE_TEXT[STATE_PLAYING] = 'STATE_PLAYING';
-function roundTime(timeValue) {
-  return Math.round(timeValue / 200) * 200;
-} // for traceLog
-// [/DEBUG]
-
 /**
  * @param {props} props - `props` of instance.
  * @param {string} type - One of EVENT_TYPE_*.
  * @returns {void}
  */
 function fireEvent(props, type) {
-  // [DEBUG]
-  traceLog.push('<fireEvent>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('isOn:' + props.isOn, 'runTime:' + roundTime(props.runTime), 'startTime:' + roundTime(props.startTime), 'currentPosition:' + roundTime(props.currentPosition));
-  traceLog.push('type:' + type);
-  // [/DEBUG]
   var initTime = Math.min(Math.max(-props.delay, 0), props.duration),
       elapsedTime = (initTime + (
   // The value for transitionend might NOT be transition-duration. (csswg.org may be wrong)
@@ -2010,7 +1940,6 @@ function fireEvent(props, type) {
   }
   event.timedTransition = props.ins;
   props.element.dispatchEvent(event);
-  traceLog.push('</fireEvent>'); // [DEBUG/]
 }
 
 /**
@@ -2018,18 +1947,11 @@ function fireEvent(props, type) {
  * @returns {void}
  */
 function fixCurrentPosition(props) {
-  // [DEBUG]
-  traceLog.push('<fixCurrentPosition>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('currentPosition:' + roundTime(props.currentPosition));
-  // [/DEBUG]
   if (props.state !== STATE_PLAYING) {
-    traceLog.push('CANCEL', '</fixCurrentPosition>'); // [DEBUG/]
     return;
   }
   var playingTime = Date.now() - props.startTime;
   props.currentPosition = props.isOn ? Math.min(props.currentPosition + playingTime, props.duration) : Math.max(props.currentPosition - playingTime, 0);
-  traceLog.push('currentPosition:' + roundTime(props.currentPosition)); // [DEBUG/]
-  traceLog.push('</fixCurrentPosition>'); // [DEBUG/]
 }
 
 /**
@@ -2038,9 +1960,7 @@ function fixCurrentPosition(props) {
  * @returns {void}
  */
 function finishAll(props) {
-  traceLog.push('<finishAll/>', '_id:' + props._id, 'isOn:' + props.isOn); // [DEBUG/]
   props.state = STATE_STOPPED;
-  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   props.runTime = 0;
   props.startTime = 0;
   props.currentPosition = props.isOn ? props.duration : 0;
@@ -2051,21 +1971,14 @@ function finishAll(props) {
  * @returns {void}
  */
 function finishPlaying(props) {
-  // [DEBUG]
-  traceLog.push('<finishPlaying>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('isOn:' + props.isOn, 'runTime:' + roundTime(props.runTime), 'startTime:' + roundTime(props.startTime), 'currentPosition:' + roundTime(props.currentPosition));
-  // [/DEBUG]
   if (props.state !== STATE_PLAYING) {
-    traceLog.push('CANCEL', '</finishPlaying>'); // [DEBUG/]
     return;
   }
 
   props.state = STATE_STOPPED;
-  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   fireEvent(props, EVENT_TYPE_END);
 
   finishAll(props);
-  traceLog.push('</finishPlaying>'); // [DEBUG/]
 }
 
 /**
@@ -2073,23 +1986,16 @@ function finishPlaying(props) {
  * @returns {void}
  */
 function finishDelaying(props) {
-  // [DEBUG]
-  traceLog.push('<finishDelaying>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('isOn:' + props.isOn, 'runTime:' + roundTime(props.runTime), 'startTime:' + roundTime(props.startTime), 'currentPosition:' + roundTime(props.currentPosition));
-  // [/DEBUG]
   if (props.state !== STATE_DELAYING) {
-    traceLog.push('CANCEL', '</finishDelaying>'); // [DEBUG/]
     return;
   }
 
   props.state = STATE_PLAYING;
-  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   props.startTime = Date.now();
   props.isReversing = !props.isOn;
   fireEvent(props, EVENT_TYPE_START);
 
   var durationLeft = props.isOn ? props.duration - props.currentPosition : props.currentPosition;
-  traceLog.push('durationLeft:' + roundTime(durationLeft)); // [DEBUG/]
   if (durationLeft > 0) {
     props.timer = setTimeout(function () {
       finishPlaying(props);
@@ -2097,7 +2003,6 @@ function finishDelaying(props) {
   } else {
     finishPlaying(props);
   }
-  traceLog.push('</finishDelaying>'); // [DEBUG/]
 }
 
 /**
@@ -2105,17 +2010,13 @@ function finishDelaying(props) {
  * @returns {void}
  */
 function abort(props) {
-  traceLog.push('<abort>', '_id:' + props._id, 'isOn:' + props.isOn); // [DEBUG/]
   clearTimeout(props.timer);
   if (props.state === STATE_STOPPED) {
-    traceLog.push('CANCEL', '</abort>'); // [DEBUG/]
     return;
   }
 
   props.state = STATE_STOPPED;
-  traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   fireEvent(props, EVENT_TYPE_CANCEL);
-  traceLog.push('</abort>'); // [DEBUG/]
 }
 
 /**
@@ -2124,13 +2025,7 @@ function abort(props) {
  * @returns {void}
  */
 function _on(props, force) {
-  // [DEBUG]
-  traceLog.push('<on>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('force:' + !!force);
-  traceLog.push('isOn:' + props.isOn, 'runTime:' + roundTime(props.runTime), 'startTime:' + roundTime(props.startTime), 'currentPosition:' + roundTime(props.currentPosition));
-  // [/DEBUG]
   if (props.isOn && props.state === STATE_STOPPED || props.isOn && props.state !== STATE_STOPPED && !force) {
-    traceLog.push('CANCEL', '</on>'); // [DEBUG/]
     return;
   }
   /*
@@ -2145,9 +2040,6 @@ function _on(props, force) {
 
   if (force || !props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
     // The delay must have not changed before turning over.
-    // [DEBUG]
-    traceLog.push('STOP(' + (force ? 'force' : !props.isOn && props.state === STATE_DELAYING ? 'DELAYING' : 'over-duration') + ')');
-    // [/DEBUG]
     abort(props);
     props.isOn = true;
     finishAll(props);
@@ -2156,7 +2048,6 @@ function _on(props, force) {
     abort(props);
 
     props.state = STATE_DELAYING;
-    traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
     props.isOn = true;
     props.runTime = Date.now();
     props.startTime = 0;
@@ -2174,7 +2065,6 @@ function _on(props, force) {
       finishDelaying(props);
     }
   }
-  traceLog.push('</on>'); // [DEBUG/]
 }
 
 /**
@@ -2183,13 +2073,7 @@ function _on(props, force) {
  * @returns {void}
  */
 function _off(props, force) {
-  // [DEBUG]
-  traceLog.push('<off>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]);
-  traceLog.push('force:' + !!force);
-  traceLog.push('isOn:' + props.isOn, 'runTime:' + roundTime(props.runTime), 'startTime:' + roundTime(props.startTime), 'currentPosition:' + roundTime(props.currentPosition));
-  // [/DEBUG]
   if (!props.isOn && props.state === STATE_STOPPED || !props.isOn && props.state !== STATE_STOPPED && !force) {
-    traceLog.push('CANCEL', '</off>'); // [DEBUG/]
     return;
   }
   /*
@@ -2204,9 +2088,6 @@ function _off(props, force) {
 
   if (force || props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
     // The delay must have not changed before turning over.
-    // [DEBUG]
-    traceLog.push('STOP(' + (force ? 'force' : props.isOn && props.state === STATE_DELAYING ? 'DELAYING' : 'over-duration') + ')');
-    // [/DEBUG]
     abort(props);
     props.isOn = false;
     finishAll(props);
@@ -2215,7 +2096,6 @@ function _off(props, force) {
     abort(props);
 
     props.state = STATE_DELAYING;
-    traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
     props.isOn = false;
     props.runTime = Date.now();
     props.startTime = 0;
@@ -2233,7 +2113,6 @@ function _off(props, force) {
       finishDelaying(props);
     }
   }
-  traceLog.push('</off>'); // [DEBUG/]
 }
 
 /**
@@ -2246,10 +2125,7 @@ function _setOptions(props, newOptions) {
 
   function parseAsCss(option) {
     var optionValue = typeof newOptions[option] === 'number' ? // From CSS
-    (props.window.getComputedStyle(props.element, '')[_cssprefix2.default.getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
-    // [DEBUG]
-    props.lastParseAsCss[option] = typeof optionValue === 'string' ? optionValue.trim() : null;
-    // [/DEBUG]
+    (props.window.getComputedStyle(props.element, '')[__WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
     return typeof optionValue === 'string' ? optionValue.trim() : null;
   }
 
@@ -2313,7 +2189,6 @@ var TimedTransition = function () {
       delay: 0,
       isOn: !!initOn
     };
-    props.lastParseAsCss = {}; // [DEBUG/]
 
     Object.defineProperty(this, '_id', { value: ++insId });
     props._id = this._id;
@@ -2475,17 +2350,7 @@ var TimedTransition = function () {
   return TimedTransition;
 }();
 
-// [DEBUG]
-
-
-TimedTransition.insProps = insProps;
-TimedTransition.traceLog = traceLog;
-TimedTransition.STATE_TEXT = STATE_TEXT;
-TimedTransition.roundTime = roundTime;
-// [/DEBUG]
-
-exports.default = TimedTransition;
-module.exports = exports['default'];
+/* harmony default export */ __webpack_exports__["a"] = (TimedTransition);
 
 /***/ }),
 /* 5 */
@@ -2506,5 +2371,5 @@ module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.
 module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
 
 /***/ })
-/******/ ]);
+/******/ ])["default"];
 //# sourceMappingURL=plain-overlay-sync.js.map

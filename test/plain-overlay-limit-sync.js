@@ -256,10 +256,6 @@ Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_timed_transition__ = __webpack_require__(4);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss__ = __webpack_require__(5);
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__default_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -277,10 +273,6 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 
-// [FACE]
-
-
-// [/FACE]
 __WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */].ignoreNative = true;
 
 var APP_ID = 'plainoverlay',
@@ -863,16 +855,10 @@ function finishShowing(props) {
   traceLog.push('_id:' + props._id, '</finishShowing>'); // [DEBUG/]
 }
 
-function finishHiding(props
-/* [DISABLE-SYNC/]
-, sync
-[DISABLE-SYNC/] */
-) {
+function finishHiding(props, sync) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   traceLog.push('<finishHiding>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
-  /* [DISABLE-SYNC/]
-  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
-  [DISABLE-SYNC/] */
+  traceLog.push('sync:' + !!sync); // [DEBUG/]
   Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -883,11 +869,7 @@ function finishHiding(props
   restoreAccKeys(props);
   props.savedElementsAccKeys = [];
 
-  if (
-  /* [DISABLE-SYNC/]
-  !sync &&
-  [DISABLE-SYNC/] */
-  props.isDoc && props.activeElement) {
+  if (!sync && props.isDoc && props.activeElement) {
     // props.state must be STATE_HIDDEN for avoiding focus.
     var stateSave = props.state;
     props.state = STATE_HIDDEN;
@@ -924,15 +906,11 @@ function finishHiding(props
     clearTimeout(props.timerRestoreAndFinish);
     props.timerRestoreAndFinish = null;
   }
-  /* [DISABLE-SYNC/]
   if (sync) {
     restoreAndFinish();
   } else {
-  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
-  props.timerRestoreAndFinish = setTimeout(restoreAndFinish, 0);
-  /* [DISABLE-SYNC/]
+    props.timerRestoreAndFinish = setTimeout(restoreAndFinish, 0);
   }
-  [DISABLE-SYNC/] */
   traceLog.push('_id:' + props._id, '</finishHiding>'); // [DEBUG/]
 }
 
@@ -1056,17 +1034,11 @@ function _show(props, force) {
  * @param {boolean} [force] - Skip effect.
  * @returns {void}
  */
-function _hide(props, force
-/* [DISABLE-SYNC/]
-, sync
-[DISABLE-SYNC/] */
-) {
+function _hide(props, force, sync) {
   // sync-mode (both `force` and `sync` are `true`)
   traceLog.push('<hide>', '_id:' + props._id, 'state:' + STATE_TEXT[props.state]); // [DEBUG/]
   traceLog.push('force:' + !!force); // [DEBUG/]
-  /* [DISABLE-SYNC/]
-  traceLog.push(`sync:${!!sync}`); // [DEBUG/]
-  [DISABLE-SYNC/] */
+  traceLog.push('sync:' + !!sync); // [DEBUG/]
   if (props.state === STATE_HIDDEN || props.state === STATE_HIDING && !force || props.state !== STATE_HIDING && props.options.onBeforeHide && props.options.onBeforeHide.call(props.ins) === false) {
     traceLog.push('CANCEL', '</hide>'); // [DEBUG/]
     return;
@@ -1095,11 +1067,7 @@ function _hide(props, force
   props.state = STATE_HIDING;
   traceLog.push('state:' + STATE_TEXT[props.state]); // [DEBUG/]
   if (force) {
-    finishHiding(props
-    /* [DISABLE-SYNC/]
-    , sync
-    [DISABLE-SYNC/] */
-    );
+    finishHiding(props, sync);
   }
   traceLog.push('_id:' + props._id, '</hide>'); // [DEBUG/]
 }
@@ -1128,16 +1096,7 @@ function _setOptions(props, newOptions) {
       elmOverlayBody.appendChild(newOptions.face);
     } else if (newOptions.face == null) {
       // Builtin face
-      // [FACE]
-      var elmDocument = props.document;
-      if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) {
-        // Add svg defs
-        var defsSvg = new props.window.DOMParser().parseFromString(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default.a, 'image/svg+xml');
-        elmDocument.body.appendChild(defsSvg.documentElement);
-      }
-      // [/FACE]
       options.face = void 0;
-      elmOverlayBody.innerHTML = __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default.a; // [FACE/]
     }
   }
 
@@ -1469,17 +1428,9 @@ var PlainOverlay = function () {
 
   }, {
     key: 'hide',
-    value: function hide(force
-    /* [DISABLE-SYNC/]
-    , sync
-    [DISABLE-SYNC/] */
-    ) {
+    value: function hide(force, sync) {
       // sync-mode (both `force` and `sync` are `true`)
-      _hide(insProps[this._id], force
-      /* [DISABLE-SYNC/]
-      , sync
-      [DISABLE-SYNC/] */
-      );
+      _hide(insProps[this._id], force, sync);
       return this;
     }
   }, {
@@ -1620,13 +1571,9 @@ var PlainOverlay = function () {
   return PlainOverlay;
 }();
 
-/* [FACE/]
 PlainOverlay.limit = true;
-[FACE/] */
 
 // [DEBUG]
-
-
 PlainOverlay.insProps = insProps;
 PlainOverlay.traceLog = traceLog;
 PlainOverlay.STATE_TEXT = STATE_TEXT;
@@ -2388,20 +2335,8 @@ var TimedTransition = function () {
 /* 5 */
 /***/ (function(module, exports) {
 
-module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000;-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0}.plainoverlay.plainoverlay-show{opacity:1}.plainoverlay.plainoverlay-force{-webkit-transition-property:none;-moz-transition-property:none;-o-transition-property:none;transition-property:none}.plainoverlay.plainoverlay-hide{display:none}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:0.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-name:plainoverlay-builtin-face_01-spin;-ms-animation-name:plainoverlay-builtin-face_01-spin;-o-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-duration:1s;-moz-animation-duration:1s;-ms-animation-duration:1s;-o-animation-duration:1s;animation-duration:1s;-webkit-animation-timing-function:linear;-moz-animation-timing-function:linear;-ms-animation-timing-function:linear;-o-animation-timing-function:linear;animation-timing-function:linear;-webkit-animation-iteration-count:infinite;-moz-animation-iteration-count:infinite;-ms-animation-iteration-count:infinite;-o-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-o-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-ms-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}";
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
+module.exports = ".plainoverlay{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000;-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0}.plainoverlay.plainoverlay-show{opacity:1}.plainoverlay.plainoverlay-force{-webkit-transition-property:none;-moz-transition-property:none;-o-transition-property:none;transition-property:none}.plainoverlay.plainoverlay-hide{display:none}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}";
 
 /***/ })
 /******/ ])["default"];
-//# sourceMappingURL=plain-overlay.js.map
+//# sourceMappingURL=plain-overlay-limit-sync.js.map

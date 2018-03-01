@@ -540,13 +540,9 @@ function finishShowing(props) {
 }
 
 function finishHiding(props
-    /* [DISABLE-SYNC/]
     , sync
-    [DISABLE-SYNC/] */
     ) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
-  /* [DISABLE-SYNC/]
-  [DISABLE-SYNC/] */
   mClassList(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
@@ -558,9 +554,7 @@ function finishHiding(props
   props.savedElementsAccKeys = [];
 
   if (
-      /* [DISABLE-SYNC/]
       !sync &&
-      [DISABLE-SYNC/] */
       props.isDoc && props.activeElement) {
     // props.state must be STATE_HIDDEN for avoiding focus.
     const stateSave = props.state;
@@ -588,15 +582,11 @@ function finishHiding(props
     clearTimeout(props.timerRestoreAndFinish);
     props.timerRestoreAndFinish = null;
   }
-  /* [DISABLE-SYNC/]
   if (sync) {
     restoreAndFinish();
   } else {
-  [DISABLE-SYNC/] */ // eslint-disable-next-line indent
     props.timerRestoreAndFinish = setTimeout(restoreAndFinish, 0);
-  /* [DISABLE-SYNC/]
   }
-  [DISABLE-SYNC/] */
 }
 
 /**
@@ -714,13 +704,9 @@ function show(props, force) {
  * @returns {void}
  */
 function hide(props, force
-    /* [DISABLE-SYNC/]
     , sync
-    [DISABLE-SYNC/] */
     ) {
   // sync-mode (both `force` and `sync` are `true`)
-  /* [DISABLE-SYNC/]
-  [DISABLE-SYNC/] */
   if (props.state === STATE_HIDDEN ||
       props.state === STATE_HIDING && !force ||
       props.state !== STATE_HIDING &&
@@ -750,9 +736,7 @@ function hide(props, force
   props.state = STATE_HIDING;
   if (force) {
     finishHiding(props
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       );
   }
 }
@@ -1073,15 +1057,11 @@ class PlainOverlay {
    * @returns {PlainOverlay} Current instance itself.
    */
   hide(force
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       ) {
     // sync-mode (both `force` and `sync` are `true`)
     hide(insProps[this._id], force
-      /* [DISABLE-SYNC/]
       , sync
-      [DISABLE-SYNC/] */
       );
     return this;
   }
