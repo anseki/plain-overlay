@@ -6,12 +6,12 @@ const
   BASE_NAME = 'plain-overlay',
   OBJECT_NAME = 'PlainOverlay',
   LIMIT_TAGS = ['FACE'],
-  BUILD = process.env.NODE_ENV === 'production',
+  BUILD_MODE = process.env.NODE_ENV === 'production',
   LIMIT = process.env.EDITION === 'limit',
   SYNC = process.env.SYNC === 'yes', // Enable "sync-mode support"
   BUILD_BASE_NAME = `${BASE_NAME}${LIMIT ? '-limit' : ''}${SYNC ? '-sync' : ''}`,
   PREPROC_REMOVE_TAGS =
-    (BUILD ? ['DEBUG'] : []).concat(LIMIT ? LIMIT_TAGS : [], SYNC ? 'DISABLE-SYNC' : []),
+    (BUILD_MODE ? ['DEBUG'] : []).concat(LIMIT ? LIMIT_TAGS : [], SYNC ? 'DISABLE-SYNC' : []),
 
   webpack = require('webpack'),
   preProc = require('pre-proc'),
@@ -20,7 +20,7 @@ const
   PKG = require('./package'),
 
   SRC_DIR_PATH = path.resolve(__dirname, 'src'),
-  BUILD_DIR_PATH = BUILD ? __dirname : path.resolve(__dirname, 'test'),
+  BUILD_DIR_PATH = BUILD_MODE ? __dirname : path.resolve(__dirname, 'test'),
   ESM_DIR_PATH = __dirname,
   ENTRY_PATH = path.join(SRC_DIR_PATH, `${BASE_NAME}.js`),
 
@@ -36,10 +36,12 @@ function writeFile(filePath, content, messageClass) {
 }
 
 module.exports = {
+  // optimization: {minimize: false},
+  mode: BUILD_MODE ? 'production' : 'development',
   entry: ENTRY_PATH,
   output: {
     path: BUILD_DIR_PATH,
-    filename: `${BUILD_BASE_NAME}${BUILD ? '.min' : ''}.js`,
+    filename: `${BUILD_BASE_NAME}${BUILD_MODE ? '.min' : ''}.js`,
     library: OBJECT_NAME,
     libraryTarget: 'var',
     libraryExport: 'default'
@@ -47,6 +49,12 @@ module.exports = {
   resolve: {mainFields: ['module', 'jsnext:main', 'browser', 'main']},
   module: {
     rules: [
+      // https://github.com/webpack/webpack/issues/6796
+      // For nested importing
+      {
+        test: path.resolve(__dirname, 'node_modules'),
+        resolve: {mainFields: ['module', 'jsnext:main', 'browser', 'main']}
+      },
       {
         resource: {and: [SRC_DIR_PATH, /\.js$/]},
         use: [
@@ -57,7 +65,7 @@ module.exports = {
               procedure(content) {
                 if (this.resourcePath === ENTRY_PATH) {
                   STATIC_ESM_FILES.push(
-                    {fileName: `${BUILD_BASE_NAME}${BUILD ? '' : '-debug'}.esm.js`, content});
+                    {fileName: `${BUILD_BASE_NAME}${BUILD_MODE ? '' : '-debug'}.mjs`, content});
                 }
                 return content;
               }
@@ -74,7 +82,7 @@ module.exports = {
             options: {
               procedure(content) {
                 content = preProc.removeTag(PREPROC_REMOVE_TAGS, content);
-                if (BUILD && this.resourcePath === ENTRY_PATH) {
+                if (BUILD_MODE && this.resourcePath === ENTRY_PATH) {
                   writeFile(path.join(SRC_DIR_PATH, `${BUILD_BASE_NAME}.proc.js`), content, 'PROC');
                 }
                 return content;
@@ -155,10 +163,9 @@ module.exports = {
       }
     ]
   },
-  devtool: BUILD ? false : 'source-map',
+  devtool: BUILD_MODE ? false : 'source-map',
   plugins: [
-    BUILD ? new webpack.optimize.UglifyJsPlugin({compress: {warnings: true}}) : null,
-    BUILD ? new webpack.BannerPlugin(
+    BUILD_MODE ? new webpack.BannerPlugin(
       `${PKG.title || PKG.name} v${PKG.version} (c) ${PKG.author.name} ${PKG.homepage}`) : null,
 
     // Static ESM

@@ -45,6 +45,11 @@ var PlainOverlay =
 /******/ 		}
 /******/ 	};
 /******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
 /******/ 	__webpack_require__.n = function(module) {
 /******/ 		var getter = module && module.__esModule ?
@@ -60,15 +65,143 @@ var PlainOverlay =
 /******/ 	// __webpack_public_path__
 /******/ 	__webpack_require__.p = "";
 /******/
+/******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 1);
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/plain-overlay.js");
 /******/ })
 /************************************************************************/
-/******/ ([
-/* 0 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
+/******/ ({
+
+/***/ "./node_modules/anim-event/anim-event.mjs":
+/*!************************************************!*\
+  !*** ./node_modules/anim-event/anim-event.mjs ***!
+  \************************************************/
+/*! exports provided: default */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
+/* ================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================ */
+
+/*
+ * AnimEvent
+ * https://github.com/anseki/anim-event
+ *
+ * Copyright (c) 2018 anseki
+ * Licensed under the MIT license.
+ */
+
+var MSPF = 1000 / 60,
+    // ms/frame (FPS: 60)
+KEEP_LOOP = 500,
+
+
+/**
+ * @typedef {Object} task
+ * @property {Event} event
+ * @property {function} listener
+ */
+
+/** @type {task[]} */
+tasks = [];
+
+var requestAnim = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
+  return setTimeout(callback, MSPF);
+},
+    cancelAnim = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame || function (requestID) {
+  return clearTimeout(requestID);
+},
+    requestID = void 0,
+    lastFrameTime = Date.now();
+
+function step() {
+  var called = void 0,
+      next = void 0;
+
+  if (requestID) {
+    cancelAnim.call(window, requestID);
+    requestID = null;
+  }
+
+  tasks.forEach(function (task) {
+    if (task.event) {
+      task.listener(task.event);
+      task.event = null;
+      called = true;
+    }
+  });
+
+  if (called) {
+    lastFrameTime = Date.now();
+    next = true;
+  } else if (Date.now() - lastFrameTime < KEEP_LOOP) {
+    // Go on for a while
+    next = true;
+  }
+  if (next) {
+    requestID = requestAnim.call(window, step);
+  }
+}
+
+function indexOfTasks(listener) {
+  var index = -1;
+  tasks.some(function (task, i) {
+    if (task.listener === listener) {
+      index = i;
+      return true;
+    }
+    return false;
+  });
+  return index;
+}
+
+var AnimEvent = {
+  /**
+   * @param {function} listener - An event listener.
+   * @returns {(function|null)} A wrapped event listener.
+   */
+  add: function add(listener) {
+    var task = void 0;
+    if (indexOfTasks(listener) === -1) {
+      tasks.push(task = { listener: listener });
+      return function (event) {
+        task.event = event;
+        if (!requestID) {
+          step();
+        }
+      };
+    } else {
+      return null;
+    }
+  },
+
+  remove: function remove(listener) {
+    var iRemove = void 0;
+    if ((iRemove = indexOfTasks(listener)) > -1) {
+      tasks.splice(iRemove, 1);
+      if (!tasks.length && requestID) {
+        cancelAnim.call(window, requestID);
+        requestID = null;
+      }
+    }
+  }
+};
+
+/* harmony default export */ __webpack_exports__["default"] = (AnimEvent);
+
+/***/ }),
+
+/***/ "./node_modules/cssprefix/cssprefix.mjs":
+/*!**********************************************!*\
+  !*** ./node_modules/cssprefix/cssprefix.mjs ***!
+  \**********************************************/
+/*! exports provided: default */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
 /* ================================================
         DON'T MANUALLY EDIT THIS FILE
 ================================================ */
@@ -242,24 +375,704 @@ var CSSPrefix = {
   getValue: getValue
 };
 
-/* harmony default export */ __webpack_exports__["a"] = (CSSPrefix);
+/* harmony default export */ __webpack_exports__["default"] = (CSSPrefix);
 
 /***/ }),
-/* 1 */
+
+/***/ "./node_modules/m-class-list/m-class-list.mjs":
+/*!****************************************************!*\
+  !*** ./node_modules/m-class-list/m-class-list.mjs ***!
+  \****************************************************/
+/*! exports provided: default */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* ================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================ */
+
+/*
+ * mClassList
+ * https://github.com/anseki/m-class-list
+ *
+ * Copyright (c) 2018 anseki
+ * Licensed under the MIT license.
+ */
+
+function normalize(token) {
+  return (token + '').trim();
+} // Not `||`
+function applyList(list, element) {
+  element.setAttribute('class', list.join(' '));
+}
+
+function _add(list, element, tokens) {
+  if (tokens.filter(function (token) {
+    if (!(token = normalize(token)) || list.indexOf(token) !== -1) {
+      return false;
+    }
+    list.push(token);
+    return true;
+  }).length) {
+    applyList(list, element);
+  }
+}
+
+function _remove(list, element, tokens) {
+  if (tokens.filter(function (token) {
+    var i = void 0;
+    if (!(token = normalize(token)) || (i = list.indexOf(token)) === -1) {
+      return false;
+    }
+    list.splice(i, 1);
+    return true;
+  }).length) {
+    applyList(list, element);
+  }
+}
+
+function _toggle(list, element, token, force) {
+  var i = list.indexOf(token = normalize(token));
+  if (i !== -1) {
+    if (force) {
+      return true;
+    }
+    list.splice(i, 1);
+    applyList(list, element);
+    return false;
+  } else {
+    if (force === false) {
+      return false;
+    }
+    list.push(token);
+    applyList(list, element);
+    return true;
+  }
+}
+
+function _replace(list, element, token, newToken) {
+  var i = void 0;
+  if (!(token = normalize(token)) || !(newToken = normalize(newToken)) || token === newToken || (i = list.indexOf(token)) === -1) {
+    return;
+  }
+  list.splice(i, 1);
+  if (list.indexOf(newToken) === -1) {
+    list.push(newToken);
+  }
+  applyList(list, element);
+}
+
+function mClassList(element) {
+  return !mClassList.ignoreNative && element.classList || function () {
+    var list = (element.getAttribute('class') || '').trim().split(/\s+/).filter(function (token) {
+      return !!token;
+    }),
+        ins = {
+      length: list.length,
+      item: function item(i) {
+        return list[i];
+      },
+      contains: function contains(token) {
+        return list.indexOf(normalize(token)) !== -1;
+      },
+      add: function add() {
+        _add(list, element, Array.prototype.slice.call(arguments));
+        return mClassList.methodChain ? ins : void 0;
+      },
+      remove: function remove() {
+        _remove(list, element, Array.prototype.slice.call(arguments));
+        return mClassList.methodChain ? ins : void 0;
+      },
+      toggle: function toggle(token, force) {
+        return _toggle(list, element, token, force);
+      },
+      replace: function replace(token, newToken) {
+        _replace(list, element, token, newToken);
+        return mClassList.methodChain ? ins : void 0;
+      }
+    };
+    return ins;
+  }();
+}
+
+mClassList.methodChain = true;
+
+/* harmony default export */ __webpack_exports__["default"] = (mClassList);
+
+/***/ }),
+
+/***/ "./node_modules/timed-transition/timed-transition.mjs":
+/*!************************************************************!*\
+  !*** ./node_modules/timed-transition/timed-transition.mjs ***!
+  \************************************************************/
+/*! exports provided: default */
+/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.mjs");
+/* ================================================
+        DON'T MANUALLY EDIT THIS FILE
+================================================ */
+
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/*
+ * TimedTransition
+ * https://github.com/anseki/timed-transition
+ *
+ * Copyright (c) 2018 anseki
+ * Licensed under the MIT license.
+ */
+
+
+
+var STATE_STOPPED = 0,
+    STATE_DELAYING = 1,
+    STATE_PLAYING = 2,
+    PREFIX = 'timed',
+    EVENT_TYPE_RUN = PREFIX + 'TransitionRun',
+    EVENT_TYPE_START = PREFIX + 'TransitionStart',
+    EVENT_TYPE_END = PREFIX + 'TransitionEnd',
+    EVENT_TYPE_CANCEL = PREFIX + 'TransitionCancel',
+    IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
+    isObject = function () {
+  var toString = {}.toString,
+      fnToString = {}.hasOwnProperty.toString,
+      objFnString = fnToString.call(Object);
+  return function (obj) {
+    var proto = void 0,
+        constr = void 0;
+    return obj && toString.call(obj) === '[object Object]' && (!(proto = Object.getPrototypeOf(obj)) || (constr = proto.hasOwnProperty('constructor') && proto.constructor) && typeof constr === 'function' && fnToString.call(constr) === objFnString);
+  };
+}(),
+    isFinite = Number.isFinite || function (value) {
+  return typeof value === 'number' && window.isFinite(value);
+},
+
+
+/**
+ * An object that has properties of instance.
+ * @typedef {Object} props
+ * @property {Object} options - Options.
+ * @property {Element} element - Target element.
+ * @property {Window} window - Window that conatins target element.
+ * @property {number} duration - Milliseconds from `transition-duration`.
+ * @property {number} delay - Milliseconds from `transition-delay`.
+ * @property {number} state - Current state.
+ * @property {boolean} isOn - `on` was called and `off` is not called yet. It is changed by only on/off.
+ * @property {number} runTime - 0, or Date.now() when EVENT_TYPE_RUN.
+ * @property {number} startTime - 0, or Date.now() when EVENT_TYPE_START. It might not be runTime + delay.
+ * @property {number} currentPosition - A time elapsed from initial state, in milliseconds.
+ * @property {boolean} isReversing - The current playing is reversing when STATE_PLAYING.
+ * @property {number} timer - Timer ID.
+ */
+
+/** @type {Object.<_id: number, props>} */
+insProps = {};
+
+var insId = 0;
+
+/**
+ * @param {props} props - `props` of instance.
+ * @param {string} type - One of EVENT_TYPE_*.
+ * @returns {void}
+ */
+function fireEvent(props, type) {
+  var initTime = Math.min(Math.max(-props.delay, 0), props.duration),
+      elapsedTime = (initTime + (
+  // The value for transitionend might NOT be transition-duration. (csswg.org may be wrong)
+  (type === EVENT_TYPE_END || type === EVENT_TYPE_CANCEL) && props.startTime ? Date.now() - props.startTime : 0)) / 1000;
+
+  var event = void 0;
+  try {
+    event = new props.window.TransitionEvent(type, {
+      propertyName: props.options.property,
+      pseudoElement: props.options.pseudoElement,
+      elapsedTime: elapsedTime,
+      bubbles: true,
+      cancelable: false
+    });
+    // Edge bug, can't set pseudoElement
+    if (IS_EDGE) {
+      event.pseudoElement = props.options.pseudoElement;
+    }
+  } catch (error) {
+    event = props.window.document.createEvent('TransitionEvent');
+    event.initTransitionEvent(type, true, false, props.options.property, elapsedTime);
+    event.pseudoElement = props.options.pseudoElement;
+  }
+  event.timedTransition = props.ins;
+  props.element.dispatchEvent(event);
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @returns {void}
+ */
+function fixCurrentPosition(props) {
+  if (props.state !== STATE_PLAYING) {
+    return;
+  }
+  var playingTime = Date.now() - props.startTime;
+  props.currentPosition = props.isOn ? Math.min(props.currentPosition + playingTime, props.duration) : Math.max(props.currentPosition - playingTime, 0);
+}
+
+/**
+ * Finish the "on/off" immediately by isOn.
+ * @param {props} props - `props` of instance.
+ * @returns {void}
+ */
+function finishAll(props) {
+  props.state = STATE_STOPPED;
+  props.runTime = 0;
+  props.startTime = 0;
+  props.currentPosition = props.isOn ? props.duration : 0;
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @returns {void}
+ */
+function finishPlaying(props) {
+  if (props.state !== STATE_PLAYING) {
+    return;
+  }
+
+  props.state = STATE_STOPPED;
+  fireEvent(props, EVENT_TYPE_END);
+
+  finishAll(props);
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @returns {void}
+ */
+function finishDelaying(props) {
+  if (props.state !== STATE_DELAYING) {
+    return;
+  }
+
+  props.state = STATE_PLAYING;
+  props.startTime = Date.now();
+  props.isReversing = !props.isOn;
+  fireEvent(props, EVENT_TYPE_START);
+
+  var durationLeft = props.isOn ? props.duration - props.currentPosition : props.currentPosition;
+  if (durationLeft > 0) {
+    props.timer = setTimeout(function () {
+      finishPlaying(props);
+    }, durationLeft);
+  } else {
+    finishPlaying(props);
+  }
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @returns {void}
+ */
+function abort(props) {
+  clearTimeout(props.timer);
+  if (props.state === STATE_STOPPED) {
+    return;
+  }
+
+  props.state = STATE_STOPPED;
+  fireEvent(props, EVENT_TYPE_CANCEL);
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @param {boolean} [force] - Skip transition.
+ * @returns {void}
+ */
+function _on(props, force) {
+  if (props.isOn && props.state === STATE_STOPPED || props.isOn && props.state !== STATE_STOPPED && !force) {
+    return;
+  }
+  /*
+    Cases:
+      - Done `off` or playing to `off`, regardless of `force`
+      - Playing to `on` and `force`
+  */
+
+  if (props.options.procToOn) {
+    props.options.procToOn.call(props.ins, !!force);
+  }
+
+  if (force || !props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
+    // The delay must have not changed before turning over.
+    abort(props);
+    props.isOn = true;
+    finishAll(props);
+  } else {
+    fixCurrentPosition(props);
+    abort(props);
+
+    props.state = STATE_DELAYING;
+    props.isOn = true;
+    props.runTime = Date.now();
+    props.startTime = 0;
+    fireEvent(props, EVENT_TYPE_RUN);
+
+    if (props.delay > 0) {
+      props.timer = setTimeout(function () {
+        finishDelaying(props);
+      }, props.delay);
+    } else {
+      if (props.delay < 0) {
+        // Move the position to the right.
+        props.currentPosition = Math.min(props.currentPosition - props.delay, props.duration);
+      }
+      finishDelaying(props);
+    }
+  }
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @param {boolean} [force] - Skip transition.
+ * @returns {void}
+ */
+function _off(props, force) {
+  if (!props.isOn && props.state === STATE_STOPPED || !props.isOn && props.state !== STATE_STOPPED && !force) {
+    return;
+  }
+  /*
+    Cases:
+      - Done `on` or playing to `on`, regardless of `force`
+      - Playing to `off` and `force`
+  */
+
+  if (props.options.procToOff) {
+    props.options.procToOff.call(props.ins, !!force);
+  }
+
+  if (force || props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
+    // The delay must have not changed before turning over.
+    abort(props);
+    props.isOn = false;
+    finishAll(props);
+  } else {
+    fixCurrentPosition(props);
+    abort(props);
+
+    props.state = STATE_DELAYING;
+    props.isOn = false;
+    props.runTime = Date.now();
+    props.startTime = 0;
+    fireEvent(props, EVENT_TYPE_RUN);
+
+    if (props.delay > 0) {
+      props.timer = setTimeout(function () {
+        finishDelaying(props);
+      }, props.delay);
+    } else {
+      if (props.delay < 0) {
+        // Move the position to the left.
+        props.currentPosition = Math.max(props.currentPosition + props.delay, 0);
+      }
+      finishDelaying(props);
+    }
+  }
+}
+
+/**
+ * @param {props} props - `props` of instance.
+ * @param {Object} newOptions - New options.
+ * @returns {void}
+ */
+function _setOptions(props, newOptions) {
+  var options = props.options;
+
+  function parseAsCss(option) {
+    var optionValue = typeof newOptions[option] === 'number' ? // From CSS
+    (props.window.getComputedStyle(props.element, '')[cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
+    return typeof optionValue === 'string' ? optionValue.trim() : null;
+  }
+
+  // pseudoElement
+  if (typeof newOptions.pseudoElement === 'string') {
+    options.pseudoElement = newOptions.pseudoElement;
+  }
+
+  // property
+  {
+    var value = parseAsCss('property');
+    if (typeof value === 'string' && value !== 'all' && value !== 'none') {
+      options.property = value;
+    }
+  }
+
+  // duration, delay
+  ['duration', 'delay'].forEach(function (option) {
+    var value = parseAsCss(option);
+    if (typeof value === 'string') {
+      var matches = void 0,
+          timeValue = void 0;
+      if (/^[0\.]+$/.test(value)) {
+        // This is invalid for CSS.
+        options[option] = '0s';
+        props[option] = 0;
+      } else if ((matches = /^(.+?)(m)?s$/.exec(value)) && isFinite(timeValue = parseFloat(matches[1])) && (option !== 'duration' || timeValue >= 0)) {
+        options[option] = '' + timeValue + (matches[2] || '') + 's';
+        props[option] = timeValue * (matches[2] ? 1 : 1000);
+      }
+    }
+  });
+
+  // procToOn, procToOff
+  ['procToOn', 'procToOff'].forEach(function (option) {
+    if (typeof newOptions[option] === 'function') {
+      options[option] = newOptions[option];
+    } else if (newOptions.hasOwnProperty(option) && newOptions[option] == null) {
+      options[option] = void 0;
+    }
+  });
+}
+
+var TimedTransition = function () {
+  /**
+   * Create a `TimedTransition` instance.
+   * @param {Element} element - Target element.
+   * @param {Object} [options] - Options.
+   * @param {boolean} [initOn] - Initial `on`.
+   */
+  function TimedTransition(element, options, initOn) {
+    _classCallCheck(this, TimedTransition);
+
+    var props = {
+      ins: this,
+      options: { // Initial options (not default)
+        pseudoElement: '',
+        property: ''
+      },
+      duration: 0,
+      delay: 0,
+      isOn: !!initOn
+    };
+
+    Object.defineProperty(this, '_id', { value: ++insId });
+    props._id = this._id;
+    insProps[this._id] = props;
+
+    if (!element.nodeType || element.nodeType !== Node.ELEMENT_NODE) {
+      throw new Error('This `element` is not accepted.');
+    }
+    props.element = element;
+    props.window = element.ownerDocument.defaultView;
+    if (!options) {
+      options = {};
+    } else if (!isObject(options)) {
+      throw new Error('Invalid options.');
+    }
+
+    // Default options
+    if (!options.hasOwnProperty('property')) {
+      options.property = 0;
+    }
+    if (!options.hasOwnProperty('duration')) {
+      options.duration = 0;
+    }
+    if (!options.hasOwnProperty('delay')) {
+      options.delay = 0;
+    }
+
+    _setOptions(props, options);
+    finishAll(props);
+  }
+
+  /**
+   * @param {Object} options - New options.
+   * @returns {TimedTransition} Current instance itself.
+   */
+
+
+  _createClass(TimedTransition, [{
+    key: 'setOptions',
+    value: function setOptions(options) {
+      if (isObject(options)) {
+        _setOptions(insProps[this._id], options);
+      }
+      return this;
+    }
+
+    /**
+     * Set `on`.
+     * @param {boolean} [force] - Set `on` it immediately without transition.
+     * @param {Object} [options] - New options.
+     * @returns {TimedTransition} Current instance itself.
+     */
+
+  }, {
+    key: 'on',
+    value: function on(force, options) {
+      if (arguments.length < 2 && typeof force !== 'boolean') {
+        options = force;
+        force = false;
+      }
+
+      this.setOptions(options);
+      _on(insProps[this._id], force);
+      return this;
+    }
+
+    /**
+     * Set 'off'.
+     * @param {boolean} [force] - Set `off` it immediately without transition.
+     * @returns {TimedTransition} Current instance itself.
+     */
+
+  }, {
+    key: 'off',
+    value: function off(force) {
+      _off(insProps[this._id], force);
+      return this;
+    }
+  }, {
+    key: 'state',
+    get: function get() {
+      return insProps[this._id].state;
+    }
+  }, {
+    key: 'element',
+    get: function get() {
+      return insProps[this._id].element;
+    }
+  }, {
+    key: 'isReversing',
+    get: function get() {
+      return insProps[this._id].isReversing;
+    }
+  }, {
+    key: 'pseudoElement',
+    get: function get() {
+      return insProps[this._id].options.pseudoElement;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { pseudoElement: value });
+    }
+  }, {
+    key: 'property',
+    get: function get() {
+      return insProps[this._id].options.property;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { property: value });
+    }
+  }, {
+    key: 'duration',
+    get: function get() {
+      return insProps[this._id].options.duration;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { duration: value });
+    }
+  }, {
+    key: 'delay',
+    get: function get() {
+      return insProps[this._id].options.delay;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { delay: value });
+    }
+  }, {
+    key: 'procToOn',
+    get: function get() {
+      return insProps[this._id].options.procToOn;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { procToOn: value });
+    }
+  }, {
+    key: 'procToOff',
+    get: function get() {
+      return insProps[this._id].options.procToOff;
+    },
+    set: function set(value) {
+      _setOptions(insProps[this._id], { procToOff: value });
+    }
+  }], [{
+    key: 'STATE_STOPPED',
+    get: function get() {
+      return STATE_STOPPED;
+    }
+  }, {
+    key: 'STATE_DELAYING',
+    get: function get() {
+      return STATE_DELAYING;
+    }
+  }, {
+    key: 'STATE_PLAYING',
+    get: function get() {
+      return STATE_PLAYING;
+    }
+  }]);
+
+  return TimedTransition;
+}();
+
+/* harmony default export */ __webpack_exports__["default"] = (TimedTransition);
+
+/***/ }),
+
+/***/ "./src/default.scss":
+/*!**************************!*\
+  !*** ./src/default.scss ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000;-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0}.plainoverlay.plainoverlay-show{opacity:1}.plainoverlay.plainoverlay-force{-webkit-transition-property:none;-moz-transition-property:none;-o-transition-property:none;transition-property:none}.plainoverlay.plainoverlay-hide{display:none}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:0.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-name:plainoverlay-builtin-face_01-spin;-ms-animation-name:plainoverlay-builtin-face_01-spin;-o-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-duration:1s;-moz-animation-duration:1s;-ms-animation-duration:1s;-o-animation-duration:1s;animation-duration:1s;-webkit-animation-timing-function:linear;-moz-animation-timing-function:linear;-ms-animation-timing-function:linear;-o-animation-timing-function:linear;animation-timing-function:linear;-webkit-animation-iteration-count:infinite;-moz-animation-iteration-count:infinite;-ms-animation-iteration-count:infinite;-o-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-o-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-ms-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}";
+
+/***/ }),
+
+/***/ "./src/face.html?tag=defs":
+/*!********************************!*\
+  !*** ./src/face.html?tag=defs ***!
+  \********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
+
+/***/ }),
+
+/***/ "./src/face.html?tag=face_01":
+/*!***********************************!*\
+  !*** ./src/face.html?tag=face_01 ***!
+  \***********************************/
+/*! no static exports found */
+/***/ (function(module, exports) {
+
+module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
+
+/***/ }),
+
+/***/ "./src/plain-overlay.js":
+/*!******************************!*\
+  !*** ./src/plain-overlay.js ***!
+  \******************************/
+/*! exports provided: default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-Object.defineProperty(__webpack_exports__, "__esModule", { value: true });
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_cssprefix__ = __webpack_require__(0);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1_anim_event__ = __webpack_require__(2);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_2_m_class_list__ = __webpack_require__(3);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_3_timed_transition__ = __webpack_require__(4);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss__ = __webpack_require__(5);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_4__default_scss___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_4__default_scss__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__ = __webpack_require__(6);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs__);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__ = __webpack_require__(7);
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default = __webpack_require__.n(__WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01__);
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.mjs");
+/* harmony import */ var anim_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! anim-event */ "./node_modules/anim-event/anim-event.mjs");
+/* harmony import */ var m_class_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! m-class-list */ "./node_modules/m-class-list/m-class-list.mjs");
+/* harmony import */ var timed_transition__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! timed-transition */ "./node_modules/timed-transition/timed-transition.mjs");
+/* harmony import */ var _default_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./default.scss */ "./src/default.scss");
+/* harmony import */ var _default_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_default_scss__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var _face_html_tag_defs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./face.html?tag=defs */ "./src/face.html?tag=defs");
+/* harmony import */ var _face_html_tag_defs__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(_face_html_tag_defs__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var _face_html_tag_face_01__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./face.html?tag=face_01 */ "./src/face.html?tag=face_01");
+/* harmony import */ var _face_html_tag_face_01__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(_face_html_tag_face_01__WEBPACK_IMPORTED_MODULE_6__);
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -281,7 +1094,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
 
 // [/FACE]
-__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */].ignoreNative = true;
+m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"].ignoreNative = true;
 
 var APP_ID = 'plainoverlay',
     STYLE_ELEMENT_ID = APP_ID + '-style',
@@ -791,7 +1604,7 @@ function _position(props, targetBodyBBox) {
 
   // border-radius
   [{ prop: 'TopLeft', hBorder: 'left', vBorder: 'top' }, { prop: 'TopRight', hBorder: 'right', vBorder: 'top' }, { prop: 'BottomRight', hBorder: 'right', vBorder: 'bottom' }, { prop: 'BottomLeft', hBorder: 'left', vBorder: 'bottom' }].forEach(function (corner) {
-    var prop = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('border' + corner.prop + 'Radius'),
+    var prop = cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('border' + corner.prop + 'Radius'),
         values = targetBodyCmpStyle[prop].split(' ');
     var h = values[0],
         v = values[1] || values[0],
@@ -819,7 +1632,7 @@ function getTargetElements(props) {
   if (props.isDoc) {
     targetElements.push(elmTargetBody);
     Array.prototype.slice.call(elmTargetBody.childNodes).forEach(function (childNode) {
-      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
+      if (childNode.nodeType === Node.ELEMENT_NODE && childNode !== elmOverlay && !Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID) {
         targetElements.push(childNode);
         Array.prototype.push.apply(targetElements, childNode.querySelectorAll('*'));
       }
@@ -835,13 +1648,13 @@ function finishShowing(props) {
   // blur
   props.filterElements = null;
   if (props.options.blur !== false) {
-    var propName = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('filter'),
-        propValue = __WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getValue('filter', 'blur(' + props.options.blur + 'px)');
+    var propName = cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('filter'),
+        propValue = cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getValue('filter', 'blur(' + props.options.blur + 'px)');
     if (propValue) {
       // undefined if no propName
       // Array of {element: element, savedStyle: {}}
       var filterElements = props.isDoc ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(function (childNode) {
-        return childNode.nodeType === Node.ELEMENT_NODE && childNode !== props.elmOverlay && !Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID;
+        return childNode.nodeType === Node.ELEMENT_NODE && childNode !== props.elmOverlay && !Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(childNode).contains(STYLE_CLASS) && childNode.id !== FACE_DEFS_ELEMENT_ID;
       }).map(function (element) {
         return { element: element, savedStyle: {} };
       }) : [{ element: props.elmTargetBody, savedStyle: {} }];
@@ -873,7 +1686,7 @@ function finishHiding(props
   /* [DISABLE-SYNC/]
   traceLog.push(`sync:${!!sync}`); // [DEBUG/]
   [DISABLE-SYNC/] */
-  Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(props.elmOverlay).add(STYLE_CLASS_HIDE);
+  Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(props.elmOverlay).add(STYLE_CLASS_HIDE);
 
   restoreStyle(props.elmTarget, props.savedStyleTarget);
   restoreStyle(props.elmTargetBody, props.savedStyleTargetBody);
@@ -1009,7 +1822,7 @@ function _show(props, force) {
 
   if (props.state === STATE_HIDDEN) {
     var elmOverlay = props.elmOverlay,
-        elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
+        elmOverlayClassList = Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(elmOverlay);
     props.document.body.appendChild(elmOverlay); // Move to last (for same z-index)
     var targetElements = getTargetElements(props);
     window.targetElements = targetElements; // [DEBUG/]
@@ -1132,19 +1945,19 @@ function _setOptions(props, newOptions) {
       var elmDocument = props.document;
       if (!elmDocument.getElementById(FACE_DEFS_ELEMENT_ID)) {
         // Add svg defs
-        var defsSvg = new props.window.DOMParser().parseFromString(__WEBPACK_IMPORTED_MODULE_5__face_html_tag_defs___default.a, 'image/svg+xml');
+        var defsSvg = new props.window.DOMParser().parseFromString(_face_html_tag_defs__WEBPACK_IMPORTED_MODULE_5___default.a, 'image/svg+xml');
         elmDocument.body.appendChild(defsSvg.documentElement);
       }
       // [/FACE]
       options.face = void 0;
-      elmOverlayBody.innerHTML = __WEBPACK_IMPORTED_MODULE_6__face_html_tag_face_01___default.a; // [FACE/]
+      elmOverlayBody.innerHTML = _face_html_tag_face_01__WEBPACK_IMPORTED_MODULE_6___default.a; // [FACE/]
     }
   }
 
   // duration
   if (isFinite(newOptions.duration) && newOptions.duration !== options.duration) {
     options.duration = newOptions.duration;
-    props.elmOverlay.style[__WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
+    props.elmOverlay.style[cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('transitionDuration')] = newOptions.duration === DURATION ? '' : newOptions.duration + 'ms';
     props.transition.duration = newOptions.duration + 'ms';
   }
 
@@ -1284,7 +2097,7 @@ var PlainOverlay = function () {
           sheet = head.insertBefore(elmDocument.createElement('style'), head.firstChild);
       sheet.type = 'text/css';
       sheet.id = STYLE_ELEMENT_ID;
-      sheet.textContent = __WEBPACK_IMPORTED_MODULE_4__default_scss___default.a;
+      sheet.textContent = _default_scss__WEBPACK_IMPORTED_MODULE_4___default.a;
       if (IS_TRIDENT || IS_EDGE) {
         forceReflow(sheet);
       } // Trident bug
@@ -1292,21 +2105,21 @@ var PlainOverlay = function () {
 
     // elmOverlay
     var elmOverlay = props.elmOverlay = elmDocument.createElement('div'),
-        elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
+        elmOverlayClassList = Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(elmOverlay);
     elmOverlayClassList.add(STYLE_CLASS, STYLE_CLASS_HIDE);
     if (props.isDoc) {
       elmOverlayClassList.add(STYLE_CLASS_DOC);
     }
 
     // TimedTransition
-    props.transition = new __WEBPACK_IMPORTED_MODULE_3_timed_transition__["a" /* default */](elmOverlay, {
+    props.transition = new timed_transition__WEBPACK_IMPORTED_MODULE_3__["default"](elmOverlay, {
       procToOn: function procToOn(force) {
-        var elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
+        var elmOverlayClassList = Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(elmOverlay);
         elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
         elmOverlayClassList.add(STYLE_CLASS_SHOW);
       },
       procToOff: function procToOff(force) {
-        var elmOverlayClassList = Object(__WEBPACK_IMPORTED_MODULE_2_m_class_list__["a" /* default */])(elmOverlay);
+        var elmOverlayClassList = Object(m_class_list__WEBPACK_IMPORTED_MODULE_2__["default"])(elmOverlay);
         elmOverlayClassList.toggle(STYLE_CLASS_FORCE, !!force);
         elmOverlayClassList.remove(STYLE_CLASS_SHOW);
       },
@@ -1372,7 +2185,7 @@ var PlainOverlay = function () {
 
     // Gecko bug, multiple calling (parallel) by `requestAnimationFrame`.
     props.resizing = false;
-    props.window.addEventListener('resize', __WEBPACK_IMPORTED_MODULE_1_anim_event__["a" /* default */].add(function () {
+    props.window.addEventListener('resize', anim_event__WEBPACK_IMPORTED_MODULE_1__["default"].add(function () {
       if (props.resizing) {
         console.warn('`resize` event listener is already running.'); // [DEBUG/]
         return;
@@ -1639,769 +2452,7 @@ PlainOverlay.IS_GECKO = IS_GECKO;
 
 /* harmony default export */ __webpack_exports__["default"] = (PlainOverlay);
 
-/***/ }),
-/* 2 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* ================================================
-        DON'T MANUALLY EDIT THIS FILE
-================================================ */
-
-/*
- * AnimEvent
- * https://github.com/anseki/anim-event
- *
- * Copyright (c) 2018 anseki
- * Licensed under the MIT license.
- */
-
-var MSPF = 1000 / 60,
-    // ms/frame (FPS: 60)
-KEEP_LOOP = 500,
-
-
-/**
- * @typedef {Object} task
- * @property {Event} event
- * @property {function} listener
- */
-
-/** @type {task[]} */
-tasks = [];
-
-var requestAnim = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame || function (callback) {
-  return setTimeout(callback, MSPF);
-},
-    cancelAnim = window.cancelAnimationFrame || window.mozCancelAnimationFrame || window.webkitCancelAnimationFrame || window.msCancelAnimationFrame || function (requestID) {
-  return clearTimeout(requestID);
-},
-    requestID = void 0,
-    lastFrameTime = Date.now();
-
-function step() {
-  var called = void 0,
-      next = void 0;
-
-  if (requestID) {
-    cancelAnim.call(window, requestID);
-    requestID = null;
-  }
-
-  tasks.forEach(function (task) {
-    if (task.event) {
-      task.listener(task.event);
-      task.event = null;
-      called = true;
-    }
-  });
-
-  if (called) {
-    lastFrameTime = Date.now();
-    next = true;
-  } else if (Date.now() - lastFrameTime < KEEP_LOOP) {
-    // Go on for a while
-    next = true;
-  }
-  if (next) {
-    requestID = requestAnim.call(window, step);
-  }
-}
-
-function indexOfTasks(listener) {
-  var index = -1;
-  tasks.some(function (task, i) {
-    if (task.listener === listener) {
-      index = i;
-      return true;
-    }
-    return false;
-  });
-  return index;
-}
-
-var AnimEvent = {
-  /**
-   * @param {function} listener - An event listener.
-   * @returns {(function|null)} A wrapped event listener.
-   */
-  add: function add(listener) {
-    var task = void 0;
-    if (indexOfTasks(listener) === -1) {
-      tasks.push(task = { listener: listener });
-      return function (event) {
-        task.event = event;
-        if (!requestID) {
-          step();
-        }
-      };
-    } else {
-      return null;
-    }
-  },
-
-  remove: function remove(listener) {
-    var iRemove = void 0;
-    if ((iRemove = indexOfTasks(listener)) > -1) {
-      tasks.splice(iRemove, 1);
-      if (!tasks.length && requestID) {
-        cancelAnim.call(window, requestID);
-        requestID = null;
-      }
-    }
-  }
-};
-
-/* harmony default export */ __webpack_exports__["a"] = (AnimEvent);
-
-/***/ }),
-/* 3 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* ================================================
-        DON'T MANUALLY EDIT THIS FILE
-================================================ */
-
-/*
- * mClassList
- * https://github.com/anseki/m-class-list
- *
- * Copyright (c) 2018 anseki
- * Licensed under the MIT license.
- */
-
-function normalize(token) {
-  return (token + '').trim();
-} // Not `||`
-function applyList(list, element) {
-  element.setAttribute('class', list.join(' '));
-}
-
-function _add(list, element, tokens) {
-  if (tokens.filter(function (token) {
-    if (!(token = normalize(token)) || list.indexOf(token) !== -1) {
-      return false;
-    }
-    list.push(token);
-    return true;
-  }).length) {
-    applyList(list, element);
-  }
-}
-
-function _remove(list, element, tokens) {
-  if (tokens.filter(function (token) {
-    var i = void 0;
-    if (!(token = normalize(token)) || (i = list.indexOf(token)) === -1) {
-      return false;
-    }
-    list.splice(i, 1);
-    return true;
-  }).length) {
-    applyList(list, element);
-  }
-}
-
-function _toggle(list, element, token, force) {
-  var i = list.indexOf(token = normalize(token));
-  if (i !== -1) {
-    if (force) {
-      return true;
-    }
-    list.splice(i, 1);
-    applyList(list, element);
-    return false;
-  } else {
-    if (force === false) {
-      return false;
-    }
-    list.push(token);
-    applyList(list, element);
-    return true;
-  }
-}
-
-function _replace(list, element, token, newToken) {
-  var i = void 0;
-  if (!(token = normalize(token)) || !(newToken = normalize(newToken)) || token === newToken || (i = list.indexOf(token)) === -1) {
-    return;
-  }
-  list.splice(i, 1);
-  if (list.indexOf(newToken) === -1) {
-    list.push(newToken);
-  }
-  applyList(list, element);
-}
-
-function mClassList(element) {
-  return !mClassList.ignoreNative && element.classList || function () {
-    var list = (element.getAttribute('class') || '').trim().split(/\s+/).filter(function (token) {
-      return !!token;
-    }),
-        ins = {
-      length: list.length,
-      item: function item(i) {
-        return list[i];
-      },
-      contains: function contains(token) {
-        return list.indexOf(normalize(token)) !== -1;
-      },
-      add: function add() {
-        _add(list, element, Array.prototype.slice.call(arguments));
-        return mClassList.methodChain ? ins : void 0;
-      },
-      remove: function remove() {
-        _remove(list, element, Array.prototype.slice.call(arguments));
-        return mClassList.methodChain ? ins : void 0;
-      },
-      toggle: function toggle(token, force) {
-        return _toggle(list, element, token, force);
-      },
-      replace: function replace(token, newToken) {
-        _replace(list, element, token, newToken);
-        return mClassList.methodChain ? ins : void 0;
-      }
-    };
-    return ins;
-  }();
-}
-
-mClassList.methodChain = true;
-
-/* harmony default export */ __webpack_exports__["a"] = (mClassList);
-
-/***/ }),
-/* 4 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony import */ var __WEBPACK_IMPORTED_MODULE_0_cssprefix__ = __webpack_require__(0);
-/* ================================================
-        DON'T MANUALLY EDIT THIS FILE
-================================================ */
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-/*
- * TimedTransition
- * https://github.com/anseki/timed-transition
- *
- * Copyright (c) 2018 anseki
- * Licensed under the MIT license.
- */
-
-
-
-var STATE_STOPPED = 0,
-    STATE_DELAYING = 1,
-    STATE_PLAYING = 2,
-    PREFIX = 'timed',
-    EVENT_TYPE_RUN = PREFIX + 'TransitionRun',
-    EVENT_TYPE_START = PREFIX + 'TransitionStart',
-    EVENT_TYPE_END = PREFIX + 'TransitionEnd',
-    EVENT_TYPE_CANCEL = PREFIX + 'TransitionCancel',
-    IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-    isObject = function () {
-  var toString = {}.toString,
-      fnToString = {}.hasOwnProperty.toString,
-      objFnString = fnToString.call(Object);
-  return function (obj) {
-    var proto = void 0,
-        constr = void 0;
-    return obj && toString.call(obj) === '[object Object]' && (!(proto = Object.getPrototypeOf(obj)) || (constr = proto.hasOwnProperty('constructor') && proto.constructor) && typeof constr === 'function' && fnToString.call(constr) === objFnString);
-  };
-}(),
-    isFinite = Number.isFinite || function (value) {
-  return typeof value === 'number' && window.isFinite(value);
-},
-
-
-/**
- * An object that has properties of instance.
- * @typedef {Object} props
- * @property {Object} options - Options.
- * @property {Element} element - Target element.
- * @property {Window} window - Window that conatins target element.
- * @property {number} duration - Milliseconds from `transition-duration`.
- * @property {number} delay - Milliseconds from `transition-delay`.
- * @property {number} state - Current state.
- * @property {boolean} isOn - `on` was called and `off` is not called yet. It is changed by only on/off.
- * @property {number} runTime - 0, or Date.now() when EVENT_TYPE_RUN.
- * @property {number} startTime - 0, or Date.now() when EVENT_TYPE_START. It might not be runTime + delay.
- * @property {number} currentPosition - A time elapsed from initial state, in milliseconds.
- * @property {boolean} isReversing - The current playing is reversing when STATE_PLAYING.
- * @property {number} timer - Timer ID.
- */
-
-/** @type {Object.<_id: number, props>} */
-insProps = {};
-
-var insId = 0;
-
-/**
- * @param {props} props - `props` of instance.
- * @param {string} type - One of EVENT_TYPE_*.
- * @returns {void}
- */
-function fireEvent(props, type) {
-  var initTime = Math.min(Math.max(-props.delay, 0), props.duration),
-      elapsedTime = (initTime + (
-  // The value for transitionend might NOT be transition-duration. (csswg.org may be wrong)
-  (type === EVENT_TYPE_END || type === EVENT_TYPE_CANCEL) && props.startTime ? Date.now() - props.startTime : 0)) / 1000;
-
-  var event = void 0;
-  try {
-    event = new props.window.TransitionEvent(type, {
-      propertyName: props.options.property,
-      pseudoElement: props.options.pseudoElement,
-      elapsedTime: elapsedTime,
-      bubbles: true,
-      cancelable: false
-    });
-    // Edge bug, can't set pseudoElement
-    if (IS_EDGE) {
-      event.pseudoElement = props.options.pseudoElement;
-    }
-  } catch (error) {
-    event = props.window.document.createEvent('TransitionEvent');
-    event.initTransitionEvent(type, true, false, props.options.property, elapsedTime);
-    event.pseudoElement = props.options.pseudoElement;
-  }
-  event.timedTransition = props.ins;
-  props.element.dispatchEvent(event);
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @returns {void}
- */
-function fixCurrentPosition(props) {
-  if (props.state !== STATE_PLAYING) {
-    return;
-  }
-  var playingTime = Date.now() - props.startTime;
-  props.currentPosition = props.isOn ? Math.min(props.currentPosition + playingTime, props.duration) : Math.max(props.currentPosition - playingTime, 0);
-}
-
-/**
- * Finish the "on/off" immediately by isOn.
- * @param {props} props - `props` of instance.
- * @returns {void}
- */
-function finishAll(props) {
-  props.state = STATE_STOPPED;
-  props.runTime = 0;
-  props.startTime = 0;
-  props.currentPosition = props.isOn ? props.duration : 0;
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @returns {void}
- */
-function finishPlaying(props) {
-  if (props.state !== STATE_PLAYING) {
-    return;
-  }
-
-  props.state = STATE_STOPPED;
-  fireEvent(props, EVENT_TYPE_END);
-
-  finishAll(props);
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @returns {void}
- */
-function finishDelaying(props) {
-  if (props.state !== STATE_DELAYING) {
-    return;
-  }
-
-  props.state = STATE_PLAYING;
-  props.startTime = Date.now();
-  props.isReversing = !props.isOn;
-  fireEvent(props, EVENT_TYPE_START);
-
-  var durationLeft = props.isOn ? props.duration - props.currentPosition : props.currentPosition;
-  if (durationLeft > 0) {
-    props.timer = setTimeout(function () {
-      finishPlaying(props);
-    }, durationLeft);
-  } else {
-    finishPlaying(props);
-  }
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @returns {void}
- */
-function abort(props) {
-  clearTimeout(props.timer);
-  if (props.state === STATE_STOPPED) {
-    return;
-  }
-
-  props.state = STATE_STOPPED;
-  fireEvent(props, EVENT_TYPE_CANCEL);
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @param {boolean} [force] - Skip transition.
- * @returns {void}
- */
-function _on(props, force) {
-  if (props.isOn && props.state === STATE_STOPPED || props.isOn && props.state !== STATE_STOPPED && !force) {
-    return;
-  }
-  /*
-    Cases:
-      - Done `off` or playing to `off`, regardless of `force`
-      - Playing to `on` and `force`
-  */
-
-  if (props.options.procToOn) {
-    props.options.procToOn.call(props.ins, !!force);
-  }
-
-  if (force || !props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
-    // The delay must have not changed before turning over.
-    abort(props);
-    props.isOn = true;
-    finishAll(props);
-  } else {
-    fixCurrentPosition(props);
-    abort(props);
-
-    props.state = STATE_DELAYING;
-    props.isOn = true;
-    props.runTime = Date.now();
-    props.startTime = 0;
-    fireEvent(props, EVENT_TYPE_RUN);
-
-    if (props.delay > 0) {
-      props.timer = setTimeout(function () {
-        finishDelaying(props);
-      }, props.delay);
-    } else {
-      if (props.delay < 0) {
-        // Move the position to the right.
-        props.currentPosition = Math.min(props.currentPosition - props.delay, props.duration);
-      }
-      finishDelaying(props);
-    }
-  }
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @param {boolean} [force] - Skip transition.
- * @returns {void}
- */
-function _off(props, force) {
-  if (!props.isOn && props.state === STATE_STOPPED || !props.isOn && props.state !== STATE_STOPPED && !force) {
-    return;
-  }
-  /*
-    Cases:
-      - Done `on` or playing to `on`, regardless of `force`
-      - Playing to `off` and `force`
-  */
-
-  if (props.options.procToOff) {
-    props.options.procToOff.call(props.ins, !!force);
-  }
-
-  if (force || props.isOn && props.state === STATE_DELAYING || -props.delay > props.duration) {
-    // The delay must have not changed before turning over.
-    abort(props);
-    props.isOn = false;
-    finishAll(props);
-  } else {
-    fixCurrentPosition(props);
-    abort(props);
-
-    props.state = STATE_DELAYING;
-    props.isOn = false;
-    props.runTime = Date.now();
-    props.startTime = 0;
-    fireEvent(props, EVENT_TYPE_RUN);
-
-    if (props.delay > 0) {
-      props.timer = setTimeout(function () {
-        finishDelaying(props);
-      }, props.delay);
-    } else {
-      if (props.delay < 0) {
-        // Move the position to the left.
-        props.currentPosition = Math.max(props.currentPosition + props.delay, 0);
-      }
-      finishDelaying(props);
-    }
-  }
-}
-
-/**
- * @param {props} props - `props` of instance.
- * @param {Object} newOptions - New options.
- * @returns {void}
- */
-function _setOptions(props, newOptions) {
-  var options = props.options;
-
-  function parseAsCss(option) {
-    var optionValue = typeof newOptions[option] === 'number' ? // From CSS
-    (props.window.getComputedStyle(props.element, '')[__WEBPACK_IMPORTED_MODULE_0_cssprefix__["a" /* default */].getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
-    return typeof optionValue === 'string' ? optionValue.trim() : null;
-  }
-
-  // pseudoElement
-  if (typeof newOptions.pseudoElement === 'string') {
-    options.pseudoElement = newOptions.pseudoElement;
-  }
-
-  // property
-  {
-    var value = parseAsCss('property');
-    if (typeof value === 'string' && value !== 'all' && value !== 'none') {
-      options.property = value;
-    }
-  }
-
-  // duration, delay
-  ['duration', 'delay'].forEach(function (option) {
-    var value = parseAsCss(option);
-    if (typeof value === 'string') {
-      var matches = void 0,
-          timeValue = void 0;
-      if (/^[0\.]+$/.test(value)) {
-        // This is invalid for CSS.
-        options[option] = '0s';
-        props[option] = 0;
-      } else if ((matches = /^(.+?)(m)?s$/.exec(value)) && isFinite(timeValue = parseFloat(matches[1])) && (option !== 'duration' || timeValue >= 0)) {
-        options[option] = '' + timeValue + (matches[2] || '') + 's';
-        props[option] = timeValue * (matches[2] ? 1 : 1000);
-      }
-    }
-  });
-
-  // procToOn, procToOff
-  ['procToOn', 'procToOff'].forEach(function (option) {
-    if (typeof newOptions[option] === 'function') {
-      options[option] = newOptions[option];
-    } else if (newOptions.hasOwnProperty(option) && newOptions[option] == null) {
-      options[option] = void 0;
-    }
-  });
-}
-
-var TimedTransition = function () {
-  /**
-   * Create a `TimedTransition` instance.
-   * @param {Element} element - Target element.
-   * @param {Object} [options] - Options.
-   * @param {boolean} [initOn] - Initial `on`.
-   */
-  function TimedTransition(element, options, initOn) {
-    _classCallCheck(this, TimedTransition);
-
-    var props = {
-      ins: this,
-      options: { // Initial options (not default)
-        pseudoElement: '',
-        property: ''
-      },
-      duration: 0,
-      delay: 0,
-      isOn: !!initOn
-    };
-
-    Object.defineProperty(this, '_id', { value: ++insId });
-    props._id = this._id;
-    insProps[this._id] = props;
-
-    if (!element.nodeType || element.nodeType !== Node.ELEMENT_NODE) {
-      throw new Error('This `element` is not accepted.');
-    }
-    props.element = element;
-    props.window = element.ownerDocument.defaultView;
-    if (!options) {
-      options = {};
-    } else if (!isObject(options)) {
-      throw new Error('Invalid options.');
-    }
-
-    // Default options
-    if (!options.hasOwnProperty('property')) {
-      options.property = 0;
-    }
-    if (!options.hasOwnProperty('duration')) {
-      options.duration = 0;
-    }
-    if (!options.hasOwnProperty('delay')) {
-      options.delay = 0;
-    }
-
-    _setOptions(props, options);
-    finishAll(props);
-  }
-
-  /**
-   * @param {Object} options - New options.
-   * @returns {TimedTransition} Current instance itself.
-   */
-
-
-  _createClass(TimedTransition, [{
-    key: 'setOptions',
-    value: function setOptions(options) {
-      if (isObject(options)) {
-        _setOptions(insProps[this._id], options);
-      }
-      return this;
-    }
-
-    /**
-     * Set `on`.
-     * @param {boolean} [force] - Set `on` it immediately without transition.
-     * @param {Object} [options] - New options.
-     * @returns {TimedTransition} Current instance itself.
-     */
-
-  }, {
-    key: 'on',
-    value: function on(force, options) {
-      if (arguments.length < 2 && typeof force !== 'boolean') {
-        options = force;
-        force = false;
-      }
-
-      this.setOptions(options);
-      _on(insProps[this._id], force);
-      return this;
-    }
-
-    /**
-     * Set 'off'.
-     * @param {boolean} [force] - Set `off` it immediately without transition.
-     * @returns {TimedTransition} Current instance itself.
-     */
-
-  }, {
-    key: 'off',
-    value: function off(force) {
-      _off(insProps[this._id], force);
-      return this;
-    }
-  }, {
-    key: 'state',
-    get: function get() {
-      return insProps[this._id].state;
-    }
-  }, {
-    key: 'element',
-    get: function get() {
-      return insProps[this._id].element;
-    }
-  }, {
-    key: 'isReversing',
-    get: function get() {
-      return insProps[this._id].isReversing;
-    }
-  }, {
-    key: 'pseudoElement',
-    get: function get() {
-      return insProps[this._id].options.pseudoElement;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { pseudoElement: value });
-    }
-  }, {
-    key: 'property',
-    get: function get() {
-      return insProps[this._id].options.property;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { property: value });
-    }
-  }, {
-    key: 'duration',
-    get: function get() {
-      return insProps[this._id].options.duration;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { duration: value });
-    }
-  }, {
-    key: 'delay',
-    get: function get() {
-      return insProps[this._id].options.delay;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { delay: value });
-    }
-  }, {
-    key: 'procToOn',
-    get: function get() {
-      return insProps[this._id].options.procToOn;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { procToOn: value });
-    }
-  }, {
-    key: 'procToOff',
-    get: function get() {
-      return insProps[this._id].options.procToOff;
-    },
-    set: function set(value) {
-      _setOptions(insProps[this._id], { procToOff: value });
-    }
-  }], [{
-    key: 'STATE_STOPPED',
-    get: function get() {
-      return STATE_STOPPED;
-    }
-  }, {
-    key: 'STATE_DELAYING',
-    get: function get() {
-      return STATE_DELAYING;
-    }
-  }, {
-    key: 'STATE_PLAYING',
-    get: function get() {
-      return STATE_PLAYING;
-    }
-  }]);
-
-  return TimedTransition;
-}();
-
-/* harmony default export */ __webpack_exports__["a"] = (TimedTransition);
-
-/***/ }),
-/* 5 */
-/***/ (function(module, exports) {
-
-module.exports = ".plainoverlay,.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-tap-highlight-color:transparent;transform:translateZ(0);box-shadow:0 0 1px transparent}.plainoverlay{position:absolute;left:0;top:0;overflow:hidden;background-color:rgba(136,136,136,0.6);cursor:wait;z-index:9000;-webkit-transition-property:opacity;-moz-transition-property:opacity;-o-transition-property:opacity;transition-property:opacity;-webkit-transition-duration:200ms;-moz-transition-duration:200ms;-o-transition-duration:200ms;transition-duration:200ms;-webkit-transition-timing-function:linear;-moz-transition-timing-function:linear;-o-transition-timing-function:linear;transition-timing-function:linear;opacity:0}.plainoverlay.plainoverlay-show{opacity:1}.plainoverlay.plainoverlay-force{-webkit-transition-property:none;-moz-transition-property:none;-o-transition-property:none;transition-property:none}.plainoverlay.plainoverlay-hide{display:none}.plainoverlay.plainoverlay-doc{position:fixed;left:-200px;top:-200px;overflow:visible;padding:200px;width:100vw;height:100vh}.plainoverlay-body{width:100%;height:100%;display:-webkit-flex;display:flex;-webkit-justify-content:center;justify-content:center;-webkit-align-items:center;align-items:center}.plainoverlay.plainoverlay-doc .plainoverlay-body{width:100vw;height:100vh}.plainoverlay-builtin-face{width:90%;height:90%;max-width:320px;max-height:320px}#plainoverlay-builtin-face-defs{width:0;height:0;position:fixed;left:-100px;top:-100px}#plainoverlay-builtin-face_01 circle,#plainoverlay-builtin-face_01 path{fill:none;stroke-width:40px}#plainoverlay-builtin-face_01 circle{stroke:#fff;opacity:0.25}#plainoverlay-builtin-face_01 path{stroke-linecap:round}.plainoverlay:not(.plainoverlay-hide) .plainoverlay-builtin-face_01{-webkit-animation-name:plainoverlay-builtin-face_01-spin;-moz-animation-name:plainoverlay-builtin-face_01-spin;-ms-animation-name:plainoverlay-builtin-face_01-spin;-o-animation-name:plainoverlay-builtin-face_01-spin;animation-name:plainoverlay-builtin-face_01-spin;-webkit-animation-duration:1s;-moz-animation-duration:1s;-ms-animation-duration:1s;-o-animation-duration:1s;animation-duration:1s;-webkit-animation-timing-function:linear;-moz-animation-timing-function:linear;-ms-animation-timing-function:linear;-o-animation-timing-function:linear;animation-timing-function:linear;-webkit-animation-iteration-count:infinite;-moz-animation-iteration-count:infinite;-ms-animation-iteration-count:infinite;-o-animation-iteration-count:infinite;animation-iteration-count:infinite}@-moz-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-webkit-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-o-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@-ms-keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}@keyframes plainoverlay-builtin-face_01-spin{from{-webkit-transform:rotate(0deg);-moz-transform:rotate(0deg);-ms-transform:rotate(0deg);-o-transform:rotate(0deg);transform:rotate(0deg)}to{-webkit-transform:rotate(360deg);-moz-transform:rotate(360deg);-ms-transform:rotate(360deg);-o-transform:rotate(360deg);transform:rotate(360deg)}}";
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg id=\"plainoverlay-builtin-face-defs\" xmlns=\"http://www.w3.org/2000/svg\" version=\"1.1\"><defs><linearGradient id=\"plainoverlay-builtin-face_01-grad\" gradientUnits=\"userSpaceOnUse\" x1=\"160\" y1=\"20\" x2=\"300\" y2=\"160\"><stop offset=\"0\" stop-color=\"#fff\" stop-opacity=\"0\"/><stop offset=\"0.2\" stop-color=\"#fff\" stop-opacity=\"0.1\"/><stop offset=\"1\" stop-color=\"#fff\" stop-opacity=\"1\"/></linearGradient><g id=\"plainoverlay-builtin-face_01\"><circle cx=\"160\" cy=\"160\" r=\"140\"/><path d=\"M160 20a140 140 0 0 1 140 140\" stroke=\"url('#plainoverlay-builtin-face_01-grad')\"/></g></defs></svg>";
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-face_01\" version=\"1.1\" viewBox=\"0 0 320 320\"><use xlink:href=\"#plainoverlay-builtin-face_01\"/></svg>";
-
 /***/ })
-/******/ ])["default"];
+
+/******/ })["default"];
 //# sourceMappingURL=plain-overlay.js.map

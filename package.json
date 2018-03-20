@@ -17,10 +17,10 @@
     "window"
   ],
   "main": "plain-overlay.min.js",
-  "module": "plain-overlay.esm.js",
-  "jsnext:main": "plain-overlay.esm.js",
+  "module": "plain-overlay.mjs",
+  "jsnext:main": "plain-overlay.mjs",
   "files": [
-    "plain-overlay?(-limit)?(-sync)?(-debug).@(min|esm).js",
+    "plain-overlay?(-limit)?(-sync)?(-debug).@(min.js|mjs)",
     "bower.json"
   ],
   "devDependencies": {
