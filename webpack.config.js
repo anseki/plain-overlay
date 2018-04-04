@@ -49,12 +49,6 @@ module.exports = {
   resolve: {mainFields: ['module', 'jsnext:main', 'browser', 'main']},
   module: {
     rules: [
-      // https://github.com/webpack/webpack/issues/6796
-      // For nested importing
-      {
-        test: path.resolve(__dirname, 'node_modules'),
-        resolve: {mainFields: ['module', 'jsnext:main', 'browser', 'main']}
-      },
       {
         resource: {and: [SRC_DIR_PATH, /\.js$/]},
         use: [
@@ -65,7 +59,7 @@ module.exports = {
               procedure(content) {
                 if (this.resourcePath === ENTRY_PATH) {
                   STATIC_ESM_FILES.push(
-                    {fileName: `${BUILD_BASE_NAME}${BUILD_MODE ? '' : '-debug'}.mjs`, content});
+                    {fileName: `${BUILD_BASE_NAME}${BUILD_MODE ? '' : '-debug'}.esm.js`, content});
                 }
                 return content;
               }
