@@ -46,7 +46,6 @@ module.exports = {
     libraryTarget: 'var',
     libraryExport: 'default'
   },
-  resolve: {mainFields: ['module', 'jsnext:main', 'browser', 'main']},
   module: {
     rules: [
       {

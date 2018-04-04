@@ -72,12 +72,12 @@ var PlainOverlay =
 /************************************************************************/
 /******/ ({
 
-/***/ "./node_modules/anim-event/anim-event.mjs":
-/*!************************************************!*\
-  !*** ./node_modules/anim-event/anim-event.mjs ***!
-  \************************************************/
+/***/ "./node_modules/anim-event/anim-event.esm.js":
+/*!***************************************************!*\
+  !*** ./node_modules/anim-event/anim-event.esm.js ***!
+  \***************************************************/
 /*! exports provided: default */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -193,12 +193,12 @@ var AnimEvent = {
 
 /***/ }),
 
-/***/ "./node_modules/cssprefix/cssprefix.mjs":
-/*!**********************************************!*\
-  !*** ./node_modules/cssprefix/cssprefix.mjs ***!
-  \**********************************************/
+/***/ "./node_modules/cssprefix/cssprefix.esm.js":
+/*!*************************************************!*\
+  !*** ./node_modules/cssprefix/cssprefix.esm.js ***!
+  \*************************************************/
 /*! exports provided: default */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -379,12 +379,12 @@ var CSSPrefix = {
 
 /***/ }),
 
-/***/ "./node_modules/m-class-list/m-class-list.mjs":
-/*!****************************************************!*\
-  !*** ./node_modules/m-class-list/m-class-list.mjs ***!
-  \****************************************************/
+/***/ "./node_modules/m-class-list/m-class-list.esm.js":
+/*!*******************************************************!*\
+  !*** ./node_modules/m-class-list/m-class-list.esm.js ***!
+  \*******************************************************/
 /*! exports provided: default */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
@@ -502,16 +502,16 @@ mClassList.methodChain = true;
 
 /***/ }),
 
-/***/ "./node_modules/timed-transition/timed-transition.mjs":
-/*!************************************************************!*\
-  !*** ./node_modules/timed-transition/timed-transition.mjs ***!
-  \************************************************************/
+/***/ "./node_modules/timed-transition/timed-transition.esm.js":
+/*!***************************************************************!*\
+  !*** ./node_modules/timed-transition/timed-transition.esm.js ***!
+  \***************************************************************/
 /*! exports provided: default */
-/***/ (function(__webpack_module__, __webpack_exports__, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.mjs");
+/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.esm.js");
 /* ================================================
         DON'T MANUALLY EDIT THIS FILE
 ================================================ */
@@ -1063,10 +1063,10 @@ module.exports = "<svg class=\"plainoverlay-builtin-face plainoverlay-builtin-fa
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.mjs");
-/* harmony import */ var anim_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! anim-event */ "./node_modules/anim-event/anim-event.mjs");
-/* harmony import */ var m_class_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! m-class-list */ "./node_modules/m-class-list/m-class-list.mjs");
-/* harmony import */ var timed_transition__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! timed-transition */ "./node_modules/timed-transition/timed-transition.mjs");
+/* harmony import */ var cssprefix__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! cssprefix */ "./node_modules/cssprefix/cssprefix.esm.js");
+/* harmony import */ var anim_event__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! anim-event */ "./node_modules/anim-event/anim-event.esm.js");
+/* harmony import */ var m_class_list__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! m-class-list */ "./node_modules/m-class-list/m-class-list.esm.js");
+/* harmony import */ var timed_transition__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! timed-transition */ "./node_modules/timed-transition/timed-transition.esm.js");
 /* harmony import */ var _default_scss__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./default.scss */ "./src/default.scss");
 /* harmony import */ var _default_scss__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(_default_scss__WEBPACK_IMPORTED_MODULE_4__);
 /* harmony import */ var _face_html_tag_defs__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./face.html?tag=defs */ "./src/face.html?tag=defs");
