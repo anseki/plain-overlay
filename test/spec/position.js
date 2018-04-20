@@ -1,4 +1,3 @@
-
 describe('position()', function() {
   'use strict';
 
@@ -412,7 +411,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 20, borderTop = 20;
+      borderLeft = 20,
+      borderTop = 20;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -445,7 +445,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 20, borderTop = 40;
+      borderLeft = 20,
+      borderTop = 40;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -478,7 +479,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 20, borderTop = 45;
+      borderLeft = 20,
+      borderTop = 45;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -511,7 +513,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 60, borderTop = 20;
+      borderLeft = 60,
+      borderTop = 20;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -544,7 +547,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 60, borderTop = 40;
+      borderLeft = 60,
+      borderTop = 40;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -577,7 +581,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 60, borderTop = 45;
+      borderLeft = 60,
+      borderTop = 45;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -610,7 +615,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 65, borderTop = 20;
+      borderLeft = 65,
+      borderTop = 20;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -643,7 +649,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 65, borderTop = 40;
+      borderLeft = 65,
+      borderTop = 40;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);
@@ -676,7 +683,8 @@ describe('position()', function() {
       bBoxTarget = getBBox(target, window),
       bBoxOverlay, overlayCmpStyle,
 
-      borderLeft = 65, borderTop = 45;
+      borderLeft = 65,
+      borderTop = 45;
 
     overlay.show();
     bBoxOverlay = getBBox(props.elmOverlay, props.window);

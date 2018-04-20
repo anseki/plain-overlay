@@ -1,4 +1,3 @@
-
 describe('scroll', function() {
   'use strict';
 
@@ -26,7 +25,8 @@ describe('scroll', function() {
 
   // scrollLeft/Top need shown display
   function setFaceScroll(overlay, scroll) {
-    var face = overlay.face, elmOverlay = insProps[overlay._id].elmOverlay,
+    var face = overlay.face,
+      elmOverlay = insProps[overlay._id].elmOverlay,
       display = elmOverlay.style.display;
     elmOverlay.style.display = 'block';
     face.scrollLeft = scroll.left;
@@ -36,8 +36,10 @@ describe('scroll', function() {
 
   // scrollLeft/Top need shown display
   function getFaceScroll(overlay) {
-    var face = overlay.face, elmOverlay = insProps[overlay._id].elmOverlay,
-      display = elmOverlay.style.display, scroll;
+    var face = overlay.face,
+      elmOverlay = insProps[overlay._id].elmOverlay,
+      display = elmOverlay.style.display,
+      scroll;
     elmOverlay.style.display = 'block';
     scroll = {left: face.scrollLeft, top: face.scrollTop};
     elmOverlay.style.display = display;

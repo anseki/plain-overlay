@@ -1,4 +1,3 @@
-
 describe('disableDocBars()', function() {
   'use strict';
 
@@ -47,7 +46,8 @@ describe('disableDocBars()', function() {
   }
 
   function addTest(caseKey, addMargin, iframeMargin) {
-    var barCase = BAR_CASES[caseKey], label = caseKey + (addMargin ? ' +margin' : '');
+    var barCase = BAR_CASES[caseKey],
+      label = caseKey + (addMargin ? ' +margin' : '');
     it(label, function(done) {
       addTarget(label, addMargin ? barCase.concat('margin') : barCase, function(iframe) {
         var overlay = PlainOverlay.show(iframe),

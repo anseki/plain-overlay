@@ -1,4 +1,3 @@
-
 describe('resizeTarget()', function() {
   'use strict';
 
@@ -6,7 +5,8 @@ describe('resizeTarget()', function() {
     PlainOverlay, insProps, pageDone,
     resizeTarget,
     TOLERANCE = 0.5,
-    WIDTH = 320, HEIGHT = 160;
+    WIDTH = 320,
+    HEIGHT = 160;
 
   beforeAll(function(beforeDone) {
     loadPage('spec/size.html', function(pageWindow, pageDocument, pageBody, done) {

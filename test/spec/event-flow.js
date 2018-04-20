@@ -1,4 +1,3 @@
-
 describe('event-flow', function() {
   'use strict';
 

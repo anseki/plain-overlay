@@ -1,4 +1,3 @@
-
 describe('avoidSelect()', function() {
   'use strict';
 

@@ -1,0 +1,6 @@
+*.min.js
+*.esm.js
+test/plain-overlay-limit-sync.js
+test/plain-overlay-limit.js
+test/plain-overlay-sync.js
+test/plain-overlay.js

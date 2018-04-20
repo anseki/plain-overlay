@@ -1,4 +1,3 @@
-
 describe('sync-mode', function() {
   'use strict';
 

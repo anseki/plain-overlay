@@ -1,5 +1,6 @@
 /* exported utils */
 /* eslint-env browser */
+/* eslint no-var: "off", prefer-arrow-callback: "off", object-shorthand: "off" */
 
 var utils = (function() {
   'use strict';
@@ -13,7 +14,10 @@ var utils = (function() {
    */
   function makeState(instances, states, cbChange, cbReady) {
     var SAVE_PROP_NAMES = ['onShow', 'onHide', 'onBeforeShow', 'onBeforeHide'],
-      timer, waitCount = 0, instancesLen, changed = [], saveProps = [], nomoreChange;
+      waitCount = 0,
+      changed = [],
+      saveProps = [],
+      timer, instancesLen, nomoreChange;
 
     function doFnc() {
       clearTimeout(timer);

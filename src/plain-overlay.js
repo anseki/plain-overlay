@@ -28,7 +28,10 @@ const
   STYLE_CLASS_BODY = `${APP_ID}-body`,
   FACE_DEFS_ELEMENT_ID = `${APP_ID}-builtin-face-defs`,
 
-  STATE_HIDDEN = 0, STATE_SHOWING = 1, STATE_SHOWN = 2, STATE_HIDING = 3,
+  STATE_HIDDEN = 0,
+  STATE_SHOWING = 1,
+  STATE_SHOWN = 2,
+  STATE_HIDING = 3,
   // DURATION = 2500, // COPY: default.scss
   DURATION = 200, // COPY: default.scss
   TOLERANCE = 0.5,
@@ -41,7 +44,8 @@ const
   IS_GECKO = 'MozAppearance' in document.documentElement.style, // [DEBUG/]
 
   isObject = (() => {
-    const toString = {}.toString, fnToString = {}.hasOwnProperty.toString,
+    const toString = {}.toString,
+      fnToString = {}.hasOwnProperty.toString,
       objFnString = fnToString.call(Object);
     return obj => {
       let proto, constr;
@@ -85,7 +89,8 @@ STATE_TEXT[STATE_HIDING] = 'STATE_HIDING';
 function forceReflow(target) {
   // Trident and Blink bug (reflow like `offsetWidth` can't update)
   setTimeout(() => {
-    const parent = target.parentNode, next = target.nextSibling;
+    const parent = target.parentNode,
+      next = target.nextSibling;
     // It has to be removed first for Blink.
     parent.insertBefore(parent.removeChild(target), next);
   }, 0);
@@ -158,27 +163,21 @@ window.getBBox = getBBox; // [DEBUG/]
 
 function scrollLeft(element, isDoc, window, value) {
   if (isDoc) {
-    const target = window;
-    if (value != null) { target.scrollTo(value, target.pageYOffset); }
-    return target.pageXOffset;
-  } else {
-    const target = element;
-    if (value != null) { target.scrollLeft = value; }
-    return target.scrollLeft;
+    if (value != null) { window.scrollTo(value, window.pageYOffset); }
+    return window.pageXOffset;
   }
+  if (value != null) { element.scrollLeft = value; }
+  return element.scrollLeft;
 }
 window.scrollLeft = scrollLeft; // [DEBUG/]
 
 function scrollTop(element, isDoc, window, value) {
   if (isDoc) {
-    const target = window;
-    if (value != null) { target.scrollTo(target.pageXOffset, value); }
-    return target.pageYOffset;
-  } else {
-    const target = element;
-    if (value != null) { target.scrollTop = value; }
-    return target.scrollTop;
+    if (value != null) { window.scrollTo(window.pageXOffset, value); }
+    return window.pageYOffset;
   }
+  if (value != null) { element.scrollTop = value; }
+  return element.scrollTop;
 }
 window.scrollTop = scrollTop; // [DEBUG/]
 
@@ -191,8 +190,10 @@ function resizeTarget(props, width, height) {
 
   const targetBodyCmpStyle = props.window.getComputedStyle(elmTargetBody, ''),
     boxSizing = targetBodyCmpStyle.boxSizing,
-    includeProps = boxSizing === 'border-box' ? [] :
-      boxSizing === 'padding-box' ? ['border'] : ['border', 'padding'], // content-box
+    includeProps =
+      boxSizing === 'border-box' ? [] :
+      boxSizing === 'padding-box' ? ['border'] :
+      ['border', 'padding'], // content-box
 
     PROP_NAMES = {
       border: {
@@ -212,7 +213,7 @@ function resizeTarget(props, width, height) {
         });
       });
       return values;
-    }, {width: width, height: height});
+    }, {width, height});
 
   // Since the `width` and `height` might change each other, fix both.
   setStyle(elmTargetBody, {
@@ -245,20 +246,20 @@ window.resizeTarget = resizeTarget; // [DEBUG/]
 // Trident and Edge bug, width and height are interchanged.
 function getDocClientWH(props) {
   const elmTarget = props.elmTarget,
-    width = elmTarget.clientWidth, height = elmTarget.clientHeight;
+    width = elmTarget.clientWidth,
+    height = elmTarget.clientHeight;
   if (IS_TRIDENT || IS_EDGE) {
     const targetBodyCmpStyle = props.window.getComputedStyle(props.elmTargetBody, ''),
       wMode = targetBodyCmpStyle.writingMode || targetBodyCmpStyle['writing-mode'], // Trident bug
       direction = targetBodyCmpStyle.direction;
     return wMode === 'tb-rl' || wMode === 'bt-rl' || wMode === 'tb-lr' || wMode === 'bt-lr' ||
-        IS_EDGE && (
-          direction === 'ltr' && (wMode === 'vertical-rl' || wMode === 'vertical-lr') ||
-          direction === 'rtl' && (wMode === 'vertical-rl' || wMode === 'vertical-lr')) ?
-      {width: height, height: width} : // interchange
-      {width: width, height: height};
-  } else {
-    return {width: width, height: height};
+      IS_EDGE && (
+        direction === 'ltr' && (wMode === 'vertical-rl' || wMode === 'vertical-lr') ||
+        direction === 'rtl' && (wMode === 'vertical-rl' || wMode === 'vertical-lr'))
+      ? {width: height, height: width} : // interchange
+      {width, height};
   }
+  return {width, height};
 }
 window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
@@ -280,16 +281,15 @@ function restoreScroll(props, element) {
       }
       return false;
     })
-    ? (traceLog.push('DONE:ELEMENT', `_id:${props._id}`, '</restoreScroll>'), true) : // [DEBUG/]
+      ? (traceLog.push('DONE:ELEMENT', `_id:${props._id}`, '</restoreScroll>'), true) : // [DEBUG/]
       (traceLog.push('NotInTarget', `_id:${props._id}`, '</restoreScroll>'), false) // [DEBUG/]
-    ;
-  } else {
-    props.savedElementsScroll.forEach(elementScroll => {
-      scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
-    });
-    traceLog.push('DONE:ALL', `_id:${props._id}`, '</restoreScroll>'); // [DEBUG/]
-    return true;
+    ; // eslint-disable-line semi-style
   }
+  props.savedElementsScroll.forEach(elementScroll => {
+    scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
+  });
+  traceLog.push('DONE:ALL', `_id:${props._id}`, '</restoreScroll>'); // [DEBUG/]
+  return true;
 }
 
 function restoreAccKeys(props) {
@@ -356,10 +356,10 @@ function selContainsNode(selection, node, partialContainment) {
         }
       }
     }
-    if (partialContainment ?
-        selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 &&
+    if (partialContainment
+      ? selRange.compareBoundaryPoints(Range.START_TO_END, nodeRange) >= 0 &&
         selRange.compareBoundaryPoints(Range.END_TO_START, nodeRange) <= 0 :
-        selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 &&
+      selRange.compareBoundaryPoints(Range.START_TO_START, nodeRange) < 0 &&
         selRange.compareBoundaryPoints(Range.END_TO_END, nodeRange) > 0) {
       return true;
     }
@@ -394,7 +394,8 @@ function avoidSelect(props) {
   const selection = ('getSelection' in window ? props.window : props.document).getSelection();
   // [DEBUG]
   if (selection.rangeCount) {
-    let start = selection.anchorNode, end = selection.focusNode;
+    let start = selection.anchorNode,
+      end = selection.focusNode;
     if (start && start.nodeType === Node.TEXT_NODE) { start = start.parentNode; }
     if (end && end.nodeType === Node.TEXT_NODE) { end = end.parentNode; }
     traceLog.push(
@@ -410,13 +411,13 @@ function avoidSelect(props) {
     traceLog.push('NoRange');
   }
   // [/DEBUG]
-  if (selection.rangeCount && (props.isDoc ?
-      !nodeContainsSel(props.elmOverlayBody, selection) :
-      (selection.containsNode &&
-          (!IS_BLINK || !selection.isCollapsed) ?  // Blink bug, fails with empty string.
-        selection.containsNode(props.elmTargetBody, true) :
-        selContainsNode(selection, props.elmTargetBody, true))
-      )) {
+  if (selection.rangeCount && (props.isDoc
+    ? !nodeContainsSel(props.elmOverlayBody, selection) :
+    (selection.containsNode &&
+          (!IS_BLINK || !selection.isCollapsed) // Blink bug, fails with empty string.
+      ? selection.containsNode(props.elmTargetBody, true) :
+      selContainsNode(selection, props.elmTargetBody, true))
+  )) {
     try {
       selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
     } catch (error) { /* ignore */ }
@@ -452,12 +453,14 @@ function barTop(wMode, direction) {
 window.barTop = barTop; // [DEBUG/]
 
 function disableDocBars(props) {
-  const elmTarget = props.elmTarget, elmTargetBody = props.elmTargetBody,
+  const elmTarget = props.elmTarget,
+    elmTargetBody = props.elmTargetBody,
     targetBodyRect = elmTargetBody.getBoundingClientRect();
 
   // Get size of each scrollbar.
   let clientWH = getDocClientWH(props),
-    barV = -clientWH.width, barH = -clientWH.height; // elmTarget.clientWidth/clientHeight
+    barV = -clientWH.width,
+    barH = -clientWH.height; // elmTarget.clientWidth/clientHeight
   setStyle(elmTarget, {overflow: 'hidden'}, props.savedStyleTarget);
   clientWH = getDocClientWH(props);
   barV += clientWH.width;
@@ -490,10 +493,9 @@ function disableDocBars(props) {
     // `overflow: 'hidden'` might change scroll.
     restoreScroll(props, elmTarget);
     return true;
-  } else {
-    restoreStyle(elmTarget, props.savedStyleTarget, ['overflow']);
-    return false;
   }
+  restoreStyle(elmTarget, props.savedStyleTarget, ['overflow']);
+  return false;
 }
 window.disableDocBars = disableDocBars; // [DEBUG/]
 
@@ -520,7 +522,7 @@ function position(props, targetBodyBBox) {
       width: `${targetBodyBBox.width - borders.left - borders.right}px`,
       height: `${targetBodyBBox.height - borders.top - borders.bottom}px`
     },
-    reValue = /^([\d\.]+)(px|%)$/;
+    reValue = /^([\d.]+)(px|%)$/;
 
   // border-radius
   [
@@ -531,7 +533,8 @@ function position(props, targetBodyBBox) {
   ].forEach(corner => {
     const prop = CSSPrefix.getName(`border${corner.prop}Radius`),
       values = targetBodyCmpStyle[prop].split(' ');
-    let h = values[0], v = values[1] || values[0],
+    let h = values[0],
+      v = values[1] || values[0],
       matches = reValue.exec(h);
     h = !matches ? 0 :
       matches[2] === 'px' ? +matches[1] :
@@ -583,13 +586,13 @@ function finishShowing(props) {
       propValue = CSSPrefix.getValue('filter', `blur(${props.options.blur}px)`);
     if (propValue) { // undefined if no propName
       // Array of {element: element, savedStyle: {}}
-      const filterElements = props.isDoc ?
-        Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
-            childNode.nodeType === Node.ELEMENT_NODE &&
+      const filterElements = props.isDoc
+        ? Array.prototype.slice.call(props.elmTargetBody.childNodes).filter(childNode =>
+          childNode.nodeType === Node.ELEMENT_NODE &&
             childNode !== props.elmOverlay &&
             !mClassList(childNode).contains(STYLE_CLASS) &&
             childNode.id !== FACE_DEFS_ELEMENT_ID)
-          .map(element => ({element: element, savedStyle: {}})) :
+          .map(element => ({element, savedStyle: {}})) :
         [{element: props.elmTargetBody, savedStyle: {}}];
 
       filterElements.forEach(filterElement => {
@@ -608,10 +611,10 @@ function finishShowing(props) {
 }
 
 function finishHiding(props
-    /* [DISABLE-SYNC/]
-    , sync
-    [DISABLE-SYNC/] */
-    ) {
+  /* [DISABLE-SYNC/]
+  , sync
+  [DISABLE-SYNC/] */
+) {
   // sync-mode (`sync` is `true`): Skip restoring active element and finish all immediately.
   traceLog.push('<finishHiding>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   /* [DISABLE-SYNC/]
@@ -628,10 +631,10 @@ function finishHiding(props
   props.savedElementsAccKeys = [];
 
   if (
-      /* [DISABLE-SYNC/]
-      !sync &&
-      [DISABLE-SYNC/] */
-      props.isDoc && props.activeElement) {
+    /* [DISABLE-SYNC/]
+    !sync &&
+    [DISABLE-SYNC/] */
+    props.isDoc && props.activeElement) {
     // props.state must be STATE_HIDDEN for avoiding focus.
     const stateSave = props.state;
     props.state = STATE_HIDDEN;
@@ -707,8 +710,7 @@ function show(props, force) {
       const isDoc = fromDoc && i === 0;
       if (elementCanScroll(element, isDoc)) {
         elementsScroll.push({
-          element: element,
-          isDoc: isDoc,
+          element, isDoc,
           left: scrollLeft(element, isDoc, props.window),
           top: scrollTop(element, isDoc, props.window)
         });
@@ -796,13 +798,14 @@ function show(props, force) {
 /**
  * @param {props} props - `props` of instance.
  * @param {boolean} [force] - Skip effect.
+ * @param {boolean} [sync] - sync-mode
  * @returns {void}
  */
 function hide(props, force
-    /* [DISABLE-SYNC/]
-    , sync
-    [DISABLE-SYNC/] */
-    ) {
+  /* [DISABLE-SYNC/]
+  , sync
+  [DISABLE-SYNC/] */
+) {
   // sync-mode (both `force` and `sync` are `true`)
   traceLog.push('<hide>', `_id:${props._id}`, `state:${STATE_TEXT[props.state]}`); // [DEBUG/]
   traceLog.push(`force:${!!force}`); // [DEBUG/]
@@ -843,7 +846,7 @@ function hide(props, force
       /* [DISABLE-SYNC/]
       , sync
       [DISABLE-SYNC/] */
-      );
+    );
   }
   traceLog.push(`_id:${props._id}`, '</hide>'); // [DEBUG/]
 }
@@ -909,7 +912,9 @@ function setOptions(props, newOptions) {
 }
 
 function scroll(props, target, dirLeft, value) {
-  let isDoc, curValue;
+  let isDoc,
+    // To return undefined
+    curValue; // eslint-disable-line prefer-const
 
   if (target) {
     const targetElements = getTargetElements(props);
@@ -921,8 +926,8 @@ function scroll(props, target, dirLeft, value) {
   }
 
   const elementScroll = value != null && props.savedElementsScroll &&
-    (props.savedElementsScroll.find ?
-      props.savedElementsScroll.find(elementScroll => elementScroll.element === target) :
+    (props.savedElementsScroll.find
+      ? props.savedElementsScroll.find(elementScroll => elementScroll.element === target) :
       (elementsScroll => {
         let found;
         elementsScroll.some(elementScroll => {
@@ -963,9 +968,9 @@ class PlainOverlay {
           const nodeName = target.nodeName.toLowerCase();
           validElement =
             nodeName === 'body' ? target.ownerDocument.documentElement : // documentElement of target body
-            nodeName === 'iframe' || nodeName === 'frame' ?
-              target.contentDocument.documentElement : // documentElement of target frame
-            target;
+            nodeName === 'iframe' || nodeName === 'frame'
+              ? target.contentDocument.documentElement : // documentElement of target frame
+              target;
         }
         if (!validElement) { throw new Error('This element is not accepted.'); }
       } else if (target === target.window) {
@@ -1064,8 +1069,8 @@ class PlainOverlay {
       if (props.state !== STATE_HIDDEN && !props.blockingDisabled &&
           restoreScroll(props,
             props.isDoc &&
-                (target === props.window || target === props.document || target === props.elmTargetBody) ?
-              props.elmTarget : target)) {
+                (target === props.window || target === props.document || target === props.elmTargetBody)
+              ? props.elmTarget : target)) {
         traceLog.push('AVOIDED'); // [DEBUG/]
         event.preventDefault();
         event.stopImmediatePropagation();
@@ -1192,19 +1197,20 @@ class PlainOverlay {
   /**
    * Hide the overlay.
    * @param {boolean} [force] - Hide it immediately without effect.
+   * @param {boolean} [sync] - sync-mode
    * @returns {PlainOverlay} Current instance itself.
    */
   hide(force
-      /* [DISABLE-SYNC/]
-      , sync
-      [DISABLE-SYNC/] */
-      ) {
+    /* [DISABLE-SYNC/]
+    , sync
+    [DISABLE-SYNC/] */
+  ) {
     // sync-mode (both `force` and `sync` are `true`)
     hide(insProps[this._id], force
       /* [DISABLE-SYNC/]
       , sync
       [DISABLE-SYNC/] */
-      );
+    );
     return this;
   }
 

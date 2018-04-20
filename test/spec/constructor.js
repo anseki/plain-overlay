@@ -1,4 +1,3 @@
-
 describe('constructor', function() {
   'use strict';
 

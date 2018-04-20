@@ -1,4 +1,3 @@
-
 describe('disableAccKeys()', function() {
   'use strict';
 

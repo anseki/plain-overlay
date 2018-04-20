@@ -1,4 +1,3 @@
-
 describe('focus', function() {
   'use strict';
 
@@ -203,7 +202,7 @@ describe('focus', function() {
 
                   '<avoidSelect>', '_id:' + overlayElm._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'start:P#pInDoc1(0),end:P#pInDoc1(0),isCollapsed:true' :
-                    'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
+                  'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
                   IS_TRIDENT ? 'NoSelection' : 'DONE',
                   '_id:' + overlayElm._id, '</avoidSelect>',
 
@@ -530,7 +529,7 @@ describe('focus', function() {
 
                   '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'start:P#pInDoc1(0),end:P#pInDoc1(0),isCollapsed:true' :
-                    'start:BODY(3),end:BODY(3),isCollapsed:true'
+                  'start:BODY(3),end:BODY(3),isCollapsed:true'
                 ].concat(
                   IS_EDGE ? [
                     '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
@@ -557,7 +556,7 @@ describe('focus', function() {
                     '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
                     'element:BODY',
                     'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
-                    '_id:' + overlayDoc._id, '</focusListener>',
+                    '_id:' + overlayDoc._id, '</focusListener>'
                   ] : []
                 ).concat([
                   '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
@@ -667,7 +666,7 @@ describe('focus', function() {
 
                   '<avoidSelect>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
                   IS_TRIDENT ? 'start:P#pInDoc1(0),end:P#pInDoc1(0),isCollapsed:true' :
-                    'start:DIV#target(3),end:DIV#target(3),isCollapsed:true',
+                  'start:DIV#target(3),end:DIV#target(3),isCollapsed:true'
                 ].concat(
                   IS_EDGE ? [
                     '<focusListener>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
@@ -694,7 +693,7 @@ describe('focus', function() {
                     '<avoidFocus>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
                     'element:BODY',
                     'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
-                    '_id:' + overlayDoc._id, '</focusListener>',
+                    '_id:' + overlayDoc._id, '</focusListener>'
                   ] : []
                 ).concat([
                   '<finishShowing>', '_id:' + overlayDoc._id, 'state:STATE_SHOWING',
@@ -728,7 +727,7 @@ describe('focus', function() {
                   '<finishHiding>', '_id:' + overlayDoc._id, 'state:STATE_HIDING',
 
                   '[SAVE1]state:STATE_HIDDEN',
-                  'focusListener:REMOVE', // ==== REMOVED LISTENER START
+                  'focusListener:REMOVE' // ==== REMOVED LISTENER START
                   // overlayElm gets the event
                 ]).concat(
                   // focus event is fired after

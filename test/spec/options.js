@@ -1,4 +1,3 @@
-
 describe('options', function() {
   'use strict';
 

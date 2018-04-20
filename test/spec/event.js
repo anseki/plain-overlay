@@ -1,4 +1,3 @@
-
 describe('event', function() {
   'use strict';
 

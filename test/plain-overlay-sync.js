@@ -1243,35 +1243,29 @@ window.getBBox = getBBox; // [DEBUG/]
 
 function scrollLeft(element, isDoc, window, value) {
   if (isDoc) {
-    var target = window;
     if (value != null) {
-      target.scrollTo(value, target.pageYOffset);
+      window.scrollTo(value, window.pageYOffset);
     }
-    return target.pageXOffset;
-  } else {
-    var _target = element;
-    if (value != null) {
-      _target.scrollLeft = value;
-    }
-    return _target.scrollLeft;
+    return window.pageXOffset;
   }
+  if (value != null) {
+    element.scrollLeft = value;
+  }
+  return element.scrollLeft;
 }
 window.scrollLeft = scrollLeft; // [DEBUG/]
 
 function scrollTop(element, isDoc, window, value) {
   if (isDoc) {
-    var target = window;
     if (value != null) {
-      target.scrollTo(target.pageXOffset, value);
+      window.scrollTo(window.pageXOffset, value);
     }
-    return target.pageYOffset;
-  } else {
-    var _target2 = element;
-    if (value != null) {
-      _target2.scrollTop = value;
-    }
-    return _target2.scrollTop;
+    return window.pageYOffset;
   }
+  if (value != null) {
+    element.scrollTop = value;
+  }
+  return element.scrollTop;
 }
 window.scrollTop = scrollTop; // [DEBUG/]
 
@@ -1345,9 +1339,8 @@ function getDocClientWH(props) {
     direction = targetBodyCmpStyle.direction;
     return wMode === 'tb-rl' || wMode === 'bt-rl' || wMode === 'tb-lr' || wMode === 'bt-lr' || IS_EDGE && (direction === 'ltr' && (wMode === 'vertical-rl' || wMode === 'vertical-lr') || direction === 'rtl' && (wMode === 'vertical-rl' || wMode === 'vertical-lr')) ? { width: height, height: width } : // interchange
     { width: width, height: height };
-  } else {
-    return { width: width, height: height };
   }
+  return { width: width, height: height };
 }
 window.getDocClientWH = getDocClientWH; // [DEBUG/]
 
@@ -1370,14 +1363,13 @@ function restoreScroll(props, element) {
       return false;
     }) ? (traceLog.push('DONE:ELEMENT', '_id:' + props._id, '</restoreScroll>'), true) : ( // [DEBUG/]
     traceLog.push('NotInTarget', '_id:' + props._id, '</restoreScroll>'), false) // [DEBUG/]
-    ;
-  } else {
-    props.savedElementsScroll.forEach(function (elementScroll) {
-      scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
-    });
-    traceLog.push('DONE:ALL', '_id:' + props._id, '</restoreScroll>'); // [DEBUG/]
-    return true;
+    ; // eslint-disable-line semi-style
   }
+  props.savedElementsScroll.forEach(function (elementScroll) {
+    scrollElement(elementScroll.element, elementScroll.isDoc, elementScroll.left, elementScroll.top);
+  });
+  traceLog.push('DONE:ALL', '_id:' + props._id, '</restoreScroll>'); // [DEBUG/]
+  return true;
 }
 
 function restoreAccKeys(props) {
@@ -1486,8 +1478,8 @@ function avoidSelect(props) {
     traceLog.push('NoRange');
   }
   // [/DEBUG]
-  if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode && (!IS_BLINK || !selection.isCollapsed) ? // Blink bug, fails with empty string.
-  selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
+  if (selection.rangeCount && (props.isDoc ? !nodeContainsSel(props.elmOverlayBody, selection) : selection.containsNode && (!IS_BLINK || !selection.isCollapsed) // Blink bug, fails with empty string.
+  ? selection.containsNode(props.elmTargetBody, true) : selContainsNode(selection, props.elmTargetBody, true))) {
     try {
       selection.removeAllRanges(); // Trident bug?, `Error:800a025e` comes sometime
     } catch (error) {/* ignore */}
@@ -1572,10 +1564,9 @@ function disableDocBars(props) {
     // `overflow: 'hidden'` might change scroll.
     restoreScroll(props, elmTarget);
     return true;
-  } else {
-    restoreStyle(elmTarget, props.savedStyleTarget, ['overflow']);
-    return false;
   }
+  restoreStyle(elmTarget, props.savedStyleTarget, ['overflow']);
+  return false;
 }
 window.disableDocBars = disableDocBars; // [DEBUG/]
 
@@ -1600,7 +1591,7 @@ function _position(props, targetBodyBBox) {
     width: targetBodyBBox.width - borders.left - borders.right + 'px',
     height: targetBodyBBox.height - borders.top - borders.bottom + 'px'
   },
-      reValue = /^([\d\.]+)(px|%)$/;
+      reValue = /^([\d.]+)(px|%)$/;
 
   // border-radius
   [{ prop: 'TopLeft', hBorder: 'left', vBorder: 'top' }, { prop: 'TopRight', hBorder: 'right', vBorder: 'top' }, { prop: 'BottomRight', hBorder: 'right', vBorder: 'bottom' }, { prop: 'BottomLeft', hBorder: 'left', vBorder: 'bottom' }].forEach(function (corner) {
@@ -1761,8 +1752,7 @@ function _show(props, force) {
       var isDoc = fromDoc && i === 0;
       if (elementCanScroll(element, isDoc)) {
         elementsScroll.push({
-          element: element,
-          isDoc: isDoc,
+          element: element, isDoc: isDoc,
           left: scrollLeft(element, isDoc, props.window),
           top: scrollTop(element, isDoc, props.window)
         });
@@ -1853,6 +1843,7 @@ function _show(props, force) {
 /**
  * @param {props} props - `props` of instance.
  * @param {boolean} [force] - Skip effect.
+ * @param {boolean} [sync] - sync-mode
  * @returns {void}
  */
 function _hide(props, force, sync) {
@@ -1959,7 +1950,9 @@ function _setOptions(props, newOptions) {
 
 function scroll(props, target, dirLeft, value) {
   var isDoc = void 0,
-      curValue = void 0;
+
+  // To return undefined
+  curValue = void 0; // eslint-disable-line prefer-const
 
   if (target) {
     var targetElements = getTargetElements(props);
@@ -2253,6 +2246,7 @@ var PlainOverlay = function () {
     /**
      * Hide the overlay.
      * @param {boolean} [force] - Hide it immediately without effect.
+     * @param {boolean} [sync] - sync-mode
      * @returns {PlainOverlay} Current instance itself.
      */
 

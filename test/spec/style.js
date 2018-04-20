@@ -1,4 +1,3 @@
-
 describe('style', function() {
   'use strict';
 

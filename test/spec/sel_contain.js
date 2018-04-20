@@ -1,8 +1,8 @@
-
 describe('selContainsNode(), nodeContainsSel()', function() {
   'use strict';
 
-  var window, document, selContainsNode, nodeContainsSel, p1, span1, NODES = [], pageDone,
+  var NODES = [],
+    window, document, selContainsNode, nodeContainsSel, p1, span1, pageDone,
     IS_TRIDENT, IS_BLINK, IS_GECKO;
 
   function getPos(index) {
@@ -129,7 +129,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `AB`', function(done) {
-    var indexStart = 0, indexEnd = 1, selection;
+    var indexStart = 0,
+      indexEnd = 1,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -257,7 +259,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `BC`', function(done) {
-    var indexStart = 1, indexEnd = 2, selection;
+    var indexStart = 1,
+      indexEnd = 2,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -308,7 +312,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `CD`', function(done) {
-    var indexStart = 2, indexEnd = 3, selection;
+    var indexStart = 2,
+      indexEnd = 3,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -417,7 +423,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `DE`', function(done) {
-    var indexStart = 3, indexEnd = 4, selection;
+    var indexStart = 3,
+      indexEnd = 4,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -443,7 +451,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
+    expect(nodeContainsSel(span1, selection)).toBe(!IS_TRIDENT); // Trident changed
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -467,7 +475,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
+    expect(nodeContainsSel(span1, selection)).toBe(!IS_TRIDENT); // Trident changed
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -531,7 +539,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `EF`', function(done) {
-    var indexStart = 4, indexEnd = 5, selection;
+    var indexStart = 4,
+      indexEnd = 5,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -582,7 +592,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `FG`', function(done) {
-    var indexStart = 5, indexEnd = 6, selection;
+    var indexStart = 5,
+      indexEnd = 6,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -633,7 +645,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `GH`', function(done) {
-    var indexStart = 6, indexEnd = 7, selection;
+    var indexStart = 6,
+      indexEnd = 7,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -742,7 +756,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `HI`', function(done) {
-    var indexStart = 7, indexEnd = 8, selection;
+    var indexStart = 7,
+      indexEnd = 8,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -765,7 +781,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       expect(selection.containsNode(span1, false)).toBe(false);
     }
     // selContainsNode
-    expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT); // Trident changed
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
     expect(nodeContainsSel(span1, selection)).toBe(false);
@@ -789,7 +805,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
       expect(selection.containsNode(span1, false)).toBe(false);
     }
     // selContainsNode
-    expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    expect(selContainsNode(selection, span1, true)).toBe(IS_TRIDENT); // Trident changed
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
     expect(nodeContainsSel(span1, selection)).toBe(false);
@@ -856,7 +872,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `IJ`', function(done) {
-    var indexStart = 8, indexEnd = 9, selection;
+    var indexStart = 8,
+      indexEnd = 9,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -907,7 +925,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `DEFG`', function(done) {
-    var indexStart = 3, indexEnd = 6, selection;
+    var indexStart = 3,
+      indexEnd = 6,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -933,7 +953,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
+    expect(nodeContainsSel(span1, selection)).toBe(!IS_TRIDENT); // Trident changed
 
     // Reversed direction
     setSelection(indexEnd, indexStart);
@@ -957,7 +977,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     expect(selContainsNode(selection, span1, true)).toBe(true);
     expect(selContainsNode(selection, span1, false)).toBe(false);
     // nodeContainsSel
-    expect(nodeContainsSel(span1, selection)).toBe(IS_TRIDENT ? false : true); // Trident changed
+    expect(nodeContainsSel(span1, selection)).toBe(!IS_TRIDENT); // Trident changed
 
     if (IS_GECKO) { // Multiple ranges
       // Add `A`
@@ -1002,7 +1022,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `CDEFG`', function(done) {
-    var indexStart = 2, indexEnd = 6, selection;
+    var indexStart = 2,
+      indexEnd = 6,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1053,7 +1075,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `DEFGH`', function(done) {
-    var indexStart = 3, indexEnd = 7, selection;
+    var indexStart = 3,
+      indexEnd = 7,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1077,7 +1101,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     }
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
-    expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT); // Trident changed
     // nodeContainsSel
     expect(nodeContainsSel(span1, selection)).toBe(false);
 
@@ -1101,7 +1125,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
     }
     // selContainsNode
     expect(selContainsNode(selection, span1, true)).toBe(true);
-    expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT ? true : false); // Trident changed
+    expect(selContainsNode(selection, span1, false)).toBe(IS_TRIDENT); // Trident changed
     // nodeContainsSel
     expect(nodeContainsSel(span1, selection)).toBe(false);
 
@@ -1109,7 +1133,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `CDEFGH`', function(done) {
-    var indexStart = 2, indexEnd = 7, selection;
+    var indexStart = 2,
+      indexEnd = 7,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1199,7 +1225,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `` the right of `B`', function(done) {
-    var indexStart = 2, indexEnd = indexStart, selection;
+    var indexStart = 2,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1228,7 +1256,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `` the right of `C`', function(done) {
-    var indexStart = 2, indexEnd = indexStart, selection;
+    var indexStart = 2,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1259,7 +1289,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   it('Select `` the left of `D`', function(done) {
     if (IS_TRIDENT) { done(); return; } // Trident changes points -> right of `C`
 
-    var indexStart = 3, indexEnd = indexStart, selection;
+    var indexStart = 3,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1275,7 +1307,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
 
     // containsNode
     if (selection.containsNode) {
-      expect(selection.containsNode(span1, true)).toBe(IS_BLINK ? false : true); // Blink bug
+      expect(selection.containsNode(span1, true)).toBe(!IS_BLINK); // Blink bug
       expect(selection.containsNode(span1, false)).toBe(false);
     }
     // selContainsNode
@@ -1288,7 +1320,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `` the right of `E`', function(done) {
-    var indexStart = 5, indexEnd = indexStart, selection;
+    var indexStart = 5,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1317,7 +1351,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `` the right of `G`', function(done) {
-    var indexStart = 6, indexEnd = indexStart, selection;
+    var indexStart = 6,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1348,7 +1384,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   it('Select `` the left of `H`', function(done) {
     if (IS_TRIDENT) { done(); return; } // Trident changes points -> right of `G`
 
-    var indexStart = 7, indexEnd = indexStart, selection;
+    var indexStart = 7,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
@@ -1364,7 +1402,7 @@ describe('selContainsNode(), nodeContainsSel()', function() {
 
     // containsNode
     if (selection.containsNode) {
-      expect(selection.containsNode(span1, true)).toBe(IS_BLINK ? true : false); // Blink bug
+      expect(selection.containsNode(span1, true)).toBe(IS_BLINK); // Blink bug
       expect(selection.containsNode(span1, false)).toBe(false);
     }
     // selContainsNode
@@ -1377,7 +1415,9 @@ describe('selContainsNode(), nodeContainsSel()', function() {
   });
 
   it('Select `` the right of `H`', function(done) {
-    var indexStart = 7, indexEnd = indexStart, selection;
+    var indexStart = 7,
+      indexEnd = indexStart,
+      selection;
 
     setSelection(indexStart, indexEnd);
     // Check selection
