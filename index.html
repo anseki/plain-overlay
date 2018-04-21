@@ -224,9 +224,11 @@ window.addEventListener('load', function() {
   bindToggleButton(new PlainOverlay(document.getElementById('ex-020-iframe'), {blur: 3}),
     document.getElementById('ex-020-iframe-btn'));
 
-  bindToggleButton(new PlainOverlay(
+  bindToggleButton(
+    new PlainOverlay(
       document.getElementById('ex-020-iframe').contentDocument.getElementById('ex-020-p'), {blur: 1}),
-    document.getElementById('ex-020-p-btn'));
+    document.getElementById('ex-020-p-btn')
+  );
 
 });
 </script>
