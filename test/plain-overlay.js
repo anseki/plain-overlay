@@ -565,7 +565,7 @@ var STATE_STOPPED = 0,
  * @typedef {Object} props
  * @property {Object} options - Options.
  * @property {Element} element - Target element.
- * @property {Window} window - Window that conatins target element.
+ * @property {Window} window - Window that contains target element.
  * @property {number} duration - Milliseconds from `transition-duration`.
  * @property {number} delay - Milliseconds from `transition-delay`.
  * @property {number} state - Current state.
@@ -797,8 +797,8 @@ function _setOptions(props, newOptions) {
   var options = props.options;
 
   function parseAsCss(option) {
-    var optionValue = typeof newOptions[option] === 'number' ? // From CSS
-    (props.window.getComputedStyle(props.element, '')[cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
+    var optionValue = typeof newOptions[option] === 'number' // From CSS
+    ? (props.window.getComputedStyle(props.element, '')[cssprefix__WEBPACK_IMPORTED_MODULE_0__["default"].getName('transition-' + option)] || '').split(',')[newOptions[option]] : newOptions[option];
     return typeof optionValue === 'string' ? optionValue.trim() : null;
   }
 
@@ -821,7 +821,7 @@ function _setOptions(props, newOptions) {
     if (typeof value === 'string') {
       var matches = void 0,
           timeValue = void 0;
-      if (/^[0\.]+$/.test(value)) {
+      if (/^[0.]+$/.test(value)) {
         // This is invalid for CSS.
         options[option] = '0s';
         props[option] = 0;
@@ -871,12 +871,12 @@ var TimedTransition = function () {
       throw new Error('This `element` is not accepted.');
     }
     props.element = element;
-    props.window = element.ownerDocument.defaultView;
     if (!options) {
       options = {};
     } else if (!isObject(options)) {
       throw new Error('Invalid options.');
     }
+    props.window = element.ownerDocument.defaultView || options.window || window;
 
     // Default options
     if (!options.hasOwnProperty('property')) {
