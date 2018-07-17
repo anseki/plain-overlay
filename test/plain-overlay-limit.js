@@ -560,16 +560,6 @@ var STATE_STOPPED = 0,
     EVENT_TYPE_END = PREFIX + 'TransitionEnd',
     EVENT_TYPE_CANCEL = PREFIX + 'TransitionCancel',
     IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-    isObject = function () {
-  var toString = {}.toString,
-      fnToString = {}.hasOwnProperty.toString,
-      objFnString = fnToString.call(Object);
-  return function (obj) {
-    var proto = void 0,
-        constr = void 0;
-    return obj && toString.call(obj) === '[object Object]' && (!(proto = Object.getPrototypeOf(obj)) || (constr = proto.hasOwnProperty('constructor') && proto.constructor) && typeof constr === 'function' && fnToString.call(constr) === objFnString);
-  };
-}(),
     isFinite = Number.isFinite || function (value) {
   return typeof value === 'number' && window.isFinite(value);
 },
@@ -892,8 +882,6 @@ var TimedTransition = function () {
     props.element = element;
     if (!options) {
       options = {};
-    } else if (!isObject(options)) {
-      throw new Error('Invalid options.');
     }
     props.window = element.ownerDocument.defaultView || options.window || window;
 
@@ -928,7 +916,7 @@ var TimedTransition = function () {
   }, {
     key: 'setOptions',
     value: function setOptions(options) {
-      if (isObject(options)) {
+      if (options) {
         _setOptions(insProps[this._id], options);
       }
       return this;
