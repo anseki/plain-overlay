@@ -1,6 +1,6 @@
 {
   "name": "plain-overlay",
-  "version": "1.4.11",
+  "version": "1.4.12",
   "description": "The simple library for customizable overlay which covers a page, elements or iframe-windows.",
   "keywords": [
     "overlay",
