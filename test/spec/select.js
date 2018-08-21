@@ -134,15 +134,22 @@ describe('avoidSelect()', function() {
 
     it('Selection: before 1', function(done) {
       var selection;
-      setSelection(pBefore, 0, pBefore, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('AB');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 0, pBefore, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('AB');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('AB');
@@ -157,23 +164,30 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: before 2', function(done) {
       var selection;
-      setSelection(pBefore, 1, pBefore, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('BC');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 1, pBefore, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('BC');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('BC');
@@ -188,23 +202,30 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: before - target', function(done) {
       var selection;
-      setSelection(pBefore, 2, pTarget, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('CD');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 2, pTarget, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('CD');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -217,23 +238,30 @@ describe('avoidSelect()', function() {
             'AVOIDED',
             '_id:' + overlayElm._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target 1', function(done) {
       var selection;
-      setSelection(pTarget, 0, pTarget, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('DE');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 0, pTarget, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('DE');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -261,23 +289,30 @@ describe('avoidSelect()', function() {
             'target:BODY',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target 2', function(done) {
       var selection;
-      setSelection(pTarget, 1, pTarget, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('EF');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 1, pTarget, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('EF');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -305,23 +340,30 @@ describe('avoidSelect()', function() {
             'target:BODY',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target - after', function(done) {
       var selection;
-      setSelection(pTarget, 2, pAfter, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('FG');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 2, pAfter, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('FG');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -349,23 +391,30 @@ describe('avoidSelect()', function() {
             'target:BODY',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after 1', function(done) {
       var selection;
-      setSelection(pAfter, 0, pAfter, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('GH');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 0, pAfter, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('GH');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('GH');
@@ -380,23 +429,30 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after 2', function(done) {
       var selection;
-      setSelection(pAfter, 1, pAfter, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('HI');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 1, pAfter, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('HI');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('HI');
@@ -411,27 +467,34 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after - face', function(done) {
       var selection;
-      setSelection(pAfter, 2, face1, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      if (IS_TRIDENT) { // Contains hidden text (face1 was moved after `MNO`)
-        expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
-      } else {
-        expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
-      }
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 2, face1, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          if (IS_TRIDENT) { // Contains hidden text (face1 was moved after `MNO`)
+            expect(selection.toString().replace(/\s/g, '')).toBe('IMNOJ');
+          } else {
+            expect(selection.toString().replace(/\s/g, '')).toBe('IJ');
+          }
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           if (IS_TRIDENT) { // Contains hidden text (face1 was moved after `MNO`)
@@ -450,23 +513,30 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: face 1', function(done) {
       var selection;
-      setSelection(face1, 0, face1, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('JK');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(face1, 0, face1, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('JK');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('JK');
@@ -481,23 +551,30 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: face 2', function(done) {
       var selection;
-      setSelection(face1, 1, face1, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('KL');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(face1, 1, face1, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('KL');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('KL');
@@ -512,10 +589,10 @@ describe('avoidSelect()', function() {
             '<text-select-event>', '_id:' + overlayDoc._id, 'state:STATE_HIDDEN',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
   });
 
@@ -541,15 +618,22 @@ describe('avoidSelect()', function() {
 
     it('Selection: before 1', function(done) {
       var selection;
-      setSelection(pBefore, 0, pBefore, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('AB');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 0, pBefore, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('AB');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -579,23 +663,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: before 2', function(done) {
       var selection;
-      setSelection(pBefore, 1, pBefore, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('BC');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 1, pBefore, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('BC');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -625,23 +716,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: before - target', function(done) {
       var selection;
-      setSelection(pBefore, 2, pTarget, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('CD');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pBefore, 2, pTarget, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('CD');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -671,23 +769,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target 1', function(done) {
       var selection;
-      setSelection(pTarget, 0, pTarget, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('DE');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 0, pTarget, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('DE');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -717,23 +822,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target 2', function(done) {
       var selection;
-      setSelection(pTarget, 1, pTarget, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('EF');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 1, pTarget, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('EF');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -763,23 +875,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: target - after', function(done) {
       var selection;
-      setSelection(pTarget, 2, pAfter, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('FG');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pTarget, 2, pAfter, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('FG');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -809,23 +928,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after 1', function(done) {
       var selection;
-      setSelection(pAfter, 0, pAfter, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('GH');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 0, pAfter, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('GH');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -855,23 +981,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after 2', function(done) {
       var selection;
-      setSelection(pAfter, 1, pAfter, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('HI');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 1, pAfter, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('HI');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -901,27 +1034,34 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: after - face', function(done) {
       var selection;
-      setSelection(pAfter, 2, face2, 0);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      if (IS_TRIDENT) { // Contains hidden text
-        expect(selection.toString().replace(/\s/g, '')).toBe('IJKLM');
-      } else {
-        expect(selection.toString().replace(/\s/g, '')).toBe('IM');
-      }
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(pAfter, 2, face2, 0);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          if (IS_TRIDENT) { // Contains hidden text
+            expect(selection.toString().replace(/\s/g, '')).toBe('IJKLM');
+          } else {
+            expect(selection.toString().replace(/\s/g, '')).toBe('IM');
+          }
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(0);
           expect(selection.toString()).toBe('');
@@ -951,23 +1091,30 @@ describe('avoidSelect()', function() {
             'NotInTarget', '_id:' + overlayDoc._id, '</avoidFocus>',
             '_id:' + overlayDoc._id, '</focusListener>'
           ] : []));
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: face 1', function(done) {
       var selection;
-      setSelection(face2, 0, face2, 1);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('MN');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(face2, 0, face2, 1);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('MN');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('MN');
@@ -982,23 +1129,30 @@ describe('avoidSelect()', function() {
             'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
     it('Selection: face 2', function(done) {
       var selection;
-      setSelection(face2, 1, face2, 2);
-      selection = ('getSelection' in window ? window : document).getSelection();
-      expect(selection.rangeCount).toBe(1);
-      expect(selection.toString().replace(/\s/g, '')).toBe('NO');
-
-      setTimeout(function() { // To check after some events in Trident with setSelection
-        traceLog.length = 0;
-        fireKeyup();
-        setTimeout(function() {
+      utils.intervalExec([
+        // ====================================
+        function() {
+          setSelection(face2, 1, face2, 2);
+          selection = ('getSelection' in window ? window : document).getSelection();
+          expect(selection.rangeCount).toBe(1);
+          expect(selection.toString().replace(/\s/g, '')).toBe('NO');
+        },
+        // ====================================
+        function() {
+          // To check after some events in Trident with setSelection
+          traceLog.length = 0;
+          fireKeyup();
+        },
+        // ====================================
+        function() {
           selection = ('getSelection' in window ? window : document).getSelection();
           expect(selection.rangeCount).toBe(1);
           expect(selection.toString().replace(/\s/g, '')).toBe('NO');
@@ -1013,10 +1167,10 @@ describe('avoidSelect()', function() {
             'NoSelection', '_id:' + overlayDoc._id, '</avoidSelect>',
             '_id:' + overlayDoc._id, '</text-select-event>'
           ]);
-
-          done();
-        }, 10);
-      }, 10);
+        },
+        // ====================================
+        0, done
+      ]);
     });
 
   });

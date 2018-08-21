@@ -74,23 +74,26 @@ describe('focus', function() {
             expect(document.activeElement).toBe(textInDoc);
 
             overlayElm.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).toBe(textInDoc); // Not changed
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).toBe(textInDoc); // Not changed
 
-                blurElement(textInDoc); // focus: OFF
-
-                setTimeout(function() {
+                  blurElement(textInDoc); // focus: OFF
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInDoc);
 
                   textInDoc.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).toBe(textInDoc);
 
-                  setTimeout(function() {
-                    expect(document.activeElement).toBe(textInDoc);
-
-                    overlayElm.hide(true);
-                  }, 0);
-                }, 0);
-              }, 0);
+                  overlayElm.hide(true);
+                }
+              ]);
             };
 
             overlayElm.onHide = function() {
@@ -176,17 +179,20 @@ describe('focus', function() {
             expect(document.activeElement).toBe(textInTarget);
 
             overlayElm.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInTarget); // BLURRED
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
-                textInTarget.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInTarget.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
                   overlayElm.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayElm.onHide = function() {
@@ -287,17 +293,20 @@ describe('focus', function() {
             expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
             overlayElm.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInFace1);
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInFace1);
 
-                textInFace1.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInFace1.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).toBe(textInFace1);
 
                   overlayElm.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayElm.onHide = function() {
@@ -403,17 +412,20 @@ describe('focus', function() {
             expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
             overlayElm.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInFace2);
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInFace2);
 
-                textInFace2.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInFace2.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInFace2); // Not changed
 
                   overlayElm.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayElm.onHide = function() {
@@ -499,17 +511,20 @@ describe('focus', function() {
             expect(document.activeElement).toBe(textInDoc);
 
             overlayDoc.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInDoc); // BLURRED
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInDoc); // BLURRED
 
-                textInDoc.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInDoc.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInDoc); // BLURRED
 
                   overlayDoc.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayDoc.onHide = function() {
@@ -636,17 +651,20 @@ describe('focus', function() {
             expect(document.activeElement).toBe(textInTarget);
 
             overlayDoc.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInTarget); // BLURRED
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
-                textInTarget.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInTarget.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInTarget); // BLURRED
 
                   overlayDoc.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayDoc.onHide = function() {
@@ -790,17 +808,20 @@ describe('focus', function() {
             expect(document.activeElement).not.toBe(textInFace2); // HIDDEN
 
             overlayDoc.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInFace2);
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInFace2);
 
-                textInFace2.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInFace2.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).toBe(textInFace2);
 
                   overlayDoc.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayDoc.onHide = function() {
@@ -917,17 +938,20 @@ describe('focus', function() {
             expect(document.activeElement).not.toBe(textInFace1); // HIDDEN
 
             overlayDoc.onShow = function() {
-              setTimeout(function() {
-                expect(document.activeElement).not.toBe(textInFace1);
+              utils.intervalExec([
+                // ====================================
+                0, function() {
+                  expect(document.activeElement).not.toBe(textInFace1);
 
-                textInFace1.focus(); // focus: ON
-
-                setTimeout(function() {
+                  textInFace1.focus(); // focus: ON
+                },
+                // ====================================
+                0, function() {
                   expect(document.activeElement).not.toBe(textInFace1); // Not changed
 
                   overlayDoc.hide(true);
-                }, 0);
-              }, 0);
+                }
+              ]);
             };
 
             overlayDoc.onHide = function() {
