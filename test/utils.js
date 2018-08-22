@@ -1,6 +1,6 @@
 /* exported utils */
 /* eslint-env browser */
-/* eslint no-var: off, prefer-arrow-callback: off, object-shorthand: off */
+/* eslint no-var: "off", prefer-arrow-callback: "off", object-shorthand: "off" */
 
 var utils = (function() {
   'use strict';
