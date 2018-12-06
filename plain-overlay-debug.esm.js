@@ -43,13 +43,19 @@ var APP_ID = 'plainoverlay',
 DURATION = 200,
     // COPY: default.scss
 TOLERANCE = 0.5,
-    IS_TRIDENT = !!document.uniqueID,
     IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
-    IS_WEBKIT = !window.chrome && 'WebkitAppearance' in document.documentElement.style,
+    IS_TRIDENT = !IS_EDGE && !!document.uniqueID,
+    // Future Edge might support `document.uniqueID`.
+IS_GECKO = 'MozAppearance' in document.documentElement.style,
     // [DEBUG/]
-IS_BLINK = !!(window.chrome && window.chrome.webstore),
-    IS_GECKO = 'MozAppearance' in document.documentElement.style,
-    // [DEBUG/]
+IS_BLINK = !IS_EDGE && !IS_GECKO && // Edge has `window.chrome`, and future Gecko might have that.
+!!window.chrome && !!window.CSS,
+
+// [DEBUG]
+IS_WEBKIT = !IS_EDGE && !IS_TRIDENT && !IS_GECKO && !IS_BLINK && // Some engines support `webkit-*` properties.
+!window.chrome && 'WebkitAppearance' in document.documentElement.style,
+
+// [/DEBUG]
 
 isObject = function () {
   var toString = {}.toString,
