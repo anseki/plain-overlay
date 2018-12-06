@@ -42,7 +42,8 @@ TOLERANCE = 0.5,
     IS_EDGE = '-ms-scroll-limit' in document.documentElement.style && '-ms-ime-align' in document.documentElement.style && !window.navigator.msPointerEnabled,
     IS_TRIDENT = !IS_EDGE && !!document.uniqueID,
     // Future Edge might support `document.uniqueID`.
-IS_BLINK = !IS_EDGE && !IS_GECKO && // Edge has `window.chrome`, and future Gecko might have that.
+IS_GECKO = 'MozAppearance' in document.documentElement.style,
+    IS_BLINK = !IS_EDGE && !IS_GECKO && // Edge has `window.chrome`, and future Gecko might have that.
 !!window.chrome && !!window.CSS,
     isObject = function () {
   var toString = {}.toString,

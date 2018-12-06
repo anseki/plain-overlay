@@ -1117,8 +1117,7 @@ TOLERANCE = 0.5,
     IS_TRIDENT = !IS_EDGE && !!document.uniqueID,
     // Future Edge might support `document.uniqueID`.
 IS_GECKO = 'MozAppearance' in document.documentElement.style,
-    // [DEBUG/]
-IS_BLINK = !IS_EDGE && !IS_GECKO && // Edge has `window.chrome`, and future Gecko might have that.
+    IS_BLINK = !IS_EDGE && !IS_GECKO && // Edge has `window.chrome`, and future Gecko might have that.
 !!window.chrome && !!window.CSS,
 
 // [DEBUG]
