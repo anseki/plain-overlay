@@ -15,14 +15,14 @@ const
 
   webpack = require('webpack'),
   preProc = require('pre-proc'),
-  path = require('path'),
+  pathUtil = require('path'),
   fs = require('fs'),
   PKG = require('./package'),
 
-  SRC_DIR_PATH = path.resolve(__dirname, 'src'),
-  BUILD_DIR_PATH = BUILD_MODE ? __dirname : path.resolve(__dirname, 'test'),
+  SRC_DIR_PATH = pathUtil.resolve(__dirname, 'src'),
+  BUILD_DIR_PATH = BUILD_MODE ? __dirname : pathUtil.resolve(__dirname, 'test'),
   ESM_DIR_PATH = __dirname,
-  ENTRY_PATH = path.join(SRC_DIR_PATH, `${BASE_NAME}.js`),
+  ENTRY_PATH = pathUtil.join(SRC_DIR_PATH, `${BASE_NAME}.js`),
 
   STATIC_ESM_FILES = [], // [{fileName, content}]
   STATIC_ESM_CONTENTS = [], // [{path, re, content}]
@@ -76,7 +76,7 @@ module.exports = {
               procedure(content) {
                 content = preProc.removeTag(PREPROC_REMOVE_TAGS, content);
                 if (BUILD_MODE && this.resourcePath === ENTRY_PATH) {
-                  writeFile(path.join(SRC_DIR_PATH, `${BUILD_BASE_NAME}.proc.js`), content, 'PROC');
+                  writeFile(pathUtil.join(SRC_DIR_PATH, `${BUILD_BASE_NAME}.proc.js`), content, 'PROC');
                 }
                 return content;
               }
@@ -99,27 +99,18 @@ module.exports = {
               toCode: true
             }
           },
-          // ================================ Fix
+          // ================================ Autoprefixer
           {
-            loader: 'skeleton-loader',
-            options: {
-              procedure: content => (content + '').replace(/\n/g, '') // for node-sass bug?
-            }
+            loader: 'postcss-loader',
+            options: {postcssOptions: {plugins: [['autoprefixer']]}}
           },
           // ================================ SASS
           {
             loader: 'sass-loader',
             options: {
-              includePaths: (() => { // Get paths for compass
-                const lib = require.resolve('compass-mixins');
-                if (!/[/\\]compass-mixins[/\\]/.test(lib)) {
-                  throw new Error('Not found `compass-mixins`');
-                }
-                return [
-                  path.dirname(lib),
-                  path.resolve(__dirname, '../../_common')
-                ];
-              })(),
+              implementation: require('sass'),
+              fiber: require('fibers'),
+              includePaths: [pathUtil.resolve(__dirname, '../../_common')],
               outputStyle: 'compressed'
             }
           },
@@ -131,7 +122,7 @@ module.exports = {
         ].filter(loader => !!loader)
       },
       {
-        test: path.resolve(SRC_DIR_PATH, 'face.html'),
+        test: pathUtil.resolve(SRC_DIR_PATH, 'face.html'),
         use: [
           // ================================ Static ESM
           {
@@ -178,7 +169,7 @@ module.exports = {
             (s, varName) => `/* Static ESM */ /* ${s} */ var ${varName} = ${content.content}`);
         });
         // Save ESM file
-        writeFile(path.join(ESM_DIR_PATH, file.fileName), file.content, 'ESM');
+        writeFile(pathUtil.join(ESM_DIR_PATH, file.fileName), file.content, 'ESM');
       });
     })
   ].filter(plugin => !!plugin)
