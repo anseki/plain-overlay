@@ -2,7 +2,7 @@
  * PlainOverlay
  * https://anseki.github.io/plain-overlay/
  *
- * Copyright (c) 2018 anseki
+ * Copyright (c) 2021 anseki
  * Licensed under the MIT license.
  */
 
