@@ -47,7 +47,7 @@
     "sass-loader": "^7.3.1",
     "skeleton-loader": "^2.0.0",
     "stats-filelist": "^1.0.1",
-    "test-page-loader": "^1.0.7",
+    "test-page-loader": "^1.0.8",
     "timed-transition": "^1.5.2",
     "webpack": "^4.16.1",
     "webpack-cli": "^3.0.8"
