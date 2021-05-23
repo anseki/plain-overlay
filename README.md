@@ -86,6 +86,19 @@ var overlay = new PlainOverlay(document.getElementById('form'), {face: false});
 
 See also: [`PlainOverlay.show`](#plainoverlayshow)
 
+When you will do something about HTML document regardless of the PlainOverlay, you typically do that after the HTML document is ready (i.e. the HTML document has been loaded and parsed by web browser).  
+For example:
+
+```js
+// Wait for HTML document to get ready
+window.addEventListener('load', function() { // NOT `DOMContentLoaded`
+  // Do something about HTML document
+  var overlay = new PlainOverlay(document.getElementById('form'));
+});
+```
+
+If you don't wait for HTML document to be ready, you might not be able to get a target element yet, or problems with incomplete layout may occur. Also, you should do so asynchronous like the above for the performance because synchronous code blocks parsing HTML.
+
 ## Methods
 
 ### `show`
