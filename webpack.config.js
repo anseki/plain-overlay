@@ -109,9 +109,11 @@ module.exports = {
             loader: 'sass-loader',
             options: {
               implementation: require('sass'),
-              fiber: require('fibers'),
-              includePaths: [pathUtil.resolve(__dirname, '../../_common')],
-              outputStyle: 'compressed'
+              sassOptions: {
+                fiber: require('fibers'),
+                includePaths: [pathUtil.resolve(__dirname, '../../_common')],
+                outputStyle: 'compressed'
+              }
             }
           },
           // ================================ Preprocess
