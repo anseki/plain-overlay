@@ -49,8 +49,8 @@
     "stats-filelist": "^1.0.1",
     "test-page-loader": "^1.0.8",
     "timed-transition": "^1.5.2",
-    "webpack": "^4.16.1",
-    "webpack-cli": "^3.0.8"
+    "webpack": "^4.46.0",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "build": "cross-env NODE_ENV=production webpack --verbose",
