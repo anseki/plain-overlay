@@ -111,7 +111,7 @@ module.exports = {
               implementation: require('sass'),
               sassOptions: {
                 fiber: require('fibers'),
-                includePaths: [pathUtil.resolve(__dirname, '../../_common')],
+                includePaths: [pathUtil.resolve(__dirname, '../../_common/files')],
                 outputStyle: 'compressed'
               }
             }
