@@ -3,24 +3,24 @@
 $media: "";
 %anim-init#{$media} { @include anim-init; }
 
-$app_id: plainoverlay;
-$app-doc: #{$app_id}-doc;
-$app-show: #{$app_id}-show;
-$app-hide: #{$app_id}-hide;
-$app-force: #{$app_id}-force;
-$app-body: #{$app_id}-body;
+$app-id: plainoverlay;
+$app-doc: #{$app-id}-doc;
+$app-show: #{$app-id}-show;
+$app-hide: #{$app-id}-hide;
+$app-force: #{$app-id}-force;
+$app-body: #{$app-id}-body;
 
-$app-face: #{$app_id}-builtin-face;
+$app-face: #{$app-id}-builtin-face;
 
 // $duration: 2500ms; // COPY: plain-overlay.js
 $duration: 200ms; // COPY: plain-overlay.js
 $overlay-bg: rgba(136, 136, 136, 0.6);
-$target_margin: 200px;
+$target-margin: 200px;
 
-// $face_01-duration: 3s;
-$face_01-duration: 1s;
+// $face-01-duration: 3s;
+$face-01-duration: 1s;
 
-.#{$app_id} {
+.#{$app-id} {
   position: absolute;
   left: 0;
   top: 0;
@@ -50,10 +50,10 @@ $face_01-duration: 1s;
 
   &.#{$app-doc} {
     position: fixed;
-    left: -$target_margin;
-    top: -$target_margin;
+    left: -$target-margin;
+    top: -$target-margin;
     overflow: visible;
-    padding: $target_margin; // For mobile browsers
+    padding: $target-margin; // For mobile browsers
     width: 100vw; // Webkit 538.1- bug, child element size by `vw` is ignored.
     height: 100vh; // Webkit 538.1- bug above, add this by way of precaution but height may have no problem.
   }
@@ -63,7 +63,7 @@ $face_01-duration: 1s;
   width: 100%;
   height: 100%;
 
-  .#{$app_id}.#{$app-doc} & {
+  .#{$app-id}.#{$app-doc} & {
     width: 100vw;
     height: 100vh;
   }
@@ -110,10 +110,10 @@ $face_01-duration: 1s;
   }
 }
 
-.#{$app_id}:not(.#{$app-hide}) .#{$app-face}_01 {
+.#{$app-id}:not(.#{$app-hide}) .#{$app-face}_01 {
   @extend %anim-init#{$media};
   animation-name: #{$app-face}_01-spin;
-  animation-duration: $face_01-duration;
+  animation-duration: $face-01-duration;
   animation-timing-function: linear;
   animation-iteration-count: infinite;
 }
